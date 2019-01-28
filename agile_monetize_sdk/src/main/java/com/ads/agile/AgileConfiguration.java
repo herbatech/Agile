@@ -27,7 +27,6 @@ public class AgileConfiguration {
     private static final String TAG = "AgileConfiguration";
     public static final int JOB_ID = 101;
     static String url = "http://192.168.1.37:8080/";
-    //static String url = "http://log.agileadnetwork.com:8080/";
 
     //retrofit instance
     public static Retrofit getRetrofit() {
