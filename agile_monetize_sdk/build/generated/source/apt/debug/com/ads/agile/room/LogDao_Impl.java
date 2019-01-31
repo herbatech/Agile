@@ -169,23 +169,4 @@ public final class LogDao_Impl implements LogDao {
       }
     });
   }
-
-  @Override
-  public int getCountLog() {
-    final String _sql = "SELECT COUNT(*) FROM tblLog";
-    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
-    final Cursor _cursor = DBUtil.query(__db, _statement, false);
-    try {
-      final int _result;
-      if(_cursor.moveToFirst()) {
-        _result = _cursor.getInt(0);
-      } else {
-        _result = 0;
-      }
-      return _result;
-    } finally {
-      _cursor.close();
-      _statement.release();
-    }
-  }
 }

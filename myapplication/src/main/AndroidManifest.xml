@@ -2,8 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.herba.sdk.myapplication">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
 
     <application
         android:allowBackup="true"
@@ -20,7 +21,8 @@
             </intent-filter>
         </activity>
 
-       <!-- <service
+        <!--
+        <service
             android:name="com.ads.agile.utils.AgileService"
             android:label="Agile service"
             android:permission="android.permission.BIND_JOB_SERVICE" >
@@ -31,8 +33,10 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="com.journaldev.AN_INTENT"/>
             </intent-filter>
-        </receiver>-->
+        </receiver>
+        -->
 
+        <activity android:name=".SecondActivity"></activity>
     </application>
 
 </manifest>

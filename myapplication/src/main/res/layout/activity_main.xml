@@ -38,6 +38,33 @@
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
+        <TextView
+            android:id="@+id/tvLog"
+            android:text="Log Example"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/goToNextPage"
+            android:text="Go To Next Page"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/getLog"
+            android:text="Get Log"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/getTest"
+            android:text="Test"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <!--delete-->
         <androidx.appcompat.widget.LinearLayoutCompat
             android:visibility="gone"

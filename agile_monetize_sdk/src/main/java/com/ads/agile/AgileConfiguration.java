@@ -1,21 +1,6 @@
 package com.ads.agile;
 
-import android.util.Log;
-
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.security.KeyStore;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
-
-import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.http.Field;
@@ -27,6 +12,7 @@ public class AgileConfiguration {
     private static final String TAG = "AgileConfiguration";
     public static final int JOB_ID = 101;
     static String url = "http://192.168.1.37:8080/";
+    public static final String MONETIZE_FILENAME = "agile_monetize.txt";
 
     //retrofit instance
     public static Retrofit getRetrofit() {

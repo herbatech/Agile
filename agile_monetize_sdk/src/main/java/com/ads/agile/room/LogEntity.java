@@ -7,6 +7,16 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "tblLog")
 public class LogEntity {
 
+
+    /*id______event_type________app_id________eventid________values__________android_id
+    * 1
+    * 2
+    * 3
+    * 4
+    * 5
+    * */
+
+
     @PrimaryKey(autoGenerate = true)
     @NonNull
     public int id;
@@ -28,6 +38,15 @@ public class LogEntity {
 
     @NonNull
     public String time = new LogTime().getTime();
+
+    @NonNull
+    public int getId() {
+        return id;
+    }
+
+    public void setId(@NonNull int id) {
+        this.id = id;
+    }
 
     public void setEvent_type(String event_type) {
         this.event_type = event_type;
@@ -89,12 +108,4 @@ public class LogEntity {
     public LogEntity() {
     }
 
-    @NonNull
-    public int getId() {
-        return id;
-    }
-
-    public void setId(@NonNull int id) {
-        this.id = id;
-    }
 }

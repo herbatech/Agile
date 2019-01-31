@@ -18,34 +18,51 @@ public class LogModel extends AndroidViewModel {
     private LogDatabase logDatabase;
     private LiveData<List<LogEntity>> liveList;
 
+    /**
+     *
+     * @param application to init the database
+     * @see LogDatabase
+     */
     public LogModel(@NonNull Application application) {
         super(application);
         logDatabase = LogDatabase.getLogDatabaseInstance(application);
         logDao = logDatabase.logDoa();
         liveList = logDao.getLiveListAllLog();
-        //list = logDao.getListAllLog();
     }
 
+    /**
+     * get all data from the database
+     * @return
+     */
     public LiveData<List<LogEntity>> getLiveListAllLog() {
         return liveList;
     }
 
+    /**
+     * insert the record into database
+     * @param logEntity
+     * @see LogDao
+     */
     public void insertLog(LogEntity logEntity) {
         new InsertAsyncTask(logDao).execute(logEntity);
     }
 
+    /**
+     *
+     * @param logEntity
+     * @see LogDao
+     */
     public void deleteLog(LogEntity logEntity) {
         new DeleteAsyncTask(logDao).execute(logEntity);
     }
 
-    public void singleDeleteLog(int id) {
-        new DeleteSingleAsyncTask(logDao, id).execute(logEntity);
+    /**
+     *
+     * @param id
+     * @see LogDao
+     */
+    public void singleDeleteLog(int id) { new DeleteSingleAsyncTask(logDao, id).execute(logEntity);
     }
-
-    /*public int getCountLog()
-    {
-        return count;
-    }*/
 
     @Override
     protected void onCleared() {
@@ -53,6 +70,9 @@ public class LogModel extends AndroidViewModel {
         Log.d(TAG, "onCleared called");
     }
 
+    /**
+     * background thread to insert the record into database
+     */
     private class InsertAsyncTask extends AsyncTask<LogEntity, Void, Void> {
 
         LogDao logDao;
@@ -68,6 +88,9 @@ public class LogModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * background thread to delete the record from database
+     */
     private class DeleteAsyncTask extends AsyncTask<LogEntity, Void, Void> {
 
         LogDao logDao;
@@ -83,6 +106,9 @@ public class LogModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * background thread to delete single record from database
+     */
     private class DeleteSingleAsyncTask extends AsyncTask<LogEntity, Void, Void> {
 
         LogDao logDao;
@@ -100,25 +126,4 @@ public class LogModel extends AndroidViewModel {
         }
     }
 
-//    private class getDataAsynTask extends AsyncTask<LogEntity, Void, List<LogEntity>> {
-//
-//        LogDao logDao;
-//        List<LogEntity> liveList;
-//
-//        public getDataAsynTask(LogDao logDao,List<LogEntity> liveList) {
-//            this.logDao = logDao;
-//            this.liveList = liveList;
-//        }
-//
-//        @Override
-//        protected List<LogEntity> doInBackground(LogEntity... logEntities) {
-//            this.liveList = this.logDao.getLiveListAllLog();
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(List<LogEntity> liveList) {
-//            super.onPostExecute(liveList);
-//        }
-//    }
 }

@@ -16,17 +16,25 @@ public abstract class LogDatabase extends RoomDatabase {
 
     private static volatile LogDatabase logDatabaseInstance;
 
+    /**
+     *
+     * @param context
+     * @return the instance of LogDatabase
+     */
     static LogDatabase getLogDatabaseInstance(final Context context) {
         if (logDatabaseInstance == null) {
             synchronized (LogDatabase.class) {
                 if (logDatabaseInstance == null) {
-                    logDatabaseInstance = Room.databaseBuilder(context, LogDatabase.class, "db_Log.db").addMigrations(MIGRATION_1_2).build();
+                    logDatabaseInstance = Room.databaseBuilder(context, LogDatabase.class, "db_Log.db").addMigrations().build();
                 }
             }
         }
         return logDatabaseInstance;
     }
 
+    /**
+     * migration from v1 to v2
+     */
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
@@ -38,6 +46,9 @@ public abstract class LogDatabase extends RoomDatabase {
         }
     };
 
+    /**
+     * migration from v2 to v3
+     */
     static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
@@ -51,6 +62,9 @@ public abstract class LogDatabase extends RoomDatabase {
         }
     };
 
+    /**
+     * migration from v3 to v4
+     */
     static final Migration MIGRATION_3_4 = new Migration(3, 4) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
