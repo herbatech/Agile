@@ -4,7 +4,7 @@
             "outputFile": "D:\\Android Project\\sample__jetpack_library\\myapplication\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v24\\values-v24.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\User\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-1.1.0-alpha01.aar\\7fde4a3d3ee0a1e72f40d623a17fcc34\\res\\values-v24\\values-v24.xml",
+                    "source": "C:\\Users\\User\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-1.1.0-alpha01.aar\\fe6dd633eabbd6ce13a2632d83125ba8\\res\\values-v24\\values-v24.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",
@@ -14,7 +14,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\User\\.gradle\\caches\\transforms-1\\files-1.1\\media-1.0.0-rc01.aar\\f330409e393b9ad25fac2146fd8c41c4\\res\\values-v24\\values-v24.xml",
+                    "source": "C:\\Users\\User\\.gradle\\caches\\transforms-1\\files-1.1\\media-1.0.0.aar\\47b41b3f61124df458499059f3b71d33\\res\\values-v24\\values-v24.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",

@@ -890,6 +890,8 @@ id blocking
 id book1
 id bottom
 id bounce
+id btnAdd
+id btnAdd2
 id btnSubmit
 id buttonPanel
 id cancel_action

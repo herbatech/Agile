@@ -25,7 +25,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.StringDef;
@@ -246,7 +248,7 @@ public class Agile extends Activity {
                 && !TextUtils.isEmpty(eventType)
                 && !TextUtils.isEmpty(values)
                 && !TextUtils.isEmpty(advertising_id)
-                ) {
+        ) {
             sendLog(appId, eventId, android_id, eventType, values, time, advertising_id);
         } else {
             Log.d(TAG, "params is empty");
@@ -751,4 +753,6 @@ public class Agile extends Activity {
             Log.d(TAG,"(argumentValidation) param value = "+param);
         }*/
     }
+
+
 }

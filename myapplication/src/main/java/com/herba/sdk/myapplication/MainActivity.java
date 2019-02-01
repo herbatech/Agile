@@ -18,6 +18,7 @@ import com.ads.agile.AgileConfiguration;
 import com.ads.agile.annotations.MyAnnotation;
 import com.ads.agile.room.LogEntity;
 import com.ads.agile.room.LogModel;
+import com.ads.agile.utils.AgileEvent;
 import com.ads.agile.utils.ConnectionStateMonitor;
 
 import org.json.JSONArray;
@@ -146,11 +147,15 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateMo
         findViewById(R.id.goToNextPage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Map<String, Object> eventValue = new HashMap<>();
-                eventValue.put("bouns_id", "01");
-                eventValue.put("bouns_name", "sample");
-                eventValue.put("bouns_type", "coins");
-                agile.addTransaction("GoToSecondActivity", String.valueOf(eventValue), false);
+//                Map<String, Object> eventValue = new HashMap<>();
+//                eventValue.put("bouns_id", "01");
+//                eventValue.put("bouns_name", "sample");
+//                eventValue.put("bouns_type", "coins");
+                AgileEvent event = new AgileEvent("Event01");
+                event.set("bouns_id", "01");
+                event.set("bouns_name", "sample");
+                event.set("bouns_type", "coins");
+                event.addEvent("GoToSecondActivity", event, false);
                 startActivity(new Intent(getApplicationContext(), SecondActivity.class));
             }
         });

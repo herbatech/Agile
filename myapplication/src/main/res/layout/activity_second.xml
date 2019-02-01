@@ -5,11 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    android:orientation="vertical"
     tools:context=".SecondActivity">
 
     <Button
         android:id="@+id/btnSubmit"
-        android:text="Submit"
+        android:text="Close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btnAdd"
+        android:text="Add the Value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btnAdd2"
+        android:text="Add new Value with same key"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
