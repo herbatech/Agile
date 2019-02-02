@@ -1,97 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:gravity="center"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:gravity="center"
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
 
             <Button
                 android:id="@+id/book1"
-                android:text="Submit"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="Submit" />
 
-            <EditText
-                android:id="@+id/event_id"
-                android:hint="Event ID"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
 
             <EditText
                 android:id="@+id/event_type"
-                android:hint="Event Type"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:hint="Event Type" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <TextView
             android:id="@+id/tvLog"
-            android:text="Log Example"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="Log Example" />
 
         <Button
             android:id="@+id/goToNextPage"
-            android:text="Go To Next Page"
-            android:textAllCaps="false"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="Go To Next Page"
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/getLog"
-            android:text="Get Log"
-            android:textAllCaps="false"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="Get Log"
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/getTest"
-            android:text="Test"
-            android:textAllCaps="false"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="Test"
+            android:textAllCaps="false" />
 
         <!--delete-->
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:visibility="gone"
-            android:gravity="center"
-            android:background="@color/colorAccent"
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <TextView
-                android:text="Delete Operation"
-                android:gravity="center"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Delete Operation" />
 
             <EditText
                 android:id="@+id/delete_event_id"
-                android:hint="Event ID"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:hint="Event ID" />
 
             <Button
                 android:id="@+id/Deletebutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Delete"
-                />
+                android:text="Delete" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

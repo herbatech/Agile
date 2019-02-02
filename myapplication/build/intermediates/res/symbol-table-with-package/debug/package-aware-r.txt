@@ -892,6 +892,8 @@ id bottom
 id bounce
 id btnAdd
 id btnAdd2
+id btnClear
+id btnDisplay
 id btnSubmit
 id buttonPanel
 id cancel_action

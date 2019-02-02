@@ -14,6 +14,7 @@ import com.ads.agile.myapplication.R;
 import com.ads.agile.room.LogEntity;
 import com.ads.agile.room.LogModel;
 import com.ads.agile.system.AdvertisingIdClient;
+import com.ads.agile.utils.AgileEvent;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
@@ -224,17 +225,15 @@ public class Agile extends Activity {
      *
      * @param appId     is application id which is provided by us to the developer
      * @param eventType define the type of event
-     * @param eventId   define the id of event
      * @param values    could be additional information which describe the eventType in more details
      */
-    public void eventLog(final String eventType, final String appId, final String eventId, final String values) {
+    public void eventLog(final String eventType, final String appId, final String values) {
 
         String advertising_id = getAdvertisingId();
         String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String time = "0";
 
         Log.d(TAG, "appId           = " + appId);
-        Log.d(TAG, "eventId         = " + eventId);
         Log.d(TAG, "android_id      = " + android_id);
         Log.d(TAG, "eventType       = " + eventType);
         Log.d(TAG, "values          = " + values);
@@ -243,13 +242,12 @@ public class Agile extends Activity {
 
         //validate input params
         if (!TextUtils.isEmpty(appId)
-                && !TextUtils.isEmpty(eventId)
                 && !TextUtils.isEmpty(android_id)
                 && !TextUtils.isEmpty(eventType)
                 && !TextUtils.isEmpty(values)
                 && !TextUtils.isEmpty(advertising_id)
         ) {
-            sendLog(appId, eventId, android_id, eventType, values, time, advertising_id);
+            sendLog(appId, android_id, eventType, new AgileEvent(values).getEvent(), time, advertising_id);
         } else {
             Log.d(TAG, "params is empty");
         }
@@ -259,19 +257,17 @@ public class Agile extends Activity {
      * check for internet connection then perform required operation
      *
      * @param appId          is application id which is provided by us to the developer
-     * @param eventId        define the id of event
      * @param android_id     is unique identification of android device
      * @param eventType      define the type of event
      * @param values         could be additional information which describe the eventType in more details
      * @param time           would be always zero if it send directly to the server or else will send the difference of current and stored entry into room database
      * @param advertising_id is google adv id
      */
-    private void sendLog(final String appId, final String eventId, String android_id, final String eventType, final String values, final String time, String advertising_id) {
+    private void sendLog(final String appId, String android_id, final String eventType, final String values, final String time, String advertising_id) {
         if (isConnected(context)) {
             sendLogToServer
                     (
                             appId,
-                            eventId,
                             android_id,
                             eventType,
                             values,
@@ -284,7 +280,6 @@ public class Agile extends Activity {
             sendLogToDatabase
                     (
                             appId,
-                            eventId,
                             eventType,
                             values
                     );
@@ -295,14 +290,13 @@ public class Agile extends Activity {
      * upload data to server
      *
      * @param appId          is application id which is provided by us to the developer
-     * @param eventId        define the id of event
      * @param android_id     is unique identification of android device
      * @param eventType      define the type of event
      * @param values         could be additional information which describe the eventType in more details
      * @param time           would be always zero if it send directly to the server or else will send the difference of current and stored entry into room database
      * @param advertising_id is google adv id
      */
-    private void sendLogToServer(final String appId, final String eventId, String android_id, final String eventType, final String values, final String time, String advertising_id) {
+    private void sendLogToServer(final String appId, String android_id, final String eventType, final String values, final String time, String advertising_id) {
 
         AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
         Call<ResponseBody> responseBodyCall = service.createUser
@@ -340,7 +334,7 @@ public class Agile extends Activity {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.d(TAG, "onFailure = " + t.getMessage());
-                sendLogToDatabase(eventType, appId, eventId, values);
+                sendLogToDatabase(eventType, appId, values);
             }
         });
     }
@@ -349,15 +343,13 @@ public class Agile extends Activity {
      * upload data to local database
      *
      * @param appId     is application id which is provided by us to the developer
-     * @param eventId   define the id of event
      * @param eventType define the type of event
      * @param values    could be additional information which describe the eventType in more details
      */
-    private void sendLogToDatabase(String appId, String eventId, String eventType, String values) {
+    private void sendLogToDatabase(String appId, String eventType, String values) {
         Log.d(TAG, "insert log into database");
         LogEntity logEntity = new LogEntity();
         logEntity.setApp_id(appId);
-        logEntity.setEvent_id(eventId);
         logEntity.setEvent_type(eventType);
         logEntity.setValue(values);
         logEntity.setAndroid_id(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
@@ -646,12 +638,13 @@ public class Agile extends Activity {
      */
     public void removeTransaction() {
 
-        if (isFileExist().exists()) {
+
+/*        if (isFileExist().exists()) {
             removeLog();
         } else {
             Log.d(TAG, "(removeTransaction) file is not exist , now create");
             createNewFile();
-        }
+        }*/
     }
 
     /**
@@ -714,11 +707,6 @@ public class Agile extends Activity {
             createNewFile();
         }
     }
-
-    /**
-     * check the events
-     * update events
-     */
 
     /**
      * this method will validate

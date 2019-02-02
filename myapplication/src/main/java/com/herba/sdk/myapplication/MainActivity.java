@@ -46,8 +46,9 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateMo
     private String TAG = this.getClass().getSimpleName();
     private Agile agile;
     private LogModel logModel;
-    private EditText event_id, event_type, delete_event_id;
+    private EditText event_type, delete_event_id;
     private TextView tvLog;
+    private AgileEvent agileEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateMo
         new ConnectionStateMonitor(this).enable(getApplicationContext());
 
         agile = new Agile(getApplicationContext(), this);
-        event_id = findViewById(R.id.event_id);
+
         event_type = findViewById(R.id.event_type);
 
 
@@ -122,24 +123,15 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateMo
 
                 Log.d(TAG, "android id = " + Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
 
-                JSONObject obj = new JSONObject();
-                JSONArray arr = new JSONArray();
-                try {
-                    obj.put("ORDER_ID", "101");
-                    obj.put("QUANTITY", "1");
-                    obj.put("PAYMENT_ID", "P1");
-                    obj.put("PAYMENT_AMOUNT", "500");
-                    obj.put("PAYMENT_METHOD_TYPE", "CREDIT");
-                    arr.put(obj);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.d(TAG, "JSONException, message = " + e.getMessage());
-                }
+                agileEvent = new AgileEvent("ButtonClick");
+                agileEvent.set("bouns_id", "01");
+                agileEvent.set("bouns_name", "sample");
+                agileEvent.set("bouns_type", "coins");
+
                 agile.eventLog(
                         event_type.getText().toString().trim(),
                         "1234567890",
-                        event_id.getText().toString().trim(),
-                        arr.toString());
+                        agileEvent.putExtras());
             }
         });
 
@@ -151,11 +143,12 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateMo
 //                eventValue.put("bouns_id", "01");
 //                eventValue.put("bouns_name", "sample");
 //                eventValue.put("bouns_type", "coins");
-                AgileEvent event = new AgileEvent("Event01");
-                event.set("bouns_id", "01");
-                event.set("bouns_name", "sample");
-                event.set("bouns_type", "coins");
-                event.addEvent("GoToSecondActivity", event, false);
+                AgileEvent agileEvent = new AgileEvent("ButtonClick");
+                agileEvent.set("bouns_id", "01");
+                agileEvent.set("bouns_name", "sample");
+                agileEvent.set("bouns_type", "coins");
+                agileEvent.commit();
+                //agileEvent.addEvent("GoToSecondActivity", agileEvent, false);
                 startActivity(new Intent(getApplicationContext(), SecondActivity.class));
             }
         });
@@ -221,13 +214,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateMo
         } catch (Exception e) {
             Log.d(TAG, "(getLog) catch error = " + e.getMessage());
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //agile.terminateTransaction();
-        agile.removeTransaction();
     }
 
     private void SampleMethod(String eventId) {

@@ -23,14 +23,14 @@ public class SecondActivity extends AppCompatActivity {
         agile = new Agile(getApplicationContext(), this);
         agileEvent = new AgileEvent("Event01");
 
-        agile.addTransaction("HomeActivity_launched", "blank", false);
+        //agile.addTransaction("HomeActivity_launched", "blank", false);
 
         findViewById(R.id.btnSubmit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //agile.addTransaction("Go-To-HomeActivity","blank",true);
-                agileEvent.unset("sample");
-                Log.d(TAG, "final list = " + agileEvent.getList().toString());
+                agileEvent.unset("bouns_name");
+                Log.d(TAG, "final list = " + agileEvent.getEvent());
                 //finish();
             }
         });
@@ -39,7 +39,7 @@ public class SecondActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 agileEvent.set("bouns_name","sample");
-                Log.d(TAG, "final list = " + agileEvent.getList().toString());
+                Log.d(TAG, "final list = " + agileEvent.getEvent());
             }
         });
 
@@ -48,7 +48,22 @@ public class SecondActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 agileEvent.set("bouns_name","sample_1");
-                Log.d(TAG, "final list = " + agileEvent.getList().toString());
+                Log.d(TAG, "final list = " + agileEvent.getEvent());
+            }
+        });
+
+        findViewById(R.id.btnDisplay).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "display final list = " + agileEvent.getEvent());
+            }
+        });
+
+
+        findViewById(R.id.btnClear).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                agileEvent.clear();
             }
         });
     }
