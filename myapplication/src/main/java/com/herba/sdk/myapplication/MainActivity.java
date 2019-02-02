@@ -1,13 +1,11 @@
 package com.herba.sdk.myapplication;
 
-import android.app.Activity;
-import android.app.ActivityManager;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.text.InputFilter;
-import android.text.Spanned;
-import android.text.TextUtils;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -21,25 +19,13 @@ import com.ads.agile.room.LogModel;
 import com.ads.agile.utils.AgileEvent;
 import com.ads.agile.utils.ConnectionStateMonitor;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
-import java.util.regex.Pattern;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
 public class MainActivity extends AppCompatActivity implements ConnectionStateMonitor.NetworkCallBack {
 

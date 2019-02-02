@@ -1,24 +1,16 @@
 package com.ads.agile.utils;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import androidx.annotation.NonNull;
-
 public class AgileEvent {
 
     private final String TAG = this.getClass().getSimpleName();
 
-    //private static Map<String, Object> list = new HashMap<>();
     private static String eventName;
 
     private static JSONObject jsonObject = new JSONObject();
@@ -33,7 +25,7 @@ public class AgileEvent {
      * @param key   String data type
      * @param value int data type
      */
-    public void set(String key, int value) throws Exception {
+    public void set(String key, int value) {
         try {
             jsonObject.put(key, value);
         } catch (JSONException e) {
@@ -45,7 +37,7 @@ public class AgileEvent {
      * @param key   String data type
      * @param value float data type
      */
-    public void set(String key, float value) throws Exception {
+    public void set(String key, float value) {
         try {
             jsonObject.put(key, value);
         } catch (JSONException e) {
@@ -171,7 +163,7 @@ public class AgileEvent {
      * @return
      */
     public String putExtras() {
-        return eventName;
+        return jsonObject.toString();
     }
 
     /**

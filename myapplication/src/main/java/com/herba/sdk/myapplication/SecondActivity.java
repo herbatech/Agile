@@ -1,13 +1,14 @@
 package com.herba.sdk.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
 import com.ads.agile.Agile;
 import com.ads.agile.utils.AgileEvent;
+
 
 public class SecondActivity extends AppCompatActivity {
 

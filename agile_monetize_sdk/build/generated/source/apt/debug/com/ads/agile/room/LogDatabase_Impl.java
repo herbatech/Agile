@@ -1,28 +1,26 @@
 package com.ads.agile.room;
 
-import androidx.room.DatabaseConfiguration;
-import androidx.room.InvalidationTracker;
-import androidx.room.RoomOpenHelper;
-import androidx.room.RoomOpenHelper.Delegate;
-import androidx.room.util.DBUtil;
-import androidx.room.util.TableInfo;
-import androidx.room.util.TableInfo.Column;
-import androidx.room.util.TableInfo.ForeignKey;
-import androidx.room.util.TableInfo.Index;
-import androidx.sqlite.db.SupportSQLiteDatabase;
-import androidx.sqlite.db.SupportSQLiteOpenHelper;
-import androidx.sqlite.db.SupportSQLiteOpenHelper.Callback;
-import androidx.sqlite.db.SupportSQLiteOpenHelper.Configuration;
+import android.arch.persistence.db.SupportSQLiteDatabase;
+import android.arch.persistence.db.SupportSQLiteOpenHelper;
+import android.arch.persistence.db.SupportSQLiteOpenHelper.Callback;
+import android.arch.persistence.db.SupportSQLiteOpenHelper.Configuration;
+import android.arch.persistence.room.DatabaseConfiguration;
+import android.arch.persistence.room.InvalidationTracker;
+import android.arch.persistence.room.RoomOpenHelper;
+import android.arch.persistence.room.RoomOpenHelper.Delegate;
+import android.arch.persistence.room.util.TableInfo;
+import android.arch.persistence.room.util.TableInfo.Column;
+import android.arch.persistence.room.util.TableInfo.ForeignKey;
+import android.arch.persistence.room.util.TableInfo.Index;
 import java.lang.IllegalStateException;
 import java.lang.Override;
 import java.lang.String;
 import java.lang.SuppressWarnings;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 
 @SuppressWarnings("unchecked")
-public final class LogDatabase_Impl extends LogDatabase {
+public class LogDatabase_Impl extends LogDatabase {
   private volatile LogDao _logDao;
 
   @Override
@@ -61,15 +59,6 @@ public final class LogDatabase_Impl extends LogDatabase {
       }
 
       @Override
-      public void onPreMigrate(SupportSQLiteDatabase _db) {
-        DBUtil.dropFtsSyncTriggers(_db);
-      }
-
-      @Override
-      public void onPostMigrate(SupportSQLiteDatabase _db) {
-      }
-
-      @Override
       protected void validateMigration(SupportSQLiteDatabase _db) {
         final HashMap<String, TableInfo.Column> _columnsTblLog = new HashMap<String, TableInfo.Column>(7);
         _columnsTblLog.put("id", new TableInfo.Column("id", "INTEGER", true, 1));
@@ -100,9 +89,7 @@ public final class LogDatabase_Impl extends LogDatabase {
 
   @Override
   protected InvalidationTracker createInvalidationTracker() {
-    final HashMap<String, String> _shadowTablesMap = new HashMap<String, String>(0);
-    HashMap<String, Set<String>> _viewTables = new HashMap<String, Set<String>>(0);
-    return new InvalidationTracker(this, _shadowTablesMap, _viewTables, "tblLog");
+    return new InvalidationTracker(this, "tblLog");
   }
 
   @Override

@@ -1,25 +1,25 @@
 package com.ads.agile.room;
 
+import android.arch.lifecycle.ComputableLiveData;
+import android.arch.lifecycle.LiveData;
+import android.arch.persistence.db.SupportSQLiteStatement;
+import android.arch.persistence.room.EntityDeletionOrUpdateAdapter;
+import android.arch.persistence.room.EntityInsertionAdapter;
+import android.arch.persistence.room.InvalidationTracker.Observer;
+import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.RoomSQLiteQuery;
+import android.arch.persistence.room.SharedSQLiteStatement;
 import android.database.Cursor;
-import androidx.lifecycle.LiveData;
-import androidx.room.EntityDeletionOrUpdateAdapter;
-import androidx.room.EntityInsertionAdapter;
-import androidx.room.RoomDatabase;
-import androidx.room.RoomSQLiteQuery;
-import androidx.room.SharedSQLiteStatement;
-import androidx.room.util.CursorUtil;
-import androidx.room.util.DBUtil;
-import androidx.sqlite.db.SupportSQLiteStatement;
-import java.lang.Exception;
+import android.support.annotation.NonNull;
 import java.lang.Override;
 import java.lang.String;
 import java.lang.SuppressWarnings;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.Set;
 
 @SuppressWarnings("unchecked")
-public final class LogDao_Impl implements LogDao {
+public class LogDao_Impl implements LogDao {
   private final RoomDatabase __db;
 
   private final EntityInsertionAdapter __insertionAdapterOfLogEntity;
@@ -92,7 +92,7 @@ public final class LogDao_Impl implements LogDao {
   }
 
   @Override
-  public void insertLog(final LogEntity logEntity) {
+  public void insertLog(LogEntity logEntity) {
     __db.beginTransaction();
     try {
       __insertionAdapterOfLogEntity.insert(logEntity);
@@ -103,7 +103,7 @@ public final class LogDao_Impl implements LogDao {
   }
 
   @Override
-  public void deleteLog(final LogEntity logEntity) {
+  public void deleteLog(LogEntity logEntity) {
     __db.beginTransaction();
     try {
       __deletionAdapterOfLogEntity.handle(logEntity);
@@ -114,7 +114,7 @@ public final class LogDao_Impl implements LogDao {
   }
 
   @Override
-  public void singleDeleteLog(final int id) {
+  public void singleDeleteLog(int id) {
     final SupportSQLiteStatement _stmt = __preparedStmtOfSingleDeleteLog.acquire();
     __db.beginTransaction();
     try {
@@ -132,18 +132,29 @@ public final class LogDao_Impl implements LogDao {
   public LiveData<List<LogEntity>> getLiveListAllLog() {
     final String _sql = "SELECT * FROM tblLog";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
-    return __db.getInvalidationTracker().createLiveData(new String[]{"tblLog"}, new Callable<List<LogEntity>>() {
+    return new ComputableLiveData<List<LogEntity>>() {
+      private Observer _observer;
+
       @Override
-      public List<LogEntity> call() throws Exception {
-        final Cursor _cursor = DBUtil.query(__db, _statement, false);
+      protected List<LogEntity> compute() {
+        if (_observer == null) {
+          _observer = new Observer("tblLog") {
+            @Override
+            public void onInvalidated(@NonNull Set<String> tables) {
+              invalidate();
+            }
+          };
+          __db.getInvalidationTracker().addWeakObserver(_observer);
+        }
+        final Cursor _cursor = __db.query(_statement);
         try {
-          final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
-          final int _cursorIndexOfEventType = CursorUtil.getColumnIndexOrThrow(_cursor, "event_type");
-          final int _cursorIndexOfAppId = CursorUtil.getColumnIndexOrThrow(_cursor, "app_id");
-          final int _cursorIndexOfEventId = CursorUtil.getColumnIndexOrThrow(_cursor, "event_id");
-          final int _cursorIndexOfValue = CursorUtil.getColumnIndexOrThrow(_cursor, "value");
-          final int _cursorIndexOfAndroidId = CursorUtil.getColumnIndexOrThrow(_cursor, "android_id");
-          final int _cursorIndexOfTime = CursorUtil.getColumnIndexOrThrow(_cursor, "time");
+          final int _cursorIndexOfId = _cursor.getColumnIndexOrThrow("id");
+          final int _cursorIndexOfEventType = _cursor.getColumnIndexOrThrow("event_type");
+          final int _cursorIndexOfAppId = _cursor.getColumnIndexOrThrow("app_id");
+          final int _cursorIndexOfEventId = _cursor.getColumnIndexOrThrow("event_id");
+          final int _cursorIndexOfValue = _cursor.getColumnIndexOrThrow("value");
+          final int _cursorIndexOfAndroidId = _cursor.getColumnIndexOrThrow("android_id");
+          final int _cursorIndexOfTime = _cursor.getColumnIndexOrThrow("time");
           final List<LogEntity> _result = new ArrayList<LogEntity>(_cursor.getCount());
           while(_cursor.moveToNext()) {
             final LogEntity _item;
@@ -167,6 +178,6 @@ public final class LogDao_Impl implements LogDao {
       protected void finalize() {
         _statement.release();
       }
-    });
+    }.getLiveData();
   }
 }

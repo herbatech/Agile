@@ -1,16 +1,20 @@
 package com.ads.agile;
 
 import android.app.Activity;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.ads.agile.myapplication.R;
 import com.ads.agile.room.LogEntity;
 import com.ads.agile.room.LogModel;
 import com.ads.agile.system.AdvertisingIdClient;
@@ -26,16 +30,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.StringDef;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -56,13 +52,14 @@ public class Agile extends Activity {
     private int size;
     private SynchroniseLogEvent synchroniseLogEvent;
 
+
     /**
      * parametric constructor
      *
      * @param context  from the activity
      * @param activity from the activity
      */
-    public Agile(Context context, FragmentActivity activity) {
+    public Agile(Context context,FragmentActivity activity) {
 
         this.context = context;
         this.activity = activity;
@@ -145,27 +142,27 @@ public class Agile extends Activity {
         switch (resultCode) {
 
             case ConnectionResult.SUCCESS:
-                Log.d(TAG, "Google Play Services is ready to go!");
+                //Log.d(TAG, "Google Play Services is ready to go!");
                 return true;
 
             case ConnectionResult.SERVICE_DISABLED:
-                Log.d(TAG, "Google Play services is disable update, Please enable it " + getResources().getText(R.string.Google_Play_is_disable));
+                //Log.d(TAG, "Google Play services is disable update, Please enable it " + getResources().getText(R.string.Google_Play_is_disable));
                 return false;
 
             case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
-                Log.d(TAG, "Google Play services is require update, Please update it , message = " + getResources().getText(R.string.Google_Play_is_not_update));
+                //Log.d(TAG, "Google Play services is require update, Please update it , message = " + getResources().getText(R.string.Google_Play_is_not_update));
                 return false;
 
             case ConnectionResult.SERVICE_MISSING:
-                Log.d(TAG, "Google Play services is missing in your device, message = " + getResources().getText(R.string.Google_Play_is_missing));
+                //Log.d(TAG, "Google Play services is missing in your device, message = " + getResources().getText(R.string.Google_Play_is_missing));
                 return false;
 
             case ConnectionResult.SERVICE_MISSING_PERMISSION:
-                Log.d(TAG, "Google Play services not having enough permission, message = " + getResources().getText(R.string.Google_Play_is_permission_missing));
+                //Log.d(TAG, "Google Play services not having enough permission, message = " + getResources().getText(R.string.Google_Play_is_permission_missing));
                 return false;
 
             default:
-                Log.d(TAG, "Google Play Services have some issue , error = " + resultCode);
+                //Log.d(TAG, "Google Play Services have some issue , error = " + resultCode);
         }
 
         return false;
@@ -250,6 +247,7 @@ public class Agile extends Activity {
             sendLog(appId, android_id, eventType, new AgileEvent(values).getEvent(), time, advertising_id);
         } else {
             Log.d(TAG, "params is empty");
+
         }
     }
 
