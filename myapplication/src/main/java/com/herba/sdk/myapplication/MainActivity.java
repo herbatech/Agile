@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.ads.agile.Agile;
 import com.ads.agile.AgileConfiguration;
-import com.ads.agile.annotations.MyAnnotation;
 import com.ads.agile.room.LogEntity;
 import com.ads.agile.room.LogModel;
 import com.ads.agile.utils.AgileEvent;
@@ -58,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateMo
         findViewById(R.id.Deletebutton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                agile.DeleteLog(Integer.parseInt(delete_event_id.getText().toString().trim()));
+                agile.deleteLog(Integer.parseInt(delete_event_id.getText().toString().trim()));
                 delete_event_id.setText("");
             }
         });
@@ -105,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateMo
         findViewById(R.id.book1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //agile.DeleteLog(delete_event_id.getText().toString().trim());
+                //agile.deleteLog(delete_event_id.getText().toString().trim());
 
                 Log.d(TAG, "android id = " + Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
 
@@ -117,7 +116,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateMo
                 agile.eventLog(
                         event_type.getText().toString().trim(),
                         "1234567890",
-                        agileEvent.putExtras());
+                        agileEvent.putExtras(),
+                        agileEvent);
             }
         });
 
@@ -183,7 +183,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateMo
         Log.d(TAG, "MainActivity disconnected to network via Agile");
     }
 
-    @MyAnnotation(value1 = 1, value2 = "", value3 = "")
     private void getLog() {
 
         File file = new File(getFilesDir(), AgileConfiguration.MONETIZE_FILENAME);

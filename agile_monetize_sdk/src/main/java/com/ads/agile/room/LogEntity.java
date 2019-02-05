@@ -1,6 +1,7 @@
 package com.ads.agile.room;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -28,9 +29,6 @@ public class LogEntity {
     public String app_id;
 
     @NonNull
-    public String event_id;
-
-    @NonNull
     public String value;
 
     @NonNull
@@ -56,9 +54,6 @@ public class LogEntity {
         this.app_id = app_id;
     }
 
-    public void setEvent_id(String event_id) {
-        this.event_id = event_id;
-    }
 
     public void setValue(String value) {
         this.value = value;
@@ -80,10 +75,6 @@ public class LogEntity {
         return app_id;
     }
 
-    public String getEvent_id() {
-        return event_id;
-    }
-
     public String getValue() {
         return value;
     }
@@ -96,14 +87,13 @@ public class LogEntity {
         return time;
     }
 
-    public LogEntity(String event_type, String app_id, String event_id, String value, String android_id, String time) {
+/*    public LogEntity(String event_type, String app_id, String value, String android_id, String time) {
         this.event_type = event_type;
         this.app_id = app_id;
-        this.event_id = event_id;
         this.value = value;
         this.android_id = android_id;
         this.time = time;
-    }
+    }*/
 
     public LogEntity() {
     }

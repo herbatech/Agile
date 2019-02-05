@@ -16,9 +16,11 @@ public class AgileEvent {
     private static JSONObject jsonObject = new JSONObject();
     private static JSONArray jsonArray = new JSONArray();
 
-
     public AgileEvent(@NonNull String eventName) {
         this.eventName = eventName;
+    }
+
+    public AgileEvent() {
     }
 
     /**
@@ -99,27 +101,7 @@ public class AgileEvent {
      * @param value
      */
     public void unset(String value) {
-
         jsonObject.remove(value);
-
-
-//        Iterator myVeryOwnIterator = list.keySet().iterator();
-//        while (myVeryOwnIterator.hasNext()) {
-//
-//            String key = (String) myVeryOwnIterator.next();
-//            String value1 = (String) list.get(key);
-//            Log.d(TAG, "Key     : " + key);
-//            Log.d(TAG, "Value   : " + value1);
-//
-//            if (value1 == value) {
-//                Log.d(TAG, "match found = " + value + " & " + value1);
-//                list.remove(key);
-//                break;
-//            } else {
-//                Log.d(TAG, "not found the value");
-//            }
-//        }
-
     }
 
     /**

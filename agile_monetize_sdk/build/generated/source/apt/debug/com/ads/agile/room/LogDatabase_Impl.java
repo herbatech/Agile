@@ -28,9 +28,9 @@ public class LogDatabase_Impl extends LogDatabase {
     final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(configuration, new RoomOpenHelper.Delegate(2) {
       @Override
       public void createAllTables(SupportSQLiteDatabase _db) {
-        _db.execSQL("CREATE TABLE IF NOT EXISTS `tblLog` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `event_type` TEXT NOT NULL, `app_id` TEXT NOT NULL, `event_id` TEXT NOT NULL, `value` TEXT NOT NULL, `android_id` TEXT NOT NULL, `time` TEXT NOT NULL)");
+        _db.execSQL("CREATE TABLE IF NOT EXISTS `tblLog` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `event_type` TEXT NOT NULL, `app_id` TEXT NOT NULL, `value` TEXT NOT NULL, `android_id` TEXT NOT NULL, `time` TEXT NOT NULL)");
         _db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        _db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"960da30c9402410981a75cd876264c5d\")");
+        _db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"5b748e678096352de83b3ef794527793\")");
       }
 
       @Override
@@ -60,11 +60,10 @@ public class LogDatabase_Impl extends LogDatabase {
 
       @Override
       protected void validateMigration(SupportSQLiteDatabase _db) {
-        final HashMap<String, TableInfo.Column> _columnsTblLog = new HashMap<String, TableInfo.Column>(7);
+        final HashMap<String, TableInfo.Column> _columnsTblLog = new HashMap<String, TableInfo.Column>(6);
         _columnsTblLog.put("id", new TableInfo.Column("id", "INTEGER", true, 1));
         _columnsTblLog.put("event_type", new TableInfo.Column("event_type", "TEXT", true, 0));
         _columnsTblLog.put("app_id", new TableInfo.Column("app_id", "TEXT", true, 0));
-        _columnsTblLog.put("event_id", new TableInfo.Column("event_id", "TEXT", true, 0));
         _columnsTblLog.put("value", new TableInfo.Column("value", "TEXT", true, 0));
         _columnsTblLog.put("android_id", new TableInfo.Column("android_id", "TEXT", true, 0));
         _columnsTblLog.put("time", new TableInfo.Column("time", "TEXT", true, 0));
@@ -78,7 +77,7 @@ public class LogDatabase_Impl extends LogDatabase {
                   + " Found:\n" + _existingTblLog);
         }
       }
-    }, "960da30c9402410981a75cd876264c5d", "432fa168c4ffc42e814fcb95d59458d9");
+    }, "5b748e678096352de83b3ef794527793", "140a99164585617e5f9450726f872367");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(configuration.context)
         .name(configuration.name)
         .callback(_openCallback)

@@ -52,14 +52,13 @@ public class Agile extends Activity {
     private int size;
     private SynchroniseLogEvent synchroniseLogEvent;
 
-
     /**
      * parametric constructor
      *
      * @param context  from the activity
      * @param activity from the activity
      */
-    public Agile(Context context,FragmentActivity activity) {
+    public Agile(Context context, FragmentActivity activity) {
 
         this.context = context;
         this.activity = activity;
@@ -136,7 +135,7 @@ public class Agile extends Activity {
      * @param context from the parametric constructor
      * @return
      */
-    public boolean checkForPlayService(Context context) {
+    public boolean checkForPlayService(@NonNull Context context) {
         int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
 
         switch (resultCode) {
@@ -200,7 +199,7 @@ public class Agile extends Activity {
      * @param context init from parametric constructor
      * @return the network connectivity state
      */
-    private boolean isConnected(Context context) {
+    private boolean isConnected(@NonNull Context context) {
         NetworkInfo info = getNetworkInfo(context);
         return (info != null && info.isConnected());
     }
@@ -212,7 +211,7 @@ public class Agile extends Activity {
      * @return the instance of NetworkInfo class
      * @see NetworkInfo for more info
      */
-    public static NetworkInfo getNetworkInfo(Context context) {
+    private static NetworkInfo getNetworkInfo(@NonNull Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo();
     }
@@ -224,7 +223,7 @@ public class Agile extends Activity {
      * @param eventType define the type of event
      * @param values    could be additional information which describe the eventType in more details
      */
-    public void eventLog(final String eventType, final String appId, final String values) {
+    public void eventLog(@NonNull final String eventType, @NonNull final String appId, @NonNull final String values) {
 
         String advertising_id = getAdvertisingId();
         String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -252,6 +251,40 @@ public class Agile extends Activity {
     }
 
     /**
+     * validate input param
+     *
+     * @param appId     is application id which is provided by us to the developer
+     * @param eventType define the type of event
+     * @param values    could be additional information which describe the eventType in more details
+     */
+    public void eventLog(@NonNull final String eventType, @NonNull final String appId, @NonNull final String values, AgileEvent agileEvent) {
+
+        String advertising_id = getAdvertisingId();
+        String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String time = "0";
+
+        Log.d(TAG, "appId           = " + appId);
+        Log.d(TAG, "android_id      = " + android_id);
+        Log.d(TAG, "eventType       = " + eventType);
+        Log.d(TAG, "values          = " + values);
+        Log.d(TAG, "time            = " + time);
+        Log.d(TAG, "advertising_id  = " + advertising_id);
+
+        //validate input params
+        if (!TextUtils.isEmpty(appId)
+                && !TextUtils.isEmpty(android_id)
+                && !TextUtils.isEmpty(eventType)
+                && !TextUtils.isEmpty(values)
+                && !TextUtils.isEmpty(advertising_id)
+        ) {
+            sendLog(appId, android_id, eventType, new AgileEvent(values).getEvent(), time, advertising_id, agileEvent);
+        } else {
+            Log.d(TAG, "params is empty");
+
+        }
+    }
+
+    /**
      * check for internet connection then perform required operation
      *
      * @param appId          is application id which is provided by us to the developer
@@ -261,7 +294,7 @@ public class Agile extends Activity {
      * @param time           would be always zero if it send directly to the server or else will send the difference of current and stored entry into room database
      * @param advertising_id is google adv id
      */
-    private void sendLog(final String appId, String android_id, final String eventType, final String values, final String time, String advertising_id) {
+    private void sendLog(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id) {
         if (isConnected(context)) {
             sendLogToServer
                     (
@@ -285,6 +318,42 @@ public class Agile extends Activity {
     }
 
     /**
+     * check for internet connection then perform required operation
+     *
+     * @param appId          is application id which is provided by us to the developer
+     * @param android_id     is unique identification of android device
+     * @param eventType      define the type of event
+     * @param values         could be additional information which describe the eventType in more details
+     * @param time           would be always zero if it send directly to the server or else will send the difference of current and stored entry into room database
+     * @param advertising_id is google adv id
+     * @param agileEvent     object of AgileEvent class
+     */
+    private void sendLog(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id, AgileEvent agileEvent) {
+        if (isConnected(context)) {
+            sendLogToServer
+                    (
+                            appId,
+                            android_id,
+                            eventType,
+                            values,
+                            time,
+                            advertising_id,
+                            agileEvent
+                    );
+        } else {
+            //save data into sqlite database
+            Log.d(TAG, "network not connected");
+            sendLogToDatabase
+                    (
+                            appId,
+                            eventType,
+                            values,
+                            agileEvent
+                    );
+        }
+    }
+
+    /**
      * upload data to server
      *
      * @param appId          is application id which is provided by us to the developer
@@ -294,7 +363,7 @@ public class Agile extends Activity {
      * @param time           would be always zero if it send directly to the server or else will send the difference of current and stored entry into room database
      * @param advertising_id is google adv id
      */
-    private void sendLogToServer(final String appId, String android_id, final String eventType, final String values, final String time, String advertising_id) {
+    private void sendLogToServer(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id) {
 
         AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
         Call<ResponseBody> responseBodyCall = service.createUser
@@ -318,6 +387,66 @@ public class Agile extends Activity {
                     JSONObject object = new JSONObject(responseString);
                     boolean status = object.getBoolean("status");
                     Log.d(TAG, "status = " + status);
+
+                    //clear the log
+                    new AgileEvent().clear();
+
+
+                } catch (IOException e) {
+                    Log.d(TAG, "IOException = " + e.getMessage());
+                } catch (JSONException e) {
+                    Log.d(TAG, "JSONException = " + e.getMessage());
+                } finally {
+                    response.body().close();
+                    Log.d(TAG, "retrofit connection closed");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d(TAG, "onFailure = " + t.getMessage());
+                sendLogToDatabase(eventType, appId, values);
+            }
+        });
+    }
+
+    /**
+     * upload data to server
+     *
+     * @param appId          is application id which is provided by us to the developer
+     * @param android_id     is unique identification of android device
+     * @param eventType      define the type of event
+     * @param values         could be additional information which describe the eventType in more details
+     * @param time           would be always zero if it send directly to the server or else will send the difference of current and stored entry into room database
+     * @param advertising_id is google adv id
+     */
+    private void sendLogToServer(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id, final AgileEvent agileEvent) {
+
+        AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
+        Call<ResponseBody> responseBodyCall = service.createUser
+                (appId,
+                        android_id,
+                        eventType,
+                        values,
+                        time,
+                        advertising_id
+                );
+        responseBodyCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.d(TAG, "response code = " + response.code());
+                try {
+
+                    String responseString = response.body().string();
+
+                    Log.d(TAG, "response body = " + responseString);
+
+                    JSONObject object = new JSONObject(responseString);
+                    boolean status = object.getBoolean("status");
+                    Log.d(TAG, "status = " + status);
+
+                    //clear the log
+                    agileEvent.clear();
 
                 } catch (IOException e) {
                     Log.d(TAG, "IOException = " + e.getMessage());
@@ -344,7 +473,7 @@ public class Agile extends Activity {
      * @param eventType define the type of event
      * @param values    could be additional information which describe the eventType in more details
      */
-    private void sendLogToDatabase(String appId, String eventType, String values) {
+    private void sendLogToDatabase(@NonNull String appId, @NonNull String eventType, @NonNull String values) {
         Log.d(TAG, "insert log into database");
         LogEntity logEntity = new LogEntity();
         logEntity.setApp_id(appId);
@@ -352,21 +481,40 @@ public class Agile extends Activity {
         logEntity.setValue(values);
         logEntity.setAndroid_id(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
         logModel.insertLog(logEntity);
+        new AgileEvent().clear();
+    }
+
+    /**
+     * upload data to local database
+     *
+     * @param appId     is application id which is provided by us to the developer
+     * @param eventType define the type of event
+     * @param values    could be additional information which describe the eventType in more details
+     */
+    private void sendLogToDatabase(@NonNull String appId, @NonNull String eventType, @NonNull String values, AgileEvent agileEvent) {
+        Log.d(TAG, "insert log into database");
+        LogEntity logEntity = new LogEntity();
+        logEntity.setApp_id(appId);
+        logEntity.setEvent_type(eventType);
+        logEntity.setValue(values);
+        logEntity.setAndroid_id(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
+        logModel.insertLog(logEntity);
+        agileEvent.clear();
     }
 
     /**
      * delete single data from the database
      *
-     * @param unique_id
+     * @param unique_id is identifier
      */
-    public void DeleteLog(int unique_id) {
+    public void deleteLog(@NonNull int unique_id) {
         logModel.singleDeleteLog(unique_id);
     }
 
     /**
      * perform operation on background thread
      */
-    public void SyncLog() {
+    public void SyncLog() throws Exception {
 
         Log.d(TAG, "(SyncLog) called ,size = " + size);
         synchroniseLogEvent = new SynchroniseLogEvent(size);
@@ -392,20 +540,18 @@ public class Agile extends Activity {
                 int id = logModel.getLiveListAllLog().getValue().get(i).getId();
                 String eventType = logModel.getLiveListAllLog().getValue().get(i).getEvent_type();
                 String appId = logModel.getLiveListAllLog().getValue().get(i).getApp_id();
-                String eventId = logModel.getLiveListAllLog().getValue().get(i).getEvent_id();
                 String value = logModel.getLiveListAllLog().getValue().get(i).getValue();
                 long time = Long.parseLong(logModel.getLiveListAllLog().getValue().get(i).getTime());
 
                 Log.d(TAG, "id               = " + id);
                 Log.d(TAG, "event type       = " + eventType);
                 Log.d(TAG, "app id           = " + appId);
-                Log.d(TAG, "event id         = " + eventId);
                 Log.d(TAG, "event value      = " + value);
                 Log.d(TAG, "event time       = " + time);
                 Log.d(TAG, "*************************************************************************************");
 
                 //call webservice to add data to database
-                eventProductLogServiceOffline(id, appId, eventId, eventType, value, time);
+                eventProductLogServiceOffline(id, appId, eventType, value, time);
             }
             return null;
         }
@@ -416,12 +562,11 @@ public class Agile extends Activity {
      *
      * @param id        is primary key of every database entry
      * @param appId     is application id which is provided by us to the developer
-     * @param eventId   define the id of event
      * @param eventType define the type of event
      * @param values    could be additional information which describe the eventType in more details
      * @param time      would be always zero if it send directly to the server or else will send the difference of current and stored entry into room database
      */
-    public void eventProductLogServiceOffline(final int id, String appId, String eventId, String eventType, String values, long time) {
+    private void eventProductLogServiceOffline(@NonNull final int id, @NonNull String appId, @NonNull String eventType, @NonNull String values, @NonNull long time) {
 
         String advertising_id = getAdvertisingId();
         time = (time - System.currentTimeMillis()) / 1000;
@@ -429,7 +574,6 @@ public class Agile extends Activity {
         Log.d(TAG, "id              = " + id);
         Log.d(TAG, "eventType       = " + eventType);
         Log.d(TAG, "appId           = " + appId);
-        Log.d(TAG, "eventId         = " + eventId);
         Log.d(TAG, "eventalues      = " + values);
         Log.d(TAG, "android_id      = " + Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
         Log.d(TAG, "time            = " + time);
@@ -491,7 +635,7 @@ public class Agile extends Activity {
      * @param key     is SharedPreference key
      * @param value   is value associated with @param key
      **/
-    private void setPreferences(Context context, String key, String value) {
+    private void setPreferences(@NonNull Context context, @NonNull String key, @NonNull String value) {
         SharedPreferences DevicePref = context.getSharedPreferences(AGILE_PREF, 0);
         SharedPreferences.Editor DeviceEditor = DevicePref.edit();
         DeviceEditor.putString(key, value);
@@ -504,7 +648,7 @@ public class Agile extends Activity {
      * @param context init from parametric constructor
      * @param key     is SharedPreference key
      **/
-    private String getPreferences(Context context, String key) {
+    private String getPreferences(@NonNull Context context, @NonNull String key) {
         String data = null;
         try {
             SharedPreferences DevicePref = context.getSharedPreferences(AGILE_PREF, 0);
@@ -713,7 +857,7 @@ public class Agile extends Activity {
      *              a-z or A-Z or 0-9 or _ or -
      *              character
      */
-    private void argumentValidation(String param) {
+    private void argumentValidation(@NonNull String param) {
 
         //check each index of string
         for (int i = 0; i < param.length(); i++) {
@@ -739,6 +883,5 @@ public class Agile extends Activity {
             Log.d(TAG,"(argumentValidation) param value = "+param);
         }*/
     }
-
 
 }

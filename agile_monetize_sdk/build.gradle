@@ -61,5 +61,4 @@ dependencies {
     implementation 'com.google.android.gms:play-services-base:16.1.0'
     //annotation
     implementation 'com.android.support:support-annotations:28.0.0'
-
 }

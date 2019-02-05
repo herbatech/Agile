@@ -33,7 +33,7 @@ public class LogDao_Impl implements LogDao {
     this.__insertionAdapterOfLogEntity = new EntityInsertionAdapter<LogEntity>(__db) {
       @Override
       public String createQuery() {
-        return "INSERT OR ABORT INTO `tblLog`(`id`,`event_type`,`app_id`,`event_id`,`value`,`android_id`,`time`) VALUES (nullif(?, 0),?,?,?,?,?,?)";
+        return "INSERT OR ABORT INTO `tblLog`(`id`,`event_type`,`app_id`,`value`,`android_id`,`time`) VALUES (nullif(?, 0),?,?,?,?,?)";
       }
 
       @Override
@@ -49,25 +49,20 @@ public class LogDao_Impl implements LogDao {
         } else {
           stmt.bindString(3, value.app_id);
         }
-        if (value.event_id == null) {
+        if (value.value == null) {
           stmt.bindNull(4);
         } else {
-          stmt.bindString(4, value.event_id);
-        }
-        if (value.value == null) {
-          stmt.bindNull(5);
-        } else {
-          stmt.bindString(5, value.value);
+          stmt.bindString(4, value.value);
         }
         if (value.android_id == null) {
-          stmt.bindNull(6);
+          stmt.bindNull(5);
         } else {
-          stmt.bindString(6, value.android_id);
+          stmt.bindString(5, value.android_id);
         }
         if (value.time == null) {
-          stmt.bindNull(7);
+          stmt.bindNull(6);
         } else {
-          stmt.bindString(7, value.time);
+          stmt.bindString(6, value.time);
         }
       }
     };
@@ -151,7 +146,6 @@ public class LogDao_Impl implements LogDao {
           final int _cursorIndexOfId = _cursor.getColumnIndexOrThrow("id");
           final int _cursorIndexOfEventType = _cursor.getColumnIndexOrThrow("event_type");
           final int _cursorIndexOfAppId = _cursor.getColumnIndexOrThrow("app_id");
-          final int _cursorIndexOfEventId = _cursor.getColumnIndexOrThrow("event_id");
           final int _cursorIndexOfValue = _cursor.getColumnIndexOrThrow("value");
           final int _cursorIndexOfAndroidId = _cursor.getColumnIndexOrThrow("android_id");
           final int _cursorIndexOfTime = _cursor.getColumnIndexOrThrow("time");
@@ -162,7 +156,6 @@ public class LogDao_Impl implements LogDao {
             _item.id = _cursor.getInt(_cursorIndexOfId);
             _item.event_type = _cursor.getString(_cursorIndexOfEventType);
             _item.app_id = _cursor.getString(_cursorIndexOfAppId);
-            _item.event_id = _cursor.getString(_cursorIndexOfEventId);
             _item.value = _cursor.getString(_cursorIndexOfValue);
             _item.android_id = _cursor.getString(_cursorIndexOfAndroidId);
             _item.time = _cursor.getString(_cursorIndexOfTime);
