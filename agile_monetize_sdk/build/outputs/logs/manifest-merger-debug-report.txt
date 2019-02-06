@@ -33,20 +33,6 @@ uses-permission#android.permission.RECEIVE_BOOT_COMPLETED
 ADDED from D:\Android Project\sample__jetpack_library\agile_monetize_sdk\src\main\AndroidManifest.xml:6:5-80
 	android:name
 		ADDED from D:\Android Project\sample__jetpack_library\agile_monetize_sdk\src\main\AndroidManifest.xml:6:22-78
-application
-ADDED from D:\Android Project\sample__jetpack_library\agile_monetize_sdk\src\main\AndroidManifest.xml:8:5-14:43
-	android:supportsRtl
-		ADDED from D:\Android Project\sample__jetpack_library\agile_monetize_sdk\src\main\AndroidManifest.xml:13:9-35
-	android:label
-		ADDED from D:\Android Project\sample__jetpack_library\agile_monetize_sdk\src\main\AndroidManifest.xml:11:9-41
-	android:roundIcon
-		ADDED from D:\Android Project\sample__jetpack_library\agile_monetize_sdk\src\main\AndroidManifest.xml:12:9-54
-	android:icon
-		ADDED from D:\Android Project\sample__jetpack_library\agile_monetize_sdk\src\main\AndroidManifest.xml:10:9-43
-	android:allowBackup
-		ADDED from D:\Android Project\sample__jetpack_library\agile_monetize_sdk\src\main\AndroidManifest.xml:9:9-35
-	android:theme
-		ADDED from D:\Android Project\sample__jetpack_library\agile_monetize_sdk\src\main\AndroidManifest.xml:14:9-40
 uses-sdk
 INJECTED from D:\Android Project\sample__jetpack_library\agile_monetize_sdk\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from D:\Android Project\sample__jetpack_library\agile_monetize_sdk\src\main\AndroidManifest.xml

@@ -236,6 +236,8 @@ public class Agile extends Activity {
         Log.d(TAG, "time            = " + time);
         Log.d(TAG, "advertising_id  = " + advertising_id);
 
+        argumentValidation(eventType);  //validation in eventLog
+
         //validate input params
         if (!TextUtils.isEmpty(appId)
                 && !TextUtils.isEmpty(android_id)
@@ -270,6 +272,8 @@ public class Agile extends Activity {
         Log.d(TAG, "time            = " + time);
         Log.d(TAG, "advertising_id  = " + advertising_id);
 
+        argumentValidation(eventType);  //validation in eventLog with object
+
         //validate input params
         if (!TextUtils.isEmpty(appId)
                 && !TextUtils.isEmpty(android_id)
@@ -295,6 +299,9 @@ public class Agile extends Activity {
      * @param advertising_id is google adv id
      */
     private void sendLog(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id) {
+
+        argumentValidation(eventType);  //validation in sendLog
+
         if (isConnected(context)) {
             sendLogToServer
                     (
@@ -329,6 +336,9 @@ public class Agile extends Activity {
      * @param agileEvent     object of AgileEvent class
      */
     private void sendLog(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id, AgileEvent agileEvent) {
+
+        argumentValidation(eventType);  //validation in sendLog  with object
+
         if (isConnected(context)) {
             sendLogToServer
                     (
@@ -364,6 +374,8 @@ public class Agile extends Activity {
      * @param advertising_id is google adv id
      */
     private void sendLogToServer(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id) {
+
+        argumentValidation(eventType);  //validation in sendLogToServer
 
         AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
         Call<ResponseBody> responseBodyCall = service.createUser
@@ -422,6 +434,8 @@ public class Agile extends Activity {
      */
     private void sendLogToServer(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id, final AgileEvent agileEvent) {
 
+        argumentValidation(eventType);  //validation in sendLogToServer with object
+
         AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
         Call<ResponseBody> responseBodyCall = service.createUser
                 (appId,
@@ -474,6 +488,9 @@ public class Agile extends Activity {
      * @param values    could be additional information which describe the eventType in more details
      */
     private void sendLogToDatabase(@NonNull String appId, @NonNull String eventType, @NonNull String values) {
+
+        argumentValidation(eventType);  //validation in sendLogToDatabase
+
         Log.d(TAG, "insert log into database");
         LogEntity logEntity = new LogEntity();
         logEntity.setApp_id(appId);
@@ -492,6 +509,9 @@ public class Agile extends Activity {
      * @param values    could be additional information which describe the eventType in more details
      */
     private void sendLogToDatabase(@NonNull String appId, @NonNull String eventType, @NonNull String values, AgileEvent agileEvent) {
+
+        argumentValidation(eventType);  //validation in sendLogToDatabase with object
+
         Log.d(TAG, "insert log into database");
         LogEntity logEntity = new LogEntity();
         logEntity.setApp_id(appId);
@@ -578,6 +598,8 @@ public class Agile extends Activity {
         Log.d(TAG, "android_id      = " + Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
         Log.d(TAG, "time            = " + time);
         Log.d(TAG, "advertising_id  = " + advertising_id);
+
+        argumentValidation(eventType);  //validation in eventProductLogServiceOffline
 
         AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
         Call<ResponseBody> responseBodyCall = service.createUser
@@ -863,9 +885,6 @@ public class Agile extends Activity {
         for (int i = 0; i < param.length(); i++) {
             char c = param.charAt(i);
 
-            //Log.d(TAG,i+" = "+c);
-            //Log.d(TAG,i+" = "+Character.isLetterOrDigit(c));
-
             if (Character.isLetterOrDigit(c) || c == '_' || c == '-') {
                 //print valid character
                 //Log.d(TAG, c + " is valid");
@@ -876,12 +895,6 @@ public class Agile extends Activity {
                 throw new IllegalArgumentException(param + " only supports a-z or A-Z or 0-9 or _ or - ");
             }
         }
-
-        /*if (param.contains(" ")) {
-            throw new IllegalArgumentException(param+" should not contain any blank space");
-        } else {
-            Log.d(TAG,"(argumentValidation) param value = "+param);
-        }*/
     }
 
 }
