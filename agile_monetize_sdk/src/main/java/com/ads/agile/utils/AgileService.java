@@ -6,7 +6,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.util.Log;
 
-import com.ads.agile.Agile;
+import com.ads.agile.AgileLog;
 
 public class AgileService extends JobService {
 
@@ -15,7 +15,7 @@ public class AgileService extends JobService {
     @Override
     public boolean onStartJob(JobParameters params) {
 
-        Intent service = new Intent(getApplicationContext(), Agile.class);
+        Intent service = new Intent(getApplicationContext(), AgileLog.class);
         getApplicationContext().startService(service);
         Log.d(TAG,"AgileService job started");
 
@@ -61,7 +61,7 @@ public class AgileService extends JobService {
             Log.d(TAG,"(InitTask) init called");
 
 //            Intent broadCastIntent = new Intent();
-//            broadCastIntent.setAction(Agile.ROOM_ACTION);
+//            broadCastIntent.setAction(AgileLog.ROOM_ACTION);
 //            broadCastIntent.putExtra(NEW_DATA, "yes");
 //            sendBroadcast(broadCastIntent);
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,88 +7,18 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <LinearLayout
+
+    <Button
+        android:id="@+id/book1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit" />
+
+
+    <EditText
+        android:id="@+id/event_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:hint="Event Type" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <Button
-                android:id="@+id/book1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Submit" />
-
-
-            <EditText
-                android:id="@+id/event_type"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Event Type" />
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/tvLog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Log Example" />
-
-        <Button
-            android:id="@+id/goToNextPage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Go To Next Page"
-            android:textAllCaps="false" />
-
-        <Button
-            android:id="@+id/getLog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Get Log"
-            android:textAllCaps="false" />
-
-        <Button
-            android:id="@+id/getTest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Test"
-            android:textAllCaps="false" />
-
-        <!--delete-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Delete Operation" />
-
-            <EditText
-                android:id="@+id/delete_event_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Event ID" />
-
-            <Button
-                android:id="@+id/Deletebutton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Delete" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-</ScrollView>
+</LinearLayout>
