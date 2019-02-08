@@ -27,7 +27,8 @@ public class AgileConfiguration {
     public static final String MONETIZE_FILENAME = "agile_monetize.txt";
     public static final String AGILE_PREF = "agile_preference";
     public static final String AGILE_ID = "agile_google_adv_id";
-
+    public static boolean isTransaction = false;
+    public static boolean isLog = false;
 
     //retrofit instance
     public static Retrofit getRetrofit() {

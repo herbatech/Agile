@@ -26,6 +26,8 @@ import retrofit2.Response;
 import static com.ads.agile.AgileConfiguration.argumentValidation;
 import static com.ads.agile.AgileConfiguration.getAdvertisingId;
 import static com.ads.agile.AgileConfiguration.isConnected;
+import static com.ads.agile.AgileConfiguration.isLog;
+import static com.ads.agile.AgileConfiguration.isTransaction;
 
 public class AgileTransaction {
 
@@ -35,7 +37,7 @@ public class AgileTransaction {
     private Context context;
     private int size;
     private static JSONObject jsonObject = new JSONObject();
-    private static boolean transactionFlag = false;
+    private static boolean transactionInitFlag = false;
     private LogModel logModel;
     private static String appId;
     private static String eventType;
@@ -51,6 +53,8 @@ public class AgileTransaction {
                 size = notes.size();
             }
         });
+
+        isLog = true;
     }
 
     public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity, @NonNull String eventType, @NonNull String appId) {
@@ -58,7 +62,7 @@ public class AgileTransaction {
         this.eventType = eventType;
         this.appId = appId;
 
-        transactionFlag = true;
+        transactionInitFlag = true;
 
         logModel = ViewModelProviders.of(activity).get(LogModel.class);
         logModel.getLiveListAllLog().observe(activity, new Observer<List<LogEntity>>() {
@@ -68,6 +72,8 @@ public class AgileTransaction {
                 size = notes.size();
             }
         });
+
+        isLog = true;
     }
 
     /**
@@ -76,7 +82,7 @@ public class AgileTransaction {
      */
     public void set(String key, int value) {
 
-        if (transactionFlag) {
+        if (transactionInitFlag) {
             try {
                 jsonObject.put(key, value);
             } catch (JSONException e) {
@@ -93,7 +99,7 @@ public class AgileTransaction {
      */
     public void set(String key, float value) {
 
-        if (transactionFlag) {
+        if (transactionInitFlag) {
             try {
                 jsonObject.put(key, value);
             } catch (JSONException e) {
@@ -110,7 +116,7 @@ public class AgileTransaction {
      */
     public void set(String key, long value) {
 
-        if (transactionFlag) {
+        if (transactionInitFlag) {
             try {
                 jsonObject.put(key, value);
             } catch (JSONException e) {
@@ -127,7 +133,7 @@ public class AgileTransaction {
      */
     public void set(String key, String value) {
 
-        if (transactionFlag) {
+        if (transactionInitFlag) {
             try {
                 jsonObject.put(key, value);
             } catch (Exception e) {
@@ -144,7 +150,7 @@ public class AgileTransaction {
      */
     public void set(String key, boolean value) {
 
-        if (transactionFlag) {
+        if (transactionInitFlag) {
             try {
                 jsonObject.put(key, value);
             } catch (Exception e) {
@@ -161,7 +167,7 @@ public class AgileTransaction {
      */
     public void set(String key, short value) {
 
-        if (transactionFlag) {
+        if (transactionInitFlag) {
             try {
                 jsonObject.put(key, value);
             } catch (Exception e) {
@@ -193,16 +199,21 @@ public class AgileTransaction {
      */
     public void rollbackTransaction() {
         jsonObject = new JSONObject();
-        transactionFlag = false;
+        transactionInitFlag = false;
     }
 
     /**
      * add jsonObject to jsonArray
      */
     public void commitTransaction() {
-        transactionFlag = false;
-        Log.d(TAG, "(commitTransaction) object = " + jsonObject.toString());
-        trackTransaction(eventType, appId);
+
+        if (isTransaction) {
+            transactionInitFlag = false;
+            Log.d(TAG, "(commitTransaction) data object = " + jsonObject.toString());
+            trackTransaction(eventType, appId);
+        } else {
+            Log.d(TAG,"transaction terminated, due to not found instance of AgileTransaction");
+        }
     }
 
     /**
@@ -212,6 +223,7 @@ public class AgileTransaction {
      * @param eventType define the type of event
      */
     private void trackTransaction(@NonNull final String eventType, @NonNull final String appId) {
+
 
         String advertising_id = getAdvertisingId(context);
         String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -290,7 +302,7 @@ public class AgileTransaction {
 
         AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
         Call<ResponseBody> responseBodyCall = service.createUser
-                (       appId,
+                (appId,
                         android_id,
                         eventType,
                         values,
@@ -365,7 +377,7 @@ public class AgileTransaction {
      * clear the object value
      */
     public void clear() {
-        transactionFlag = false;
+        transactionInitFlag = false;
         jsonObject = new JSONObject();
     }
 }

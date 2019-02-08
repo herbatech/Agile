@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity implements AgileStateMonitor
     private EditText event_type;
     private AgileTransaction agileTransaction;
 
+    boolean aBoolean;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements AgileStateMonitor
         Log.d(TAG, "TimeZone name = " + TimeZone.getDefault().getDisplayName());
         Log.d(TAG, "TimeStamp All = " + TimeZone.getTimeZone(TimeZone.getDefault().getID()));
         Log.d(TAG, "TimeStamp     = " + System.currentTimeMillis());
+        Log.d(TAG, "boolean       = " + aBoolean);
 
         new AgileStateMonitor(this).enable(getApplicationContext());
 
@@ -65,8 +68,8 @@ public class MainActivity extends AppCompatActivity implements AgileStateMonitor
                 agileLog.set("bouns_id", "01");
                 agileLog.set("bouns_name", "sample");
                 agileLog.set("bouns_type", "coins");
-                agileTransaction.set("MainActivityTransaction", "yes it is");
                 agileLog.trackLog(event_type.getText().toString().trim(), "1234567890");
+                agileTransaction.set("MainActivityTransaction", "yes it is");
             }
         });
     }

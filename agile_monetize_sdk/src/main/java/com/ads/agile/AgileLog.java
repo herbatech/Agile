@@ -39,6 +39,8 @@ import retrofit2.Response;
 import static com.ads.agile.AgileConfiguration.AGILE_ID;
 import static com.ads.agile.AgileConfiguration.AGILE_PREF;
 import static com.ads.agile.AgileConfiguration.MONETIZE_FILENAME;
+import static com.ads.agile.AgileConfiguration.isLog;
+import static com.ads.agile.AgileConfiguration.isTransaction;
 
 
 public class AgileLog extends Activity {
@@ -55,10 +57,11 @@ public class AgileLog extends Activity {
     /**
      * parametric constructor
      *
-     * @param context  from the activity
-     * @param activity from the activity
+     * @param context          from the activity
+     * @param activity         from the activity
+     * @param agileTransaction
      */
-    public AgileLog(@NonNull Context context, @NonNull FragmentActivity activity) {
+    public AgileLog(@NonNull Context context, @NonNull FragmentActivity activity, AgileTransaction agileTransaction) {
 
         this.context = context;
         this.activity = activity;
@@ -86,6 +89,16 @@ public class AgileLog extends Activity {
 
         //initialization of transaction
         //initTransaction();
+
+        //check for transaction instance
+        if (agileTransaction instanceof AgileTransaction) {
+            Log.d(TAG, "instance agileTransaction exist");
+            isTransaction = true;
+        } else {
+            Log.d(TAG, "instance not agileTransaction exist");
+            isTransaction = false;
+        }
+
     }
 
     /**
@@ -224,6 +237,29 @@ public class AgileLog extends Activity {
      */
     public void trackLog(@NonNull final String eventType, @NonNull final String appId) {
 
+        /**
+         * if the transaction is enable
+         */
+        if (isTransaction) {
+            if (isLog) {
+                validateLog(eventType, appId);
+            } else {
+                Log.d(TAG,"log cant send to server, due to the validation failed in set method of AgileTransaction class");
+            }
+        }
+        /**
+         * if the transaction is disable
+         */
+        else {
+            validateLog(eventType, appId);
+        }
+    }
+
+    /**
+     * @param eventType
+     * @param appId
+     */
+    private void validateLog(String eventType, String appId) {
         String advertising_id = getAdvertisingId();
         String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String time = "0";
