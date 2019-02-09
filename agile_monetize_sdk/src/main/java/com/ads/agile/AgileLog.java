@@ -24,10 +24,6 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
@@ -38,7 +34,6 @@ import retrofit2.Response;
 
 import static com.ads.agile.AgileConfiguration.AGILE_ID;
 import static com.ads.agile.AgileConfiguration.AGILE_PREF;
-import static com.ads.agile.AgileConfiguration.MONETIZE_FILENAME;
 import static com.ads.agile.AgileConfiguration.isLog;
 import static com.ads.agile.AgileConfiguration.isTransaction;
 
@@ -106,7 +101,7 @@ public class AgileLog extends Activity {
      *
      * @return the google adv id
      */
-    public String getAdvertisingId() {
+    private String getAdvertisingId() {
 
         final String[] result = new String[1];
 
@@ -148,7 +143,7 @@ public class AgileLog extends Activity {
      * @param context from the parametric constructor
      * @return
      */
-    public boolean checkForPlayService(@NonNull Context context) {
+    private boolean checkForPlayService(@NonNull Context context) {
         int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
 
         switch (resultCode) {
@@ -202,7 +197,7 @@ public class AgileLog extends Activity {
      * @see com.ads.agile.room.LogDao
      * @see com.ads.agile.room.LogEntity
      */
-    public LiveData<List<LogEntity>> getAllLog() {
+    private LiveData<List<LogEntity>> getOfflineLog() {
         return logModel.getLiveListAllLog();
     }
 
@@ -244,7 +239,7 @@ public class AgileLog extends Activity {
             if (isLog) {
                 validateLog(eventType, appId);
             } else {
-                Log.d(TAG,"log cant send to server, due to the validation failed in set method of AgileTransaction class");
+                Log.d(TAG, "log cant send to server, due to the validation failed in set method of AgileTransaction class");
             }
         }
         /**
@@ -278,7 +273,7 @@ public class AgileLog extends Activity {
                 && !TextUtils.isEmpty(eventType)
                 && !TextUtils.isEmpty(advertising_id)
         ) {
-            sendLog(appId, android_id, eventType, getEvent(), time, advertising_id);
+            sendLog(appId, android_id, eventType, getLogEvent(), time, advertising_id);
         } else {
             Log.d(TAG, "params is empty");
 
@@ -358,8 +353,8 @@ public class AgileLog extends Activity {
                     boolean status = object.getBoolean("status");
                     Log.d(TAG, "status = " + status);
 
-                    //clear the log
-                    clear();
+                    //clearLogEvent the log
+                    clearLogEvent();
 
 
                 } catch (IOException e) {
@@ -398,7 +393,7 @@ public class AgileLog extends Activity {
         logEntity.setValue(values);
         logEntity.setAndroid_id(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
         logModel.insertLog(logEntity);
-        clear();
+        clearLogEvent();
     }
 
     /**
@@ -560,196 +555,6 @@ public class AgileLog extends Activity {
         return data;
     }
 
-    /**
-     * initialize transactions from the constructor
-     *
-     * @see AgileConfiguration for file name
-     */
-    private void initTransaction() {
-
-        try {
-            if (isFileExist().exists()) {
-                //file is exist
-                Log.d(TAG, "(initTransaction) file is exist");
-            } else {
-                //file is not exist , now create
-                Log.d(TAG, "(initTransaction) file is not exist , now create");
-                createNewFile();
-            }
-        } catch (Exception e) {
-            Log.d(TAG, "(initTransaction) catch error = " + e.getMessage());
-        }
-    }
-
-    /**
-     * return instance of
-     *
-     * @return File
-     * @see AgileConfiguration for file name
-     **/
-    private File isFileExist() {
-        File file = new File(context.getFilesDir() + File.separator, MONETIZE_FILENAME);
-        Log.d(TAG, "(isFileExist) file path = " + file.toString());
-        return file;
-    }
-
-    /**
-     * create fresh new file
-     *
-     * @see AgileConfiguration for file name
-     */
-    private void createNewFile() {
-        try {
-            FileWriter writer = new FileWriter(isFileExist());
-            writer.append("#BEGINS\n");
-            writer.flush();
-            writer.close();
-        } catch (Exception e) {
-            Log.d(TAG, "(createNewFile) catch error = " + e.getMessage());
-        }
-    }
-
-    /**
-     * add log to log file
-     *
-     * @param checkout   is responsible for the finish the log i.e. if true it will add #END at the end of log or else do nothing
-     * @param eventType  define the type of event
-     * @param eventValue define the event value , whose input took from where this function will call.
-     * @see AgileConfiguration for file name
-     **/
-    public void addTransaction(@NonNull String eventType, @NonNull String eventValue, @NonNull boolean checkout) {
-
-        if (isFileExist().exists()) {
-
-            argumentValidation(eventType);
-
-            writeInFile(eventType, eventValue, checkout);
-
-        } else {
-            Log.d(TAG, "(addTransaction) file is not exist , now create");
-            createNewFile();
-        }
-    }
-
-    /**
-     * method will notify if there is any duplicate key inside array
-     */
-    private void checkForExistanceEntry() {
-
-        File file = new File(getFilesDir(), AgileConfiguration.MONETIZE_FILENAME);
-        StringBuilder text = new StringBuilder();
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = br.readLine()) != null) {
-                text.append(line);
-                text.append('\n');
-            }
-            br.close();
-        } catch (Exception e) {
-            Log.d(TAG, "(checkForExistanceEntry) catch error = " + e.getMessage());
-        }
-    }
-
-    /**
-     * @param checkout   is responsible for the end the log i.e. if true it will add #END at the end of log or else do nothing
-     * @param eventType  define the type of event
-     * @param eventValue define the event value , whose input took from where this function will call.
-     * @see AgileConfiguration for file name
-     **/
-    private void writeInFile(String eventType, String eventValue, boolean checkout) {
-        try {
-            FileWriter writer = new FileWriter(isFileExist(), true);
-            writer.append(eventType + ":" + eventValue);
-            writer.append("\n");
-
-            if (checkout) {
-                writer.append("#END");
-                writer.append("\n");
-            }
-            writer.flush();
-            writer.close();
-        } catch (Exception e) {
-            Log.d(TAG, "(writeInFile) catch error = " + e.getMessage());
-        }
-    }
-
-    /**
-     * clear the log
-     *
-     * @see AgileConfiguration for file name
-     */
-    public void removeTransaction() {
-
-
-/*        if (isFileExist().exists()) {
-            removeLog();
-        } else {
-            Log.d(TAG, "(removeTransaction) file is not exist , now create");
-            createNewFile();
-        }*/
-    }
-
-    /**
-     * flush all information from the log file
-     *
-     * @see AgileConfiguration for file name
-     */
-    private void removeLog() {
-        try {
-            FileWriter writer = new FileWriter(isFileExist(), false);
-            writer.append("#BEGINS\n");
-            writer.flush();
-            writer.close();
-        } catch (Exception e) {
-            Log.d(TAG, "(removeLog) catch error = " + e.getMessage());
-        }
-    }
-
-    /**
-     * commit the changes
-     *
-     * @see AgileConfiguration for file name
-     */
-    public void commitTransaction() {
-
-        if (isFileExist().exists()) {
-            commitLog();
-        } else {
-            Log.d(TAG, "(commitTransaction) file is not exist , now create");
-            createNewFile();
-        }
-    }
-
-    /**
-     * this method will append the <#END> at the end of log before commit
-     *
-     * @see AgileConfiguration for file name
-     */
-    private void commitLog() {
-        try {
-            FileWriter writer = new FileWriter(isFileExist(), true);
-            writer.append("#END\n");
-            writer.flush();
-            writer.close();
-        } catch (Exception e) {
-            Log.d(TAG, "(commitLog) catch error = " + e.getMessage());
-        }
-    }
-
-    /**
-     * delete the log file
-     *
-     * @see AgileConfiguration for file name
-     */
-    public void terminateTransaction() {
-        if (isFileExist().exists()) {
-            isFileExist().delete();
-        } else {
-            Log.d(TAG, "(terminateTransaction) file is not exist , now create");
-            createNewFile();
-        }
-    }
 
     /**
      * this method will validate
@@ -860,14 +665,14 @@ public class AgileLog extends Activity {
     /**
      * @return
      */
-    public String getEvent() {
+    public String getLogEvent() {
         return jsonObject.toString();
     }
 
     /**
-     * clear the object value
+     * clearLogEvent the object value
      */
-    public void clear() {
+    public void clearLogEvent() {
         jsonObject = new JSONObject();
     }
 }

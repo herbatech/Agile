@@ -21,15 +21,15 @@ public class SecondActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
 
-        agileTransaction = new AgileTransaction(getApplicationContext(),this,"SecondActivityEventType","12345678");
-        agileLog = new AgileLog(getApplicationContext(), this);
+        agileTransaction = new AgileTransaction(getApplicationContext(), this, "SecondActivityEventType", "12345678");
+        agileLog = new AgileLog(getApplicationContext(), this, agileTransaction);
 
         findViewById(R.id.btnSubmit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //agileLog.addTransaction("Go-To-HomeActivity","blank",true);
                 agileLog.unset("bouns_name");
-                Log.d(TAG, "final list = " + agileLog.getEvent());
+                Log.d(TAG, "final list = " + agileLog.getLogEvent());
                 //finish();
             }
         });
@@ -38,7 +38,7 @@ public class SecondActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 agileLog.set("bouns_name", "sample");
-                Log.d(TAG, "final list = " + agileLog.getEvent());
+                Log.d(TAG, "final list = " + agileLog.getLogEvent());
             }
         });
 
@@ -47,14 +47,14 @@ public class SecondActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 agileLog.set("bouns_name", "sample_1");
-                Log.d(TAG, "final list = " + agileLog.getEvent());
+                Log.d(TAG, "final list = " + agileLog.getLogEvent());
             }
         });
 
         findViewById(R.id.btnDisplay).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "display final list = " + agileLog.getEvent());
+                Log.d(TAG, "display final list = " + agileLog.getLogEvent());
             }
         });
 
@@ -62,7 +62,7 @@ public class SecondActivity extends AppCompatActivity {
         findViewById(R.id.btnClear).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                agileLog.clear();
+                agileLog.clearLogEvent();
             }
         });
     }

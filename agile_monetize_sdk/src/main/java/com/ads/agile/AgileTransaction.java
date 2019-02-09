@@ -42,8 +42,12 @@ public class AgileTransaction {
     private static String appId;
     private static String eventType;
 
-    public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity) {
+    public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity, @NonNull String eventType, @NonNull String appId) {
         this.context = context;
+        this.eventType = eventType;
+        this.appId = appId;
+
+        transactionInitFlag = true;
 
         logModel = ViewModelProviders.of(activity).get(LogModel.class);
         logModel.getLiveListAllLog().observe(activity, new Observer<List<LogEntity>>() {
@@ -57,12 +61,8 @@ public class AgileTransaction {
         isLog = true;
     }
 
-    public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity, @NonNull String eventType, @NonNull String appId) {
+    public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity) {
         this.context = context;
-        this.eventType = eventType;
-        this.appId = appId;
-
-        transactionInitFlag = true;
 
         logModel = ViewModelProviders.of(activity).get(LogModel.class);
         logModel.getLiveListAllLog().observe(activity, new Observer<List<LogEntity>>() {
@@ -195,7 +195,7 @@ public class AgileTransaction {
     }
 
     /**
-     * clear the object value
+     * clearLogEvent the object value
      */
     public void rollbackTransaction() {
         jsonObject = new JSONObject();
@@ -212,7 +212,7 @@ public class AgileTransaction {
             Log.d(TAG, "(commitTransaction) data object = " + jsonObject.toString());
             trackTransaction(eventType, appId);
         } else {
-            Log.d(TAG,"transaction terminated, due to not found instance of AgileTransaction");
+            Log.d(TAG, "transaction terminated, due to not found instance of AgileTransaction");
         }
     }
 
@@ -243,7 +243,7 @@ public class AgileTransaction {
                 && !TextUtils.isEmpty(eventType)
                 && !TextUtils.isEmpty(advertising_id)
         ) {
-            sendLog(appId, android_id, eventType, getEvent(), time, advertising_id);
+            sendLog(appId, android_id, eventType, getTransaction(), time, advertising_id);
         } else {
             Log.d(TAG, "params is empty");
             throw new IllegalArgumentException("param is empty for trackTransaction method");
@@ -323,8 +323,8 @@ public class AgileTransaction {
                     boolean status = object.getBoolean("status");
                     Log.d(TAG, "status = " + status);
 
-                    //clear the log
-                    clear();
+                    //clearLogEvent the log
+                    clearTransaction();
 
 
                 } catch (IOException e) {
@@ -363,20 +363,13 @@ public class AgileTransaction {
         logEntity.setValue(values);
         logEntity.setAndroid_id(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
         logModel.insertLog(logEntity);
-        clear();
+        clearTransaction();
     }
 
     /**
-     * @return
+     * clearLogEvent the object value
      */
-    public String getEvent() {
-        return jsonObject.toString();
-    }
-
-    /**
-     * clear the object value
-     */
-    public void clear() {
+    public void clearTransaction() {
         transactionInitFlag = false;
         jsonObject = new JSONObject();
     }

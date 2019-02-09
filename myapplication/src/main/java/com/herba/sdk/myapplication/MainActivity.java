@@ -1,7 +1,5 @@
 package com.herba.sdk.myapplication;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -42,19 +40,10 @@ public class MainActivity extends AppCompatActivity implements AgileStateMonitor
 
         agileTransaction = new AgileTransaction(getApplicationContext(), this, "MainActivityEventType", "12345678");
 
-        agileLog = new AgileLog(getApplicationContext(), this);
+        agileLog = new AgileLog(getApplicationContext(), this, agileTransaction);
 
         event_type = findViewById(R.id.event_type);
 
-        //list count
-        logModel = ViewModelProviders.of(this).get(LogModel.class);
-        logModel.getLiveListAllLog().observe(this, new Observer<List<LogEntity>>() {
-            @Override
-            public void onChanged(List<LogEntity> notes) {
-                Log.d(TAG, "size count = " + notes.size());
-                listAllData(notes);
-            }
-        });
 
         buttonClickEvent();
 
