@@ -23,17 +23,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.ads.agile.AgileConfiguration.AGILE_CRASH_COUNTER;
 import static com.ads.agile.AgileConfiguration.argumentValidation;
 import static com.ads.agile.AgileConfiguration.getAdvertisingId;
+import static com.ads.agile.AgileConfiguration.getPreferences;
 import static com.ads.agile.AgileConfiguration.isConnected;
 import static com.ads.agile.AgileConfiguration.isLog;
 import static com.ads.agile.AgileConfiguration.isTransaction;
+import static com.ads.agile.AgileConfiguration.setPreferences;
 
 public class AgileTransaction {
 
     private final String TAG = this.getClass().getSimpleName();
-
-
     private Context context;
     private int size;
     private static JSONObject jsonObject = new JSONObject();
@@ -41,6 +42,7 @@ public class AgileTransaction {
     private LogModel logModel;
     private static String appId;
     private static String eventType;
+    private int counter;
 
     public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity, @NonNull String eventType, @NonNull String appId) {
         this.context = context;
@@ -59,6 +61,15 @@ public class AgileTransaction {
         });
 
         isLog = true;
+
+        if (getPreferences(context, AGILE_CRASH_COUNTER).equalsIgnoreCase("1")) {
+            counter = 1;
+        } else if (getPreferences(context, AGILE_CRASH_COUNTER).equalsIgnoreCase("2")) {
+            counter = 2;
+        } else {
+            setPreferences(context, AGILE_CRASH_COUNTER, "1");
+            counter = 1;
+        }
     }
 
     public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity) {
@@ -74,6 +85,13 @@ public class AgileTransaction {
         });
 
         isLog = true;
+
+        if (getPreferences(context, AGILE_CRASH_COUNTER).equalsIgnoreCase("2")) {
+            counter = 2;
+        } else {
+            setPreferences(context, AGILE_CRASH_COUNTER, "1");
+            counter = 1;
+        }
     }
 
     /**
@@ -89,7 +107,13 @@ public class AgileTransaction {
                 Log.d(TAG, "(set) String int catch error = " + e.getMessage());
             }
         } else {
-            throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
+            if (String.valueOf(counter).equalsIgnoreCase("1")) {
+                setPreferences(context, AGILE_CRASH_COUNTER, "2");
+                throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
+            } else {
+                //setPreferences(context,AGILE_CRASH_COUNTER,"1");
+                Log.d(TAG, "crash suppressed");
+            }
         }
     }
 
@@ -106,7 +130,13 @@ public class AgileTransaction {
                 Log.d(TAG, "(set) String float catch error = " + e.getMessage());
             }
         } else {
-            throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
+            if (String.valueOf(counter).equalsIgnoreCase("1")) {
+                setPreferences(context, AGILE_CRASH_COUNTER, "2");
+                throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
+            } else {
+                //setPreferences(context,AGILE_CRASH_COUNTER,"1");
+                Log.d(TAG, "crash suppressed");
+            }
         }
     }
 
@@ -123,7 +153,13 @@ public class AgileTransaction {
                 Log.d(TAG, "(set) String long catch error = " + e.getMessage());
             }
         } else {
-            throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
+            if (String.valueOf(counter).equalsIgnoreCase("1")) {
+                setPreferences(context, AGILE_CRASH_COUNTER, "2");
+                throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
+            } else {
+                //setPreferences(context,AGILE_CRASH_COUNTER,"1");
+                Log.d(TAG, "crash suppressed");
+            }
         }
     }
 
@@ -140,7 +176,13 @@ public class AgileTransaction {
                 Log.d(TAG, "(set) String String catch error = " + e.getMessage());
             }
         } else {
-            throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
+            if (String.valueOf(counter).equalsIgnoreCase("1")) {
+                setPreferences(context, AGILE_CRASH_COUNTER, "2");
+                throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
+            } else {
+                //setPreferences(context,AGILE_CRASH_COUNTER,"1");
+                Log.d(TAG, "crash suppressed");
+            }
         }
     }
 
@@ -157,7 +199,13 @@ public class AgileTransaction {
                 Log.d(TAG, "(set) String boolean catch error = " + e.getMessage());
             }
         } else {
-            throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
+            if (String.valueOf(counter).equalsIgnoreCase("1")) {
+                setPreferences(context, AGILE_CRASH_COUNTER, "2");
+                throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
+            } else {
+                //setPreferences(context,AGILE_CRASH_COUNTER,"1");
+                Log.d(TAG, "crash suppressed");
+            }
         }
     }
 
@@ -174,7 +222,13 @@ public class AgileTransaction {
                 Log.d(TAG, "(set) String short catch error = " + e.getMessage());
             }
         } else {
-            throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
+            if (String.valueOf(counter).equalsIgnoreCase("1")) {
+                setPreferences(context, AGILE_CRASH_COUNTER, "2");
+                throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
+            } else {
+                //setPreferences(context,AGILE_CRASH_COUNTER,"1");
+                Log.d(TAG, "crash suppressed");
+            }
         }
     }
 

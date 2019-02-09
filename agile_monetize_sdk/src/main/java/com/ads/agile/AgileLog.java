@@ -401,7 +401,7 @@ public class AgileLog extends Activity {
      *
      * @param unique_id is identifier
      */
-    public void deleteLog(@NonNull int unique_id) {
+    private void deleteLog(@NonNull int unique_id) {
         logModel.singleDeleteLog(unique_id);
     }
 
