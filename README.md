@@ -1,3 +1,1 @@
-# AgileSDK
-
-this is sample example
+# Agile Monetize SDK
