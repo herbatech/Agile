@@ -3,6 +3,7 @@ package com.ads.agile;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -16,7 +17,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -44,12 +49,63 @@ public class AgileTransaction {
     private static String eventType;
     private int counter;
 
+    private Date datata;
+    long seconds ;
+    SharedPreferences prefs;
+    String dateTimeKey = "time_duration";
+
     public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity, @NonNull String eventType, @NonNull String appId) {
         this.context = context;
         this.eventType = eventType;
         this.appId = appId;
 
+
+        prefs = context.getSharedPreferences("com.ads.agile", Context.MODE_PRIVATE);
+        Date dato = new Date();
+        prefs.edit().putLong(dateTimeKey, dato.getTime()).commit();
+        long l = prefs.getLong(dateTimeKey, new Date().getTime());
+        Log.d(TAG, "currentTimeValue     =="+l);
+        datata = new Date(l);
+
+        Timer updateTimer = new Timer();
+        updateTimer.schedule(new TimerTask()
+        {
+            public void run()
+            {
+                try
+                {
+
+                    Date date2 =  new Date();
+                    long mills = date2 .getTime() - datata.getTime();
+                    Log.v("Data1", ""+ datata .getTime());
+                    Log.v("Data2", ""+date2.getTime());
+                    int hours = (int) (mills/(1000 * 60 * 60));
+                    int mins = (int) (mills/(1000*60)) % 60;
+
+                    String diff = hours + ":" + mins; // updated value every1 second
+                    seconds = TimeUnit.MILLISECONDS.toSeconds(mills);
+
+
+                    // txtCurrentTime.setText(diff);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+        }, 0, 1000);
+
+
+
+
         transactionInitFlag = true;
+
+
+
+
+
+
 
         logModel = ViewModelProviders.of(activity).get(LogModel.class);
         logModel.getLiveListAllLog().observe(activity, new Observer<List<LogEntity>>() {
@@ -318,6 +374,51 @@ public class AgileTransaction {
 
         argumentValidation(eventType);  //validation in sendLog
 
+        SharedPreferences prefs = context.getSharedPreferences("com.ads.agile", Context.MODE_PRIVATE);
+        String dateTimeKey = "time_duration";
+
+        long l = prefs.getLong(dateTimeKey, new Date().getTime());
+
+        Log.d(TAG, "currentTimeValue     =="+l);
+
+        datata = new Date(l);
+
+        Date dato = new Date();
+        prefs.edit().putLong(dateTimeKey, dato.getTime()).commit();
+
+
+
+        Timer updateTimer = new Timer();
+        updateTimer.schedule(new TimerTask()
+        {
+            public void run()
+            {
+                try
+                {
+
+                    Date date2 =  new Date();
+                    long mills = date2 .getTime() - datata.getTime();
+                    Log.v("Data1", ""+ datata .getTime());
+                    Log.v("Data2", ""+date2.getTime());
+                    int hours = (int) (mills/(1000 * 60 * 60));
+                    int mins = (int) (mills/(1000*60)) % 60;
+
+                    String diff = hours + ":" + mins; // updated value every1 second
+                    seconds = TimeUnit.MILLISECONDS.toSeconds(mills);
+
+                    Log.d(TAG, "currentTimeValue11     =="+seconds);
+                    // txtCurrentTime.setText(diff);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+        }, 0, 1000);
+
+
+
         if (isConnected(context)) {
             sendLogToServer
                     (
@@ -326,7 +427,7 @@ public class AgileTransaction {
                             eventType,
                             values,
                             time,
-                            advertising_id
+                            advertising_id,seconds
                     );
         } else {
             //save data into sqlite database
@@ -350,7 +451,7 @@ public class AgileTransaction {
      * @param time           would be always zero if it send directly to the server or else will send the difference of current and stored entry into room database
      * @param advertising_id is google adv id
      */
-    private void sendLogToServer(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id) {
+    private void sendLogToServer(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id,@NonNull long seconds) {
 
         argumentValidation(eventType);  //validation in sendLogToServer
 
@@ -361,7 +462,7 @@ public class AgileTransaction {
                         eventType,
                         values,
                         time,
-                        advertising_id
+                        advertising_id,seconds,""
                 );
         responseBodyCall.enqueue(new Callback<ResponseBody>() {
             @Override

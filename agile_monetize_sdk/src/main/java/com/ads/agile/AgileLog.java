@@ -6,6 +6,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -25,7 +26,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -49,6 +54,14 @@ public class AgileLog extends Activity {
     private SynchroniseLogEvent synchroniseLogEvent;
     private static JSONObject jsonObject = new JSONObject();
 
+    private Date datata;
+    long seconds ;
+    SharedPreferences prefs;
+    String dateTimeKey = "time_duration";
+
+
+
+
     /**
      * parametric constructor
      *
@@ -69,6 +82,72 @@ public class AgileLog extends Activity {
         else {
             Log.d(TAG,"Service with job id "+JOB_ID+" already running");
         }*/
+
+       /* if (activity.onBackPressed().isFinishing()) {
+            // Here  you can be sure the Activity will be destroyed eventually
+
+            Log.d(TAG, "finishing Activity   =");
+        }*/
+
+
+/*
+      if(activity != null) {
+            try{
+                Log.d(TAG,"Service with job id already running");
+                //activity.finish();
+            }catch(Throwable e){
+                e.printStackTrace();
+                Log.d(TAG,"Service  =="+e.getMessage());
+            }
+        }*/
+        prefs = context.getSharedPreferences("com.ads.agile", Context.MODE_PRIVATE);
+        Date dato = new Date();
+        prefs.edit().putLong(dateTimeKey, dato.getTime()).commit();
+        long l = prefs.getLong(dateTimeKey, new Date().getTime());
+        Log.d(TAG, "currentTimeValue     =="+l);
+        datata = new Date(l);
+
+
+
+
+        Timer updateTimer = new Timer();
+        updateTimer.schedule(new TimerTask()
+        {
+            public void run()
+            {
+                try
+                {
+
+                    Date date2 =  new Date();
+                    long mills = date2 .getTime() - datata.getTime();
+                    Log.v("Data1", ""+ datata .getTime());
+                    Log.v("Data2", ""+date2.getTime());
+                    int hours = (int) (mills/(1000 * 60 * 60));
+                    int mins = (int) (mills/(1000*60)) % 60;
+
+                    String diff = hours + ":" + mins; // updated value every1 second
+                    seconds = TimeUnit.MILLISECONDS.toSeconds(mills);
+
+
+                    // txtCurrentTime.setText(diff);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+        }, 0, 1000);
+
+
+        PackageManager packageManager= context.getPackageManager();
+        try {
+            String appName = (String) packageManager.getApplicationLabel(packageManager.getApplicationInfo("com.ads.agile",PackageManager.GET_META_DATA));
+            Log.d(TAG, "currentTimeValue3333     =="+appName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            Log.d(TAG, "currentTimeValue3333     =="+e.getMessage());
+        }
 
         logModel = ViewModelProviders.of(activity).get(LogModel.class);
         logModel.getLiveListAllLog().observe(activity, new Observer<List<LogEntity>>() {
@@ -95,7 +174,6 @@ public class AgileLog extends Activity {
         }
 
     }
-
     /**
      * get Google advertising id on background thread
      *
@@ -230,14 +308,17 @@ public class AgileLog extends Activity {
      * @param appId     is application id which is provided by us to the developer
      * @param eventType define the type of event
      */
-    public void trackLog(@NonNull final String eventType, @NonNull final String appId) {
+    public void trackLog(@NonNull final String eventType, @NonNull final String appId,@NonNull final String packgeId) {
 
         /**
          * if the transaction is enable
          */
+
+        Log.d(TAG,"packegeId     >"+packgeId);
+
         if (isTransaction) {
             if (isLog) {
-                validateLog(eventType, appId);
+                validateLog(eventType, appId,packgeId);
             } else {
                 Log.d(TAG, "log cant send to server, due to the validation failed in set method of AgileTransaction class");
             }
@@ -246,7 +327,7 @@ public class AgileLog extends Activity {
          * if the transaction is disable
          */
         else {
-            validateLog(eventType, appId);
+            validateLog(eventType, appId,packgeId);
         }
     }
 
@@ -254,7 +335,7 @@ public class AgileLog extends Activity {
      * @param eventType
      * @param appId
      */
-    private void validateLog(String eventType, String appId) {
+    private void validateLog(String eventType, String appId,String packgeId) {
         String advertising_id = getAdvertisingId();
         String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String time = "0";
@@ -273,7 +354,7 @@ public class AgileLog extends Activity {
                 && !TextUtils.isEmpty(eventType)
                 && !TextUtils.isEmpty(advertising_id)
         ) {
-            sendLog(appId, android_id, eventType, getLogEvent(), time, advertising_id);
+            sendLog(appId, android_id, eventType, getLogEvent(), time, advertising_id,packgeId);
         } else {
             Log.d(TAG, "params is empty");
 
@@ -290,9 +371,12 @@ public class AgileLog extends Activity {
      * @param time           would be always zero if it send directly to the server or else will send the difference of current and stored entry into room database
      * @param advertising_id is google adv id
      */
-    private void sendLog(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id) {
-
+    private void sendLog(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id,@NonNull String packgeId) {
+        Log.d(TAG, "currentTimeValue11     =="+appId);
+        Log.d(TAG, "android_Id     =="+packgeId);
         argumentValidation(eventType);  //validation in sendLog
+
+
 
         if (isConnected(context)) {
             sendLogToServer
@@ -302,7 +386,7 @@ public class AgileLog extends Activity {
                             eventType,
                             values,
                             time,
-                            advertising_id
+                            advertising_id,seconds,packgeId
                     );
         } else {
             //save data into sqlite database
@@ -326,7 +410,7 @@ public class AgileLog extends Activity {
      * @param time           would be always zero if it send directly to the server or else will send the difference of current and stored entry into room database
      * @param advertising_id is google adv id
      */
-    private void sendLogToServer(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id) {
+    private void sendLogToServer(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id, @NonNull long seconds, @NonNull String packgeId) {
 
         argumentValidation(eventType);  //validation in sendLogToServer
 
@@ -337,7 +421,7 @@ public class AgileLog extends Activity {
                         eventType,
                         values,
                         time,
-                        advertising_id
+                        advertising_id,seconds,packgeId
                 );
         responseBodyCall.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -482,7 +566,7 @@ public class AgileLog extends Activity {
                         eventType,
                         values,
                         String.valueOf(time),
-                        advertising_id
+                        advertising_id,seconds,""
                 );
 
         responseBodyCall.enqueue(new Callback<ResponseBody>() {

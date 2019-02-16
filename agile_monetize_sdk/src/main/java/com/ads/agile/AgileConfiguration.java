@@ -55,7 +55,9 @@ public class AgileConfiguration {
                         @Field("event_type") String event_type,
                         @Field("event_value") String event_value,
                         @Field("timestamp_diff") String timestamp_diff,
-                        @Field("advertising_id") String advertising_id
+                        @Field("advertising_id") String advertising_id,
+                        @Field("ag_session") long ag_session,
+                        @Field("ag_install") String ag_install
                 );
     }
 
@@ -64,6 +66,13 @@ public class AgileConfiguration {
      *
      * @return the google adv id
      */
+
+
+
+
+
+
+
     public static String getAdvertisingId(final Context context) {
 
         final String[] result = new String[1];
