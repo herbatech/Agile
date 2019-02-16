@@ -6,6 +6,7 @@ public class AgEventType {
     public static final String EVENT_PRODUCT = "PRODUCT";
     public static final String EVENT_COUNTER = "COUNTER";
 
+
     public static final String LOGIN = "ag_login";
     public static final String COMPLETE_REGISTRATION = "ag_complete_registration";
     public static final String PURCHASE = "ag_purchase";
