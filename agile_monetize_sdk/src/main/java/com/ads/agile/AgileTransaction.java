@@ -77,8 +77,8 @@ public class AgileTransaction {
 
                     Date date2 =  new Date();
                     long mills = date2 .getTime() - datata.getTime();
-                    Log.v("Data1", ""+ datata .getTime());
-                    Log.v("Data2", ""+date2.getTime());
+                  //  Log.v("Data1", ""+ datata .getTime());
+                  //  Log.v("Data2", ""+date2.getTime());
                     int hours = (int) (mills/(1000 * 60 * 60));
                     int mins = (int) (mills/(1000*60)) % 60;
 
@@ -381,7 +381,7 @@ public class AgileTransaction {
 
         Log.d(TAG, "currentTimeValue     =="+l);
 
-        datata = new Date(l);
+      /*  datata = new Date(l);
 
         Date dato = new Date();
         prefs.edit().putLong(dateTimeKey, dato.getTime()).commit();
@@ -415,7 +415,7 @@ public class AgileTransaction {
                 }
             }
 
-        }, 0, 1000);
+        }, 0, 1000);*/
 
 
 
@@ -462,7 +462,7 @@ public class AgileTransaction {
                         eventType,
                         values,
                         time,
-                        advertising_id,seconds,""
+                        advertising_id
                 );
         responseBodyCall.enqueue(new Callback<ResponseBody>() {
             @Override

@@ -24,11 +24,14 @@ public class AgileConfiguration {
     private static final String TAG = "AgileConfiguration";
     public static final int JOB_ID = 101;
     private static String url = "http://192.168.1.37:8080/";
+   // private static String url = "http://log.agileadnetwork.com:8080/";
     public static final String AGILE_PREF = "agile_preference";
     public static final String AGILE_ID = "agile_google_adv_id";
     public static final String AGILE_CRASH_COUNTER = "agile_crash_counter";
     public static boolean isTransaction = false;
     public static boolean isLog = false;
+
+
 
     //retrofit instance
     public static Retrofit getRetrofit() {
@@ -55,9 +58,9 @@ public class AgileConfiguration {
                         @Field("event_type") String event_type,
                         @Field("event_value") String event_value,
                         @Field("timestamp_diff") String timestamp_diff,
-                        @Field("advertising_id") String advertising_id,
-                        @Field("ag_session") long ag_session,
-                        @Field("ag_install") String ag_install
+                        @Field("advertising_id") String advertising_id
+                       /* @Field("ag_session") long ag_session,
+                        @Field("ag_install") String ag_install*/
                 );
     }
 

@@ -28,8 +28,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.ResponseBody;
@@ -54,11 +52,12 @@ public class AgileLog extends Activity {
     private SynchroniseLogEvent synchroniseLogEvent;
     private static JSONObject jsonObject = new JSONObject();
 
-    private Date datata;
+    private Date date1;
     long seconds ;
     SharedPreferences prefs;
     String dateTimeKey = "time_duration";
-
+    private Boolean firstTime = false;
+    AgileTransaction agileTransaction;
 
 
 
@@ -73,6 +72,7 @@ public class AgileLog extends Activity {
 
         this.context = context;
         this.activity = activity;
+
 
         /*UtilConfig.scheduleJob(context);
 
@@ -100,15 +100,19 @@ public class AgileLog extends Activity {
                 Log.d(TAG,"Service  =="+e.getMessage());
             }
         }*/
+
+
+
         prefs = context.getSharedPreferences("com.ads.agile", Context.MODE_PRIVATE);
         Date dato = new Date();
         prefs.edit().putLong(dateTimeKey, dato.getTime()).commit();
         long l = prefs.getLong(dateTimeKey, new Date().getTime());
-        Log.d(TAG, "currentTimeValue     =="+l);
-        datata = new Date(l);
+       // Log.d(TAG, "currentTimeValue     =="+l);
+        date1 = new Date(l);
 
 
 
+/*
 
         Timer updateTimer = new Timer();
         updateTimer.schedule(new TimerTask()
@@ -118,15 +122,7 @@ public class AgileLog extends Activity {
                 try
                 {
 
-                    Date date2 =  new Date();
-                    long mills = date2 .getTime() - datata.getTime();
-                    Log.v("Data1", ""+ datata .getTime());
-                    Log.v("Data2", ""+date2.getTime());
-                    int hours = (int) (mills/(1000 * 60 * 60));
-                    int mins = (int) (mills/(1000*60)) % 60;
 
-                    String diff = hours + ":" + mins; // updated value every1 second
-                    seconds = TimeUnit.MILLISECONDS.toSeconds(mills);
 
 
                     // txtCurrentTime.setText(diff);
@@ -138,6 +134,7 @@ public class AgileLog extends Activity {
             }
 
         }, 0, 1000);
+*/
 
 
         PackageManager packageManager= context.getPackageManager();
@@ -159,7 +156,9 @@ public class AgileLog extends Activity {
         });
 
         //get add id while initialization
-        getAdvertisingId();
+
+
+
 
         //initialization of transaction
         //initTransaction();
@@ -172,6 +171,8 @@ public class AgileLog extends Activity {
             Log.d(TAG, "instance not agileTransaction exist");
             isTransaction = false;
         }
+
+        getAdvertisingId();
 
     }
     /**
@@ -202,6 +203,7 @@ public class AgileLog extends Activity {
                             boolean optOutEnabled = adInfo.isLimitAdTrackingEnabled();
                             //save google ad id into shared preference
                             setPreferences(context, AGILE_ID, advertisingId);
+                            firstTime=true;
                             Log.d(TAG, "(getAdvertisingId) Google optOutEnabled = " + optOutEnabled);
                         } catch (Exception e) {
                             Log.d(TAG, "(getAdvertisingId) catch error" + e.getMessage());
@@ -302,44 +304,91 @@ public class AgileLog extends Activity {
         return cm.getActiveNetworkInfo();
     }
 
+    public void sessionComplete(@NonNull String appId){
+        Date date2 =  new Date();
+        long mills = date2 .getTime() - date1.getTime();
+        int hours = (int) (mills/(1000 * 60 * 60));
+        int mins = (int) (mills/(1000*60)) % 60;
+        String diff = hours + ":" + mins; // updated value every1 second
+        seconds = TimeUnit.MILLISECONDS.toSeconds(mills);
+
+        set("duration",seconds);
+        trackLog("ag_session", appId);
+    }
+
+    public void agileInstall(@NonNull String appId){
+        //  isFirstTime();
+
+        if (getAdvertisingId()!=null){
+            boolean isFirstTime = MyPreferences.isFirst(context);
+            if (isFirstTime){
+                trackLog("ag_install",appId);
+                //  Log.d(TAG, "log cant send to server, due to the validation failed in set method of AgileTransaction class111111111");
+            }
+        }
+
+
+      }
+    public static class MyPreferences {
+
+        private static final String MY_PREFERENCES = "my_preferences";
+
+        public static boolean isFirst(Context context){
+            final SharedPreferences reader = context.getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
+            final boolean first = reader.getBoolean("is_first", true);
+            if(first){
+                final SharedPreferences.Editor editor = reader.edit();
+                editor.putBoolean("is_first", false);
+                editor.commit();
+            }
+            return first;
+        }
+
+    }
+
+
     /**
      * validate input param
      *
      * @param appId     is application id which is provided by us to the developer
      * @param eventType define the type of event
      */
-    public void trackLog(@NonNull final String eventType, @NonNull final String appId,@NonNull final String packgeId) {
+    public void trackLog(@NonNull final String eventType, @NonNull final String appId) {
 
         /**
          * if the transaction is enable
          */
 
-        Log.d(TAG,"packegeId     >"+packgeId);
+
+
+       // Log.d(TAG,"packegeId     >"+eventType);
 
         if (isTransaction) {
             if (isLog) {
-                validateLog(eventType, appId,packgeId);
+                validateLog(eventType, appId);
             } else {
-                Log.d(TAG, "log cant send to server, due to the validation failed in set method of AgileTransaction class");
+
             }
         }
         /**
          * if the transaction is disable
          */
         else {
-            validateLog(eventType, appId,packgeId);
+            validateLog(eventType, appId);
         }
     }
+
+
 
     /**
      * @param eventType
      * @param appId
      */
-    private void validateLog(String eventType, String appId,String packgeId) {
+    private void validateLog(String eventType, String appId) {
         String advertising_id = getAdvertisingId();
         String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String time = "0";
-
+        agileInstall(appId);
         Log.d(TAG, "appId           = " + appId);
         Log.d(TAG, "android_id      = " + android_id);
         Log.d(TAG, "eventType       = " + eventType);
@@ -354,7 +403,7 @@ public class AgileLog extends Activity {
                 && !TextUtils.isEmpty(eventType)
                 && !TextUtils.isEmpty(advertising_id)
         ) {
-            sendLog(appId, android_id, eventType, getLogEvent(), time, advertising_id,packgeId);
+            sendLog(appId, android_id, eventType, getLogEvent(), time, advertising_id);
         } else {
             Log.d(TAG, "params is empty");
 
@@ -371,9 +420,9 @@ public class AgileLog extends Activity {
      * @param time           would be always zero if it send directly to the server or else will send the difference of current and stored entry into room database
      * @param advertising_id is google adv id
      */
-    private void sendLog(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id,@NonNull String packgeId) {
+    private void sendLog(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id) {
         Log.d(TAG, "currentTimeValue11     =="+appId);
-        Log.d(TAG, "android_Id     =="+packgeId);
+       // Log.d(TAG, "android_Id     =="+packgeId);
         argumentValidation(eventType);  //validation in sendLog
 
 
@@ -386,7 +435,7 @@ public class AgileLog extends Activity {
                             eventType,
                             values,
                             time,
-                            advertising_id,seconds,packgeId
+                            advertising_id
                     );
         } else {
             //save data into sqlite database
@@ -410,7 +459,7 @@ public class AgileLog extends Activity {
      * @param time           would be always zero if it send directly to the server or else will send the difference of current and stored entry into room database
      * @param advertising_id is google adv id
      */
-    private void sendLogToServer(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id, @NonNull long seconds, @NonNull String packgeId) {
+    private void sendLogToServer(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id) {
 
         argumentValidation(eventType);  //validation in sendLogToServer
 
@@ -421,7 +470,7 @@ public class AgileLog extends Activity {
                         eventType,
                         values,
                         time,
-                        advertising_id,seconds,packgeId
+                        advertising_id
                 );
         responseBodyCall.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -566,7 +615,7 @@ public class AgileLog extends Activity {
                         eventType,
                         values,
                         String.valueOf(time),
-                        advertising_id,seconds,""
+                        advertising_id
                 );
 
         responseBodyCall.enqueue(new Callback<ResponseBody>() {
@@ -757,6 +806,39 @@ public class AgileLog extends Activity {
      * clearLogEvent the object value
      */
     public void clearLogEvent() {
+        jsonObject = new JSONObject();
+    }
+
+
+
+    public void setEventType(String key, String value) {
+        try {
+            jsonObject.put(key, value);
+        } catch (Exception e) {
+            Log.d(TAG, "(set) String short catch error = " + e.getMessage());
+        }
+    }
+
+    /**
+     * remove the value from the list
+     *
+     * @param value
+     */
+    public void unsetEventType(String value) {
+        jsonObject.remove(value);
+    }
+
+    /**
+     * @return
+     */
+    public String getLogEventType() {
+        return jsonObject.toString();
+    }
+
+    /**
+     * clearLogEvent the object value
+     */
+    public void clearLogEventType() {
         jsonObject = new JSONObject();
     }
 }
