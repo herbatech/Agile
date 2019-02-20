@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.ads.agile.myapplication.BuildConfig;
 import com.ads.agile.system.AdvertisingIdClient;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -41,7 +42,7 @@ public class AgileConfiguration {
 //        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(url)
+                .baseUrl(url)//BuildConfig.Base_URL
                 //.client(client)
                 .build();
         return retrofit;

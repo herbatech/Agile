@@ -10,12 +10,14 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.ads.agile.myapplication.BuildConfig;
 import com.ads.agile.room.LogEntity;
 import com.ads.agile.room.LogModel;
 import com.ads.agile.system.AdvertisingIdClient;
@@ -59,6 +61,8 @@ public class AgileLog extends Activity {
     private Boolean firstTime = false;
     AgileTransaction agileTransaction;
 
+    String AppId;
+
 
 
     /**
@@ -72,6 +76,8 @@ public class AgileLog extends Activity {
 
         this.context = context;
         this.activity = activity;
+        Bundle metadata = getMetaData(context);
+       AppId= metadata.getString("com.agile.sdk.ApplicationId");
 
 
         /*UtilConfig.scheduleJob(context);
@@ -174,6 +180,15 @@ public class AgileLog extends Activity {
 
         getAdvertisingId();
 
+    }
+
+    public static Bundle getMetaData(Context context) {
+        try {
+            return context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA).metaData;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     /**
      * get Google advertising id on background thread
@@ -304,7 +319,7 @@ public class AgileLog extends Activity {
         return cm.getActiveNetworkInfo();
     }
 
-    public void sessionComplete(@NonNull String appId){
+    public void sessionComplete(){
         Date date2 =  new Date();
         long mills = date2 .getTime() - date1.getTime();
         int hours = (int) (mills/(1000 * 60 * 60));
@@ -313,16 +328,18 @@ public class AgileLog extends Activity {
         seconds = TimeUnit.MILLISECONDS.toSeconds(mills);
 
         set("duration",seconds);
-        trackLog("ag_session", appId);
+        trackLog("ag_session");
     }
 
-    public void agileInstall(@NonNull String appId){
+    public void agileInstall(){
+
         //  isFirstTime();
+        Log.d(TAG, "log cant send to server  ="+ AppId);
 
         if (getAdvertisingId()!=null){
             boolean isFirstTime = MyPreferences.isFirst(context);
             if (isFirstTime){
-                trackLog("ag_install",appId);
+                trackLog("ag_install");
                 //  Log.d(TAG, "log cant send to server, due to the validation failed in set method of AgileTransaction class111111111");
             }
         }
@@ -350,10 +367,9 @@ public class AgileLog extends Activity {
     /**
      * validate input param
      *
-     * @param appId     is application id which is provided by us to the developer
      * @param eventType define the type of event
      */
-    public void trackLog(@NonNull final String eventType, @NonNull final String appId) {
+    public void trackLog(@NonNull final String eventType) {
 
         /**
          * if the transaction is enable
@@ -365,7 +381,7 @@ public class AgileLog extends Activity {
 
         if (isTransaction) {
             if (isLog) {
-                validateLog(eventType, appId);
+                validateLog(eventType, AppId);
             } else {
 
             }
@@ -374,7 +390,7 @@ public class AgileLog extends Activity {
          * if the transaction is disable
          */
         else {
-            validateLog(eventType, appId);
+            validateLog(eventType,AppId);
         }
     }
 
@@ -388,7 +404,7 @@ public class AgileLog extends Activity {
         String advertising_id = getAdvertisingId();
         String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String time = "0";
-        agileInstall(appId);
+       // agileInstall();
         Log.d(TAG, "appId           = " + appId);
         Log.d(TAG, "android_id      = " + android_id);
         Log.d(TAG, "eventType       = " + eventType);

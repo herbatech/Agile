@@ -4,6 +4,8 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -53,49 +55,16 @@ public class AgileTransaction {
     long seconds ;
     SharedPreferences prefs;
     String dateTimeKey = "time_duration";
+    String AppId;
 
-    public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity, @NonNull String eventType, @NonNull String appId) {
+    public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity, @NonNull String eventType) {
         this.context = context;
         this.eventType = eventType;
         this.appId = appId;
 
 
-        prefs = context.getSharedPreferences("com.ads.agile", Context.MODE_PRIVATE);
-        Date dato = new Date();
-        prefs.edit().putLong(dateTimeKey, dato.getTime()).commit();
-        long l = prefs.getLong(dateTimeKey, new Date().getTime());
-        Log.d(TAG, "currentTimeValue     =="+l);
-        datata = new Date(l);
-
-        Timer updateTimer = new Timer();
-        updateTimer.schedule(new TimerTask()
-        {
-            public void run()
-            {
-                try
-                {
-
-                    Date date2 =  new Date();
-                    long mills = date2 .getTime() - datata.getTime();
-                  //  Log.v("Data1", ""+ datata .getTime());
-                  //  Log.v("Data2", ""+date2.getTime());
-                    int hours = (int) (mills/(1000 * 60 * 60));
-                    int mins = (int) (mills/(1000*60)) % 60;
-
-                    String diff = hours + ":" + mins; // updated value every1 second
-                    seconds = TimeUnit.MILLISECONDS.toSeconds(mills);
-
-
-                    // txtCurrentTime.setText(diff);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }
-
-        }, 0, 1000);
-
+        Bundle metadata = getMetaData(context);
+        AppId= metadata.getString("com.agile.sdk.ApplicationId");
 
 
 
@@ -149,7 +118,14 @@ public class AgileTransaction {
             counter = 1;
         }
     }
-
+    public static Bundle getMetaData(Context context) {
+        try {
+            return context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA).metaData;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     /**
      * @param key   String data type
      * @param value int data type
@@ -320,7 +296,7 @@ public class AgileTransaction {
         if (isTransaction) {
             transactionInitFlag = false;
             Log.d(TAG, "(commitTransaction) data object = " + jsonObject.toString());
-            trackTransaction(eventType, appId);
+            trackTransaction(eventType, AppId);
         } else {
             Log.d(TAG, "transaction terminated, due to not found instance of AgileTransaction");
         }

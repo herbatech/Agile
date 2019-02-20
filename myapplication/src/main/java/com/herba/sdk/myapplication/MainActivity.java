@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements AgileStateMonitor
     private LogModel logModel;
     private EditText event_type;
     private AgileTransaction agileTransaction;
-    private static final String AG_App_KEY = "1234567890";
+   // private static final String AG_App_KEY = "1234567890";
 
     boolean aBoolean;
 
@@ -40,11 +40,11 @@ public class MainActivity extends AppCompatActivity implements AgileStateMonitor
 
         new AgileStateMonitor(this).enable(getApplicationContext());
 
-        agileTransaction = new AgileTransaction(getApplicationContext(), this, "MainActivityEventType",AG_App_KEY);
-
+        agileTransaction = new AgileTransaction(getApplicationContext(), this, "MainActivityEventType");
         agileLog = new AgileLog(getApplicationContext(), this, agileTransaction);
+
         event_type = findViewById(R.id.event_type);
-        agileLog.agileInstall(AG_App_KEY);
+        agileLog.agileInstall();
 
         buttonClickEvent();
 
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements AgileStateMonitor
                 agileLog.set("bouns_id", "01");
                 agileLog.set("bouns_name", "sample");
                 agileLog.set("bouns_type", "coins");
-                agileLog.trackLog(event_type.getText().toString().trim(),AG_App_KEY);
+                agileLog.trackLog("ag_ad_click");
                 agileTransaction.set("MainActivityTransaction", "yes it is");
             }
         });
@@ -90,6 +90,6 @@ public class MainActivity extends AppCompatActivity implements AgileStateMonitor
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        agileLog.sessionComplete(AG_App_KEY);
+        agileLog.sessionComplete();
     }
 }

@@ -21,7 +21,7 @@ public class SecondActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
 
-        agileTransaction = new AgileTransaction(getApplicationContext(), this, "SecondActivityEventType", "12345678");
+        agileTransaction = new AgileTransaction(getApplicationContext(), this, "SecondActivityEventType");
         agileLog = new AgileLog(getApplicationContext(), this, agileTransaction);
 
         findViewById(R.id.btnSubmit).setOnClickListener(new View.OnClickListener() {
