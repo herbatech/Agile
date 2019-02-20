@@ -1,5 +1,6 @@
 package com.herba.sdk.myapplication;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements AgileStateMonitor
     private LogModel logModel;
     private EditText event_type;
     private AgileTransaction agileTransaction;
+    private static final String AG_App_KEY = "1234567890";
 
     boolean aBoolean;
 
@@ -38,12 +40,11 @@ public class MainActivity extends AppCompatActivity implements AgileStateMonitor
 
         new AgileStateMonitor(this).enable(getApplicationContext());
 
-        agileTransaction = new AgileTransaction(getApplicationContext(), this, "MainActivityEventType", "12345678");
+        agileTransaction = new AgileTransaction(getApplicationContext(), this, "MainActivityEventType",AG_App_KEY);
 
         agileLog = new AgileLog(getApplicationContext(), this, agileTransaction);
-
         event_type = findViewById(R.id.event_type);
-
+        agileLog.agileInstall(AG_App_KEY);
 
         buttonClickEvent();
 
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements AgileStateMonitor
                 agileLog.set("bouns_id", "01");
                 agileLog.set("bouns_name", "sample");
                 agileLog.set("bouns_type", "coins");
-                agileLog.trackLog(event_type.getText().toString().trim(), "1234567890");
+                agileLog.trackLog(event_type.getText().toString().trim(),AG_App_KEY);
                 agileTransaction.set("MainActivityTransaction", "yes it is");
             }
         });
@@ -85,4 +86,10 @@ public class MainActivity extends AppCompatActivity implements AgileStateMonitor
         Log.d(TAG, "MainActivity disconnected to network via AgileLog");
     }
 
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        agileLog.sessionComplete(AG_App_KEY);
+    }
 }
