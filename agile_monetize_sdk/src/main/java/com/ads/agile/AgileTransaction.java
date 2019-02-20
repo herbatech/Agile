@@ -4,8 +4,6 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -55,16 +53,14 @@ public class AgileTransaction {
     long seconds ;
     SharedPreferences prefs;
     String dateTimeKey = "time_duration";
-    String AppId;
 
-    public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity, @NonNull String eventType) {
+    public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity, @NonNull String eventType, @NonNull String appId) {
         this.context = context;
         this.eventType = eventType;
         this.appId = appId;
 
 
-        Bundle metadata = getMetaData(context);
-        AppId= metadata.getString("com.agile.sdk.ApplicationId");
+
 
 
 
@@ -118,14 +114,7 @@ public class AgileTransaction {
             counter = 1;
         }
     }
-    public static Bundle getMetaData(Context context) {
-        try {
-            return context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA).metaData;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+
     /**
      * @param key   String data type
      * @param value int data type
@@ -296,7 +285,7 @@ public class AgileTransaction {
         if (isTransaction) {
             transactionInitFlag = false;
             Log.d(TAG, "(commitTransaction) data object = " + jsonObject.toString());
-            trackTransaction(eventType, AppId);
+            trackTransaction(eventType, appId);
         } else {
             Log.d(TAG, "transaction terminated, due to not found instance of AgileTransaction");
         }

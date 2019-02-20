@@ -21,9 +21,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <meta-data
+      <!--  <meta-data
             android:name="com.agile.sdk.ApplicationId"
-            android:value="@string/Agile_Sdk" />
+            android:value="@string/Agile_Sdk" />-->
         <!--
         <service
             android:name="com.ads.agile.utils.AgileService"
