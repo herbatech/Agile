@@ -4,6 +4,8 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -54,18 +56,12 @@ public class AgileTransaction {
     SharedPreferences prefs;
     String dateTimeKey = "time_duration";
 
-    public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity, @NonNull String eventType, @NonNull String appId) {
+    public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity, @NonNull String eventType) {
         this.context = context;
         this.eventType = eventType;
-        this.appId = appId;
-
-
-
-
-
-
         transactionInitFlag = true;
-
+        Bundle metadata = getMetaData(context);
+        appId= metadata.getString("com.agile.sdk.ApplicationId");
 
 
 
@@ -113,6 +109,15 @@ public class AgileTransaction {
             setPreferences(context, AGILE_CRASH_COUNTER, "1");
             counter = 1;
         }
+    }
+
+    public static Bundle getMetaData(Context context) {
+        try {
+            return context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA).metaData;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

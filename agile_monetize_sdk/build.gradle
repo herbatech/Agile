@@ -3,12 +3,6 @@ apply plugin: 'com.github.dcendents.android-maven'
 group = 'com.github.pritesh25'
 
 
-def Base_URL = '"' + WEBServiceBaseURL + '"' ?: '"Define BASE URL"';
-
-android.buildTypes.each { type ->
-    type.buildConfigField 'String', 'Base_URL', WEBServiceBaseURL
-}
-
 android {
     compileSdkVersion 28
     defaultConfig {
