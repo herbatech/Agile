@@ -406,7 +406,7 @@ public class AgileLog extends Activity {
         String advertising_id = getAdvertisingId();
         String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String time = "0";
-        agileInstall();
+       // agileInstall();
         Log.d(TAG, "appId           = " + appId);
         Log.d(TAG, "android_id      = " + android_id);
         Log.d(TAG, "eventType       = " + eventType);
