@@ -308,12 +308,14 @@ public class AgileTransaction {
         String advertising_id = getAdvertisingId(context);
         String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String time = "0";
+/*
 
         Log.d(TAG, "appId           = " + appId);
         Log.d(TAG, "android_id      = " + android_id);
         Log.d(TAG, "eventType       = " + eventType);
         Log.d(TAG, "time            = " + time);
         Log.d(TAG, "advertising_id  = " + advertising_id);
+*/
 
         argumentValidation(eventType);  //validation in trackLog
 
@@ -351,45 +353,7 @@ public class AgileTransaction {
 
         Log.d(TAG, "currentTimeValue     =="+l);
 
-      /*  datata = new Date(l);
-
-        Date dato = new Date();
-        prefs.edit().putLong(dateTimeKey, dato.getTime()).commit();
-
-
-
-        Timer updateTimer = new Timer();
-        updateTimer.schedule(new TimerTask()
-        {
-            public void run()
-            {
-                try
-                {
-
-                    Date date2 =  new Date();
-                    long mills = date2 .getTime() - datata.getTime();
-                    Log.v("Data1", ""+ datata .getTime());
-                    Log.v("Data2", ""+date2.getTime());
-                    int hours = (int) (mills/(1000 * 60 * 60));
-                    int mins = (int) (mills/(1000*60)) % 60;
-
-                    String diff = hours + ":" + mins; // updated value every1 second
-                    seconds = TimeUnit.MILLISECONDS.toSeconds(mills);
-
-                    Log.d(TAG, "currentTimeValue11     =="+seconds);
-                    // txtCurrentTime.setText(diff);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }
-
-        }, 0, 1000);*/
-
-
-
-        if (isConnected(context)) {
+       if (isConnected(context)) {
             sendLogToServer
                     (
                             appId,
@@ -437,34 +401,34 @@ public class AgileTransaction {
         responseBodyCall.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.d(TAG, "response code = " + response.code());
+              //  Log.d(TAG, "response code = " + response.code());
                 try {
 
                     String responseString = response.body().string();
 
-                    Log.d(TAG, "response body = " + responseString);
+                    //Log.d(TAG, "response body = " + responseString);
 
                     JSONObject object = new JSONObject(responseString);
                     boolean status = object.getBoolean("status");
-                    Log.d(TAG, "status = " + status);
+                 //   Log.d(TAG, "status = " + status);
 
                     //clearLogEvent the log
                     clearTransaction();
 
 
                 } catch (IOException e) {
-                    Log.d(TAG, "IOException = " + e.getMessage());
+                  //  Log.d(TAG, "IOException = " + e.getMessage());
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSONException = " + e.getMessage());
+                  //  Log.d(TAG, "JSONException = " + e.getMessage());
                 } finally {
                     response.body().close();
-                    Log.d(TAG, "retrofit connection closed");
+                 //   Log.d(TAG, "retrofit connection closed");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d(TAG, "onFailure = " + t.getMessage());
+             //   Log.d(TAG, "onFailure = " + t.getMessage());
                 sendLogToDatabase(eventType, appId, values);
             }
         });
@@ -481,7 +445,7 @@ public class AgileTransaction {
 
         argumentValidation(eventType);  //validation in sendLogToDatabase
 
-        Log.d(TAG, "insert log into database");
+        //Log.d(TAG, "insert log into database");
         LogEntity logEntity = new LogEntity();
         logEntity.setApp_id(appId);
         logEntity.setEvent_type(eventType);

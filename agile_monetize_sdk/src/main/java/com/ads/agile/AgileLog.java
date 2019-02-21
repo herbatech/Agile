@@ -79,70 +79,11 @@ public class AgileLog extends Activity {
         Bundle metadata = getMetaData(context);
         AppId= metadata.getString("com.agile.sdk.ApplicationId");
 
-        Log.d(TAG,"App Id   ="+AppId);
-
-
-        /*UtilConfig.scheduleJob(context);
-
-        if(UtilConfig.isJobServiceOn(context)) {
-            UtilConfig.scheduleJob(context);
-        }
-        else {
-            Log.d(TAG,"Service with job id "+JOB_ID+" already running");
-        }*/
-
-       /* if (activity.onBackPressed().isFinishing()) {
-            // Here  you can be sure the Activity will be destroyed eventually
-
-            Log.d(TAG, "finishing Activity   =");
-        }*/
-
-
-/*
-      if(activity != null) {
-            try{
-                Log.d(TAG,"Service with job id already running");
-                //activity.finish();
-            }catch(Throwable e){
-                e.printStackTrace();
-                Log.d(TAG,"Service  =="+e.getMessage());
-            }
-        }*/
-
-
-
         prefs = context.getSharedPreferences("com.ads.agile", Context.MODE_PRIVATE);
         Date dato = new Date();
         prefs.edit().putLong(dateTimeKey, dato.getTime()).commit();
         long l = prefs.getLong(dateTimeKey, new Date().getTime());
-       // Log.d(TAG, "currentTimeValue     =="+l);
         date1 = new Date(l);
-
-
-
-/*
-
-        Timer updateTimer = new Timer();
-        updateTimer.schedule(new TimerTask()
-        {
-            public void run()
-            {
-                try
-                {
-
-
-
-
-                    // txtCurrentTime.setText(diff);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }
-
-        }, 0, 1000);
-*/
 
 
         PackageManager packageManager= context.getPackageManager();
@@ -164,10 +105,6 @@ public class AgileLog extends Activity {
         });
 
         //get add id while initialization
-
-
-
-
         //initialization of transaction
         //initTransaction();
 
@@ -377,11 +314,7 @@ public class AgileLog extends Activity {
          * if the transaction is enable
          */
 
-
-
-       // Log.d(TAG,"packegeId     >"+eventType);
-
-        if (isTransaction) {
+          if (isTransaction) {
             if (isLog) {
                 validateLog(eventType, AppId);
             } else {
@@ -406,12 +339,12 @@ public class AgileLog extends Activity {
         String advertising_id = getAdvertisingId();
         String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String time = "0";
-       // agileInstall();
+    /*
         Log.d(TAG, "appId           = " + appId);
         Log.d(TAG, "android_id      = " + android_id);
         Log.d(TAG, "eventType       = " + eventType);
         Log.d(TAG, "time            = " + time);
-        Log.d(TAG, "advertising_id  = " + advertising_id);
+        Log.d(TAG, "advertising_id  = " + advertising_id);*/
 
         argumentValidation(eventType);  //validation in trackLog
 
@@ -423,7 +356,7 @@ public class AgileLog extends Activity {
         ) {
             sendLog(appId, android_id, eventType, getLogEvent(), time, advertising_id);
         } else {
-            Log.d(TAG, "params is empty");
+          //  Log.d(TAG, "params is empty");
 
         }
     }
@@ -493,16 +426,16 @@ public class AgileLog extends Activity {
         responseBodyCall.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.d(TAG, "response code = " + response.code());
+              //  Log.d(TAG, "response code = " + response.code());
                 try {
 
                     String responseString = response.body().string();
 
-                    Log.d(TAG, "response body = " + responseString);
+                   // Log.d(TAG, "response body = " + responseString);
 
                     JSONObject object = new JSONObject(responseString);
                     boolean status = object.getBoolean("status");
-                    Log.d(TAG, "status = " + status);
+                //    Log.d(TAG, "status = " + status);
 
                     //clearLogEvent the log
                     clearLogEvent();
@@ -514,13 +447,13 @@ public class AgileLog extends Activity {
                     Log.d(TAG, "JSONException = " + e.getMessage());
                 } finally {
                     response.body().close();
-                    Log.d(TAG, "retrofit connection closed");
+               //     Log.d(TAG, "retrofit connection closed");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d(TAG, "onFailure = " + t.getMessage());
+             //   Log.d(TAG, "onFailure = " + t.getMessage());
                 sendLogToDatabase(eventType, appId, values);
             }
         });
@@ -537,7 +470,7 @@ public class AgileLog extends Activity {
 
         argumentValidation(eventType);  //validation in sendLogToDatabase
 
-        Log.d(TAG, "insert log into database");
+       // Log.d(TAG, "insert log into database");
         LogEntity logEntity = new LogEntity();
         logEntity.setApp_id(appId);
         logEntity.setEvent_type(eventType);
@@ -561,7 +494,7 @@ public class AgileLog extends Activity {
      */
     public void syncLog() throws Exception {
 
-        Log.d(TAG, "(syncLog) called ,size = " + size);
+      //  Log.d(TAG, "(syncLog) called ,size = " + size);
         synchroniseLogEvent = new SynchroniseLogEvent(size);
         synchroniseLogEvent.execute();
     }
@@ -588,12 +521,12 @@ public class AgileLog extends Activity {
                 String value = logModel.getLiveListAllLog().getValue().get(i).getValue();
                 long time = Long.parseLong(logModel.getLiveListAllLog().getValue().get(i).getTime());
 
-                Log.d(TAG, "id               = " + id);
+             /*   Log.d(TAG, "id               = " + id);
                 Log.d(TAG, "event type       = " + eventType);
                 Log.d(TAG, "app id           = " + appId);
                 Log.d(TAG, "event value      = " + value);
                 Log.d(TAG, "event time       = " + time);
-                Log.d(TAG, "*************************************************************************************");
+                Log.d(TAG, "*************************************************************************************");*/
 
                 //call webservice to add data to database
                 eventProductLogServiceOffline(id, appId, eventType, value, time);
@@ -615,14 +548,14 @@ public class AgileLog extends Activity {
 
         String advertising_id = getAdvertisingId();
         time = (time - System.currentTimeMillis()) / 1000;
-
+/*
         Log.d(TAG, "id              = " + id);
         Log.d(TAG, "eventType       = " + eventType);
         Log.d(TAG, "appId           = " + appId);
         Log.d(TAG, "eventalues      = " + values);
         Log.d(TAG, "android_id      = " + Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
         Log.d(TAG, "time            = " + time);
-        Log.d(TAG, "advertising_id  = " + advertising_id);
+        Log.d(TAG, "advertising_id  = " + advertising_id);*/
 
         argumentValidation(eventType);  //validation in eventProductLogServiceOffline
 
@@ -640,16 +573,16 @@ public class AgileLog extends Activity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-                Log.d(TAG, "response code, id = " + id + " = " + response.code());
+             //   Log.d(TAG, "response code, id = " + id + " = " + response.code());
 
                 try {
 
                     String responseString = response.body().string();
-                    Log.d(TAG, "response body " + id + " = " + responseString);
+                //    Log.d(TAG, "response body " + id + " = " + responseString);
 
                     JSONObject object = new JSONObject(responseString);
                     boolean status = object.getBoolean("status");
-                    Log.d(TAG, "status = " + status);
+               //     Log.d(TAG, "status = " + status);
 
                     if (status) {
                         //delete record from the database if the response is true
@@ -659,17 +592,17 @@ public class AgileLog extends Activity {
                     }
 
                 } catch (IOException e) {
-                    Log.d(TAG, "IOException = " + e.getMessage());
+               //     Log.d(TAG, "IOException = " + e.getMessage());
                     synchroniseLogEvent.cancel(true);
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSONException = " + e.getMessage());
+                //    Log.d(TAG, "JSONException = " + e.getMessage());
                     synchroniseLogEvent.cancel(true);
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d(TAG, "onFailure = " + t.getMessage());
+              //  Log.d(TAG, "onFailure = " + t.getMessage());
                 synchroniseLogEvent.cancel(true);
             }
         });
@@ -701,7 +634,7 @@ public class AgileLog extends Activity {
             SharedPreferences DevicePref = context.getSharedPreferences(AGILE_PREF, 0);
             data = DevicePref.getString(key, "");
         } catch (Exception e) {
-            Log.d(TAG, "(getPreferences) catch exception = " + e.getMessage());
+          //  Log.d(TAG, "(getPreferences) catch exception = " + e.getMessage());
         }
         return data;
     }
