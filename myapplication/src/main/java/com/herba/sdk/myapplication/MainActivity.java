@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements AgileStateMonitor
 
         new AgileStateMonitor(this).enable(getApplicationContext());
 
-        agileTransaction = new AgileTransaction(getApplicationContext(), this, "MainActivityEventType");
+        agileTransaction = new AgileTransaction(getApplicationContext(), this, "ag_transaction");
         agileLog = new AgileLog(getApplicationContext(), this, agileTransaction);
 
         event_type = findViewById(R.id.event_type);
@@ -58,8 +58,10 @@ public class MainActivity extends AppCompatActivity implements AgileStateMonitor
                 agileLog.set("bouns_id", "01");
                 agileLog.set("bouns_name", "sample");
                 agileLog.set("bouns_type", "coins");
-                agileLog.trackLog("ag_clicked");
-                agileTransaction.set("MainActivityTransaction", "yes it is");
+              //  agileLog.trackLog("ag_clicked");
+                agileTransaction.set("buyer_name", "yes it is");
+                agileTransaction.set("buyer_address", "buyer_address");
+                agileTransaction.commitTransaction();
             }
         });
     }
