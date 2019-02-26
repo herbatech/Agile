@@ -58,10 +58,10 @@ public class MainActivity extends AppCompatActivity implements AgileStateMonitor
                 agileLog.set("bouns_id", "01");
                 agileLog.set("bouns_name", "sample");
                 agileLog.set("bouns_type", "coins");
-              //  agileLog.trackLog("ag_clicked");
+                agileLog.trackLog("ag_clicked");
                 agileTransaction.set("buyer_name", "yes it is");
-                agileTransaction.set("buyer_address", "buyer_address");
-                agileTransaction.commitTransaction();
+             //   agileTransaction.set("buyer_address", "buyer_address");
+              //  agileTransaction.commitTransaction();
             }
         });
     }
