@@ -1,23 +1,23 @@
 -- Merging decision tree log ---
 manifest
-ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-16:12
-INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-16:12
-INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-16:12
-INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-16:12
-INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-16:12
-INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-16:12
-INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-16:12
+ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
+INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
+INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
+INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
+INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
+INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
+INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
 	package
 		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:2:5-42
 		INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
 		INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
 	android:versionName
 		INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
-		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-16:12
+		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
 		INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
 	android:versionCode
 		INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
-		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-16:12
+		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
 		INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:11-69

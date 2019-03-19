@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -23,7 +25,7 @@
         </activity>
         <meta-data
             android:name="com.agile.sdk.ApplicationId"
-            android:value="@string/Agile_Sdk" />
+            android:value="@string/Agile_App_Id" />
         <!--
         <service
             android:name="com.ads.agile.utils.AgileService"

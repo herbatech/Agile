@@ -1,35 +1,65 @@
 package com.ads.agile;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.ads.agile.myapplication.BuildConfig;
 import com.ads.agile.room.LogEntity;
 import com.ads.agile.room.LogModel;
 import com.ads.agile.system.AdvertisingIdClient;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.ResponseBody;
@@ -60,8 +90,42 @@ public class AgileLog extends Activity {
     String dateTimeKey = "time_duration";
     private Boolean firstTime = false;
     AgileTransaction agileTransaction;
+    private String AppId;
+    private String WifiState="";
+    private String DeviceType;
+    private String DeviceBrand;
+    private String DeviceCarier;
+    private String DeviceLanguage;
+    private String DeviceModel;
+    private String DeviceOsName;
+    private String DeviceOsVersion;
+    private String DeviceAppVersion;
+    private String SDkVersion;
+    private String Latittude;
+    private String Longitude;
+    private String localDateTime;
+    private String localTimezone;
+    private String AndroidPlatform;
+    TelephonyManager telephonyManager;
 
-    String AppId;
+
+
+    private FusedLocationProviderClient mFusedLocationClient;
+    private SettingsClient mSettingsClient;
+    private LocationRequest mLocationRequest;
+    private LocationSettingsRequest mLocationSettingsRequest;
+    private LocationCallback mLocationCallback;
+    private Location mCurrentLocation;
+
+    public static final long   UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    public static final long   FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
+    public static final int    REQUEST_CHECK_SETTINGS = 100;
+
+    private String                      mLastUpdateTime;
+    private Geocoder                    geocoder;
+    private List<Address> addresses;
+
+    private String _latitude  = "false" , _longitude = "false";
 
 
 
@@ -84,8 +148,8 @@ public class AgileLog extends Activity {
         prefs.edit().putLong(dateTimeKey, dato.getTime()).commit();
         long l = prefs.getLong(dateTimeKey, new Date().getTime());
         date1 = new Date(l);
-
-
+//         telephonyManager = ((TelephonyManager) getSystemService(co.TELEPHONY_SERVICE));
+      // context.registerReceiver(this.WifiStateChangedReceiver, new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
         PackageManager packageManager= context.getPackageManager();
         try {
             String appName = (String) packageManager.getApplicationLabel(packageManager.getApplicationInfo("com.ads.agile",PackageManager.GET_META_DATA));
@@ -116,9 +180,26 @@ public class AgileLog extends Activity {
             Log.d(TAG, "instance not agileTransaction exist");
             isTransaction = false;
         }
-
+        initLocation(activity);
         getAdvertisingId();
 
+
+
+    }
+
+
+    private static String getOsVersionName() {
+        Field[] fields = Build.VERSION_CODES.class.getFields();
+        String name =  fields[Build.VERSION.SDK_INT + 1].getName();
+
+        if(name.equals("O")) name = "Oreo";
+        if(name.equals("N")) name = "Nougat";
+        if(name.equals("M")) name = "Marshmallow";
+
+        if(name.startsWith("O_")) name = "Oreo++";
+        if(name.startsWith("N_")) name = "Nougat++";
+
+        return name;
     }
 
     public static Bundle getMetaData(Context context) {
@@ -301,6 +382,93 @@ public class AgileLog extends Activity {
 
     }
 
+    private void initLocation(final Activity context) {
+
+        geocoder = new Geocoder(context, Locale.getDefault());
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
+        mSettingsClient = LocationServices.getSettingsClient(context);
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                // location is received
+                mCurrentLocation = locationResult.getLastLocation();
+                mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+
+                updateLocation();
+
+            }
+        };
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(mLocationRequest);
+        mLocationSettingsRequest = builder.build();
+
+        startLocation(context);
+
+    }
+
+    private void startLocation(final Activity context) {
+        mSettingsClient
+                .checkLocationSettings(mLocationSettingsRequest)
+                .addOnSuccessListener(context, new OnSuccessListener<LocationSettingsResponse>() {
+                    @SuppressLint("MissingPermission")
+                    @Override
+                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+
+                        Log.d(TAG, "Started location updates!");
+
+                        //noinspection MissingPermission
+                        mFusedLocationClient.requestLocationUpdates(mLocationRequest,mLocationCallback, Looper.myLooper());
+
+                        updateLocation();
+                    }
+                })
+                .addOnFailureListener(context, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        int statusCode = ((ApiException) e).getStatusCode();
+                        switch (statusCode) {
+                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                                Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade location settings ");
+                                try {
+                                    // Show the dialog by calling startResolutionForResult(), and check the
+                                    // result in onActivityResult().
+                                    ResolvableApiException rae = (ResolvableApiException) e;
+                                    rae.startResolutionForResult( context, REQUEST_CHECK_SETTINGS);
+                                } catch (IntentSender.SendIntentException sie) {
+                                    Log.d(TAG, "PendingIntent unable to execute request.");
+                                }
+                                break;
+                            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                String errorMessage = "Location settings are inadequate, and cannot be fixed here. Fix in Settings.";
+                                Log.e(TAG, errorMessage);
+                        }
+
+                        updateLocation();
+                    }
+                });
+    }
+
+
+    private void updateLocation(){
+        if (mCurrentLocation != null) {
+            _latitude    = String.valueOf(mCurrentLocation.getLatitude());
+            _longitude   = String.valueOf(mCurrentLocation.getLongitude());
+
+        }
+
+    }
+
+
+
 
     /**
      * validate input param
@@ -313,7 +481,6 @@ public class AgileLog extends Activity {
         /**
          * if the transaction is enable
          */
-
           if (isTransaction) {
             if (isLog) {
                 validateLog(eventType, AppId);
@@ -329,6 +496,24 @@ public class AgileLog extends Activity {
         }
     }
 
+    private String checkNetworkStatus(Context context) {
+
+         WifiState ="";
+        final ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        final android.net.NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        final android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        if (wifi.isConnectedOrConnecting ()) {
+            WifiState="wifi";
+            //  Toast.makeText(this, "Wifi", Toast.LENGTH_LONG).show();
+        } else if (mobile.isConnectedOrConnecting ()) {
+            WifiState="Data";
+            //  Toast.makeText(this, "Mobile 3G ", Toast.LENGTH_LONG).show();
+        } else {
+            WifiState="false";
+            //   Toast.makeText(this, "No Network ", Toast.LENGTH_LONG).show();
+        }
+        return WifiState;
+    }
 
 
     /**
@@ -339,6 +524,67 @@ public class AgileLog extends Activity {
         String advertising_id = getAdvertisingId();
         String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String time = "0";
+
+
+        try {
+            PackageInfo pInfo =   context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            String version = pInfo.versionName;
+            String verCode = String.valueOf(pInfo.versionCode);
+            TimeZone timeZone = TimeZone.getDefault();
+            DateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String dateString2 = dateFormat2.format(new Date()).toString();
+
+//            String simOperatorName = telephonyManager.getSimOperatorName();
+
+            DeviceBrand = Build.BRAND;
+            localDateTime=dateString2;
+            localTimezone=timeZone.getID();
+            DeviceLanguage=Locale.getDefault().getDisplayLanguage();
+            DeviceType= Build.TYPE;
+            DeviceModel=Build.MODEL;
+            DeviceOsVersion=Build.VERSION.RELEASE;
+            DeviceOsName=getOsVersionName();
+            DeviceAppVersion=verCode;
+            AndroidPlatform="Android";
+            Latittude=_latitude;
+            Longitude=_longitude;
+            SDkVersion="1.1.3";
+            WifiState=checkNetworkStatus(context);
+
+
+            Log.d(TAG,"WifiState  ="+checkNetworkStatus(context));
+            Log.d(TAG,"DeviceLanguage  ="+DeviceLanguage);
+            Log.d(TAG,"DeviceType  ="+DeviceType);
+            Log.d(TAG,"DeviceModel  ="+DeviceModel);
+            Log.d(TAG,"DeviceOsVersion  ="+DeviceOsVersion);
+            Log.d(TAG,"DeviceOsName  ="+DeviceOsName);
+            Log.d(TAG,"DeviceAppVersion  ="+DeviceAppVersion);
+            Log.d(TAG,"Latittude  ="+_latitude);
+            Log.d(TAG,"Longitude  ="+_longitude);
+            Log.d(TAG,"AndroidPlatform  ="+AndroidPlatform );
+            Log.d(TAG,"localDateTime  ="+localDateTime);
+            Log.d(TAG,"localTimezone  ="+localTimezone);
+            Log.d(TAG,"DeviceBrand  ="+ DeviceBrand);
+            Log.d(TAG,"SDkVersion  ="+SDkVersion);
+
+            argumentValidation(eventType);  //validation in trackLog
+
+            //validate input params
+            if (!TextUtils.isEmpty(appId)
+                    && !TextUtils.isEmpty(android_id)
+                    && !TextUtils.isEmpty(eventType)
+                    && !TextUtils.isEmpty(advertising_id)
+            ) {
+                sendLog(appId, android_id, eventType, getLogEvent(), time, advertising_id);
+            } else {
+                //  Log.d(TAG, "params is empty");
+
+            }
+
+
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     /*
         Log.d(TAG, "appId           = " + appId);
         Log.d(TAG, "android_id      = " + android_id);
@@ -346,19 +592,6 @@ public class AgileLog extends Activity {
         Log.d(TAG, "time            = " + time);
         Log.d(TAG, "advertising_id  = " + advertising_id);*/
 
-        argumentValidation(eventType);  //validation in trackLog
-
-        //validate input params
-        if (!TextUtils.isEmpty(appId)
-                && !TextUtils.isEmpty(android_id)
-                && !TextUtils.isEmpty(eventType)
-                && !TextUtils.isEmpty(advertising_id)
-        ) {
-            sendLog(appId, android_id, eventType, getLogEvent(), time, advertising_id);
-        } else {
-          //  Log.d(TAG, "params is empty");
-
-        }
     }
 
     /**
@@ -376,8 +609,6 @@ public class AgileLog extends Activity {
        // Log.d(TAG, "android_Id     =="+packgeId);
         argumentValidation(eventType);  //validation in sendLog
 
-
-
         if (isConnected(context)) {
             sendLogToServer
                     (
@@ -386,7 +617,10 @@ public class AgileLog extends Activity {
                             eventType,
                             values,
                             time,
-                            advertising_id
+                            advertising_id,
+                            WifiState,DeviceLanguage,DeviceType,DeviceModel,DeviceOsVersion,DeviceOsName,
+                            DeviceAppVersion,Latittude,Longitude,AndroidPlatform,localDateTime,localTimezone,
+                            DeviceBrand,SDkVersion
                     );
         } else {
             //save data into sqlite database
@@ -410,7 +644,10 @@ public class AgileLog extends Activity {
      * @param time           would be always zero if it send directly to the server or else will send the difference of current and stored entry into room database
      * @param advertising_id is google adv id
      */
-    private void sendLogToServer(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id) {
+    private void sendLogToServer(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id,
+                                 @NonNull String wifiState, @NonNull String deviceLanguage, @NonNull String deviceType, @NonNull String deviceModel, @NonNull String deviceOsVersion,
+                                 @NonNull String deviceOsName, @NonNull String deviceAppVersion, @NonNull String latittude, @NonNull String longitude, @NonNull String androidPlatform,
+                                 @NonNull String localDateTime, @NonNull String localTimezone, @NonNull String deviceOperator, @NonNull String sdkversion) {
 
         argumentValidation(eventType);  //validation in sendLogToServer
 
@@ -421,7 +658,8 @@ public class AgileLog extends Activity {
                         eventType,
                         values,
                         time,
-                        advertising_id
+                        advertising_id,wifiState,deviceOperator,deviceLanguage,deviceType,deviceModel,deviceOsName,deviceOsVersion,
+                        deviceAppVersion,sdkversion,latittude,longitude,androidPlatform,localDateTime,localTimezone
                 );
         responseBodyCall.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -435,10 +673,8 @@ public class AgileLog extends Activity {
 
                     JSONObject object = new JSONObject(responseString);
                     boolean status = object.getBoolean("status");
-                //    Log.d(TAG, "status = " + status);
-
-                    //clearLogEvent the log
                     clearLogEvent();
+                    agileInstall();
 
 
                 } catch (IOException e) {
@@ -521,7 +757,7 @@ public class AgileLog extends Activity {
                 String value = logModel.getLiveListAllLog().getValue().get(i).getValue();
                 long time = Long.parseLong(logModel.getLiveListAllLog().getValue().get(i).getTime());
 
-             /*   Log.d(TAG, "id               = " + id);
+                /* Log.d(TAG, "id               = " + id);
                 Log.d(TAG, "event type       = " + eventType);
                 Log.d(TAG, "app id           = " + appId);
                 Log.d(TAG, "event value      = " + value);
@@ -529,7 +765,10 @@ public class AgileLog extends Activity {
                 Log.d(TAG, "*************************************************************************************");*/
 
                 //call webservice to add data to database
-                eventProductLogServiceOffline(id, appId, eventType, value, time);
+                eventProductLogServiceOffline(id, appId, eventType, value, time,
+                        WifiState,DeviceLanguage,DeviceType,DeviceModel,DeviceOsVersion,DeviceOsName,
+                        DeviceAppVersion,_latitude,_longitude,AndroidPlatform,localDateTime,localTimezone,
+                        DeviceBrand,SDkVersion);
             }
             return null;
         }
@@ -544,10 +783,14 @@ public class AgileLog extends Activity {
      * @param values    could be additional information which describe the eventType in more details
      * @param time      would be always zero if it send directly to the server or else will send the difference of current and stored entry into room database
      */
-    private void eventProductLogServiceOffline(@NonNull final int id, @NonNull String appId, @NonNull String eventType, @NonNull String values, @NonNull long time) {
+    private void eventProductLogServiceOffline(@NonNull final int id, @NonNull String appId, @NonNull String eventType, @NonNull String values, @NonNull long time,
+                                               @NonNull String wifiState, @NonNull String deviceLanguage, @NonNull String deviceType, @NonNull String deviceModel, @NonNull String deviceOsVersion,
+                                               @NonNull String deviceOsName, @NonNull String deviceAppVersion, @NonNull String latittude, @NonNull String longitude, @NonNull String androidPlatform,
+                                               @NonNull String localDateTime, @NonNull String localTimezone, @NonNull String deviceOperator, @NonNull String sdkversion) {
 
         String advertising_id = getAdvertisingId();
-        time = (time - System.currentTimeMillis()) / 1000;
+        time = (System.currentTimeMillis()-time) / 1000;
+        String wifi=checkNetworkStatus(context);
 /*
         Log.d(TAG, "id              = " + id);
         Log.d(TAG, "eventType       = " + eventType);
@@ -558,7 +801,6 @@ public class AgileLog extends Activity {
         Log.d(TAG, "advertising_id  = " + advertising_id);*/
 
         argumentValidation(eventType);  //validation in eventProductLogServiceOffline
-
         AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
         Call<ResponseBody> responseBodyCall = service.createUser
                 (appId,
@@ -566,7 +808,8 @@ public class AgileLog extends Activity {
                         eventType,
                         values,
                         String.valueOf(time),
-                        advertising_id
+                        advertising_id,wifi,deviceOperator,deviceLanguage,deviceType,deviceModel,deviceOsName,deviceOsVersion,
+                        deviceAppVersion,sdkversion,latittude,longitude,androidPlatform,localDateTime,localTimezone
                 );
 
         responseBodyCall.enqueue(new Callback<ResponseBody>() {

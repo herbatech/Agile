@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">My Application</string>
-    <string name="Agile_Sdk">9689326397</string>
+  <!--  <string name="Agile_Sdk">9689326397</string>-->
+    <string name="Agile_App_Id">6</string>
 </resources>

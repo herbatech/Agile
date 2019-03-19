@@ -24,8 +24,8 @@ public class AgileConfiguration {
 
     private static final String TAG = "AgileConfiguration";
     public static final int JOB_ID = 101;
-  //  private static String url = "http://192.168.1.37:8080/";
-    private static String url = "http://log.agileadnetwork.com:8080/";
+    private static String url = "http://192.168.1.37:8080/";
+   // private static String url = "http://log.agileadnetwork.com:8080/";
     public static final String AGILE_PREF = "agile_preference";
     public static final String AGILE_ID = "agile_google_adv_id";
     public static final String AGILE_CRASH_COUNTER = "agile_crash_counter";
@@ -59,7 +59,21 @@ public class AgileConfiguration {
                         @Field("event_type") String event_type,
                         @Field("event_value") String event_value,
                         @Field("timestamp_diff") String timestamp_diff,
-                        @Field("advertising_id") String advertising_id
+                        @Field("advertising_id") String advertising_id,
+                        @Field("wifi") String wifi,
+                        @Field("device_brand") String operator,
+                        @Field("device_language") String device_language,
+                        @Field("device_name") String device_name,
+                        @Field("device_model") String device_model,
+                        @Field("os_name") String os_name,
+                        @Field("os_version") String os_version,
+                        @Field("app_version") String app_version,
+                        @Field("sdk_version") String sdk_version,
+                        @Field("longitude") String longitude,
+                        @Field("latitude") String latitude,
+                        @Field("platform") String platform,
+                        @Field("device_date_time") String device_date_time,
+                        @Field("device_time_zone") String device_time_zone
 
                 );
     }
