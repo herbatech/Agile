@@ -15,10 +15,11 @@ import com.ads.agile.utils.AgileStateMonitor;
 
 import java.util.List;
 import java.util.TimeZone;
-public class MainActivity extends AppCompatActivity implements AgileStateMonitor.NetworkCallBack {
+public class MainActivity extends AppCompatActivity {
 
     private String TAG = this.getClass().getSimpleName();
     private AgileLog agileLog;
+
     private AgileTransaction agileTransaction;
 
     @Override
@@ -26,7 +27,6 @@ public class MainActivity extends AppCompatActivity implements AgileStateMonitor
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new AgileStateMonitor(this).enable(getApplicationContext());
         agileTransaction = new AgileTransaction(getApplicationContext(), this, "ag_transaction");
         agileLog = new AgileLog(getApplicationContext(), this, agileTransaction);
         findViewById(R.id.book1).setOnClickListener(new View.OnClickListener() {
@@ -36,30 +36,13 @@ public class MainActivity extends AppCompatActivity implements AgileStateMonitor
                 agileLog.set("bouns_name", "sample");
                 agileLog.set("bouns_type", "coins");
                 agileLog.trackLog("ag_clicked");
-                agileTransaction.set("buyer_name", "yes it is");
-                //   agileTransaction.set("buyer_address", "buyer_address");
-                //  agileTransaction.commitTransaction();
+                /*agileTransaction.set("buyer_name", "yes it is");
+                agileTransaction.set("buyer_address", "buyer_address");
+                agileTransaction.commitTransaction();*/
             }
         });
 
     }
-
-    @Override
-    public void onConnected() {
-        Log.d(TAG, "MainActivity connected to network via AgileLog");
-
-        try {
-            agileLog.syncLog();
-        } catch (Exception e) {
-            Log.d(TAG, "(onConnected) catch error = " + e.getMessage());
-        }
-    }
-
-    @Override
-    public void onDisconnected() {
-        Log.d(TAG, "MainActivity disconnected to network via AgileLog");
-    }
-
 
     @Override
     public void onBackPressed() {

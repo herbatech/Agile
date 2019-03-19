@@ -33,6 +33,7 @@ import android.util.Log;
 import com.ads.agile.room.LogEntity;
 import com.ads.agile.room.LogModel;
 import com.ads.agile.system.AdvertisingIdClient;
+import com.ads.agile.utils.AgileStateMonitor;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
@@ -73,7 +74,7 @@ import static com.ads.agile.AgileConfiguration.isLog;
 import static com.ads.agile.AgileConfiguration.isTransaction;
 
 
-public class AgileLog extends Activity {
+public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallBack {
 
     private final String TAG = this.getClass().getSimpleName();
 
@@ -129,6 +130,7 @@ public class AgileLog extends Activity {
 
 
 
+
     /**
      * parametric constructor
      *
@@ -142,7 +144,6 @@ public class AgileLog extends Activity {
         this.activity = activity;
         Bundle metadata = getMetaData(context);
         AppId= metadata.getString("com.agile.sdk.ApplicationId");
-
         prefs = context.getSharedPreferences("com.ads.agile", Context.MODE_PRIVATE);
         Date dato = new Date();
         prefs.edit().putLong(dateTimeKey, dato.getTime()).commit();
@@ -183,7 +184,7 @@ public class AgileLog extends Activity {
         initLocation(activity);
         getAdvertisingId();
 
-
+        new AgileStateMonitor(this).enable(context);
 
     }
 
@@ -365,6 +366,23 @@ public class AgileLog extends Activity {
 
 
       }
+
+    @Override
+    public void onConnected() {
+        Log.d(TAG, "MainActivity connected to network via AgileLog");
+
+        try {
+            syncLog();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onDisconnected() {
+
+    }
+
     public static class MyPreferences {
 
         private static final String MY_PREFERENCES = "my_preferences";
@@ -504,6 +522,7 @@ public class AgileLog extends Activity {
         final android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
         if (wifi.isConnectedOrConnecting ()) {
             WifiState="wifi";
+
             //  Toast.makeText(this, "Wifi", Toast.LENGTH_LONG).show();
         } else if (mobile.isConnectedOrConnecting ()) {
             WifiState="Data";
