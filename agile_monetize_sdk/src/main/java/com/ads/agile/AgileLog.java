@@ -5,10 +5,7 @@ import android.app.Activity;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -18,7 +15,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -349,7 +345,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         seconds = TimeUnit.MILLISECONDS.toSeconds(mills);
 
         set("duration",seconds);
-        trackLog("ag_session");
+        trackEvent("ag_session");
     }
 
     public void agileInstall(){
@@ -359,7 +355,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         if (getAdvertisingId()!=null){
             boolean isFirstTime = MyPreferences.isFirst(context);
             if (isFirstTime){
-                trackLog("ag_install");
+                trackEvent("ag_install");
                 //  Log.d(TAG, "log cant send to server, due to the validation failed in set method of AgileTransaction class111111111");
             }
         }
@@ -494,7 +490,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
      *
      * @param eventType define the type of event
      */
-    public void trackLog(@NonNull final String eventType) {
+    public void trackEvent(@NonNull final String eventType) {
 
         /**
          * if the transaction is enable
@@ -522,7 +518,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         final android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
         if (wifi.isConnectedOrConnecting ()) {
             WifiState="wifi";
-
             //  Toast.makeText(this, "Wifi", Toast.LENGTH_LONG).show();
         } else if (mobile.isConnectedOrConnecting ()) {
             WifiState="Data";
@@ -533,8 +528,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         }
         return WifiState;
     }
-
-
     /**
      * @param eventType
      * @param appId
@@ -586,7 +579,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             Log.d(TAG,"DeviceBrand  ="+ DeviceBrand);
             Log.d(TAG,"SDkVersion  ="+SDkVersion);
 
-            argumentValidation(eventType);  //validation in trackLog
+            argumentValidation(eventType);  //validation in trackEvent
 
             //validate input params
             if (!TextUtils.isEmpty(appId)
@@ -677,7 +670,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                         eventType,
                         values,
                         time,
-                        advertising_id,wifiState,deviceOperator,deviceLanguage,deviceType,deviceModel,deviceOsName,deviceOsVersion,
+                        advertising_id,wifiState,deviceOperator,deviceLanguage,deviceModel,deviceOsName,deviceOsVersion,
                         deviceAppVersion,sdkversion,latittude,longitude,androidPlatform,localDateTime,localTimezone
                 );
         responseBodyCall.enqueue(new Callback<ResponseBody>() {
@@ -827,7 +820,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                         eventType,
                         values,
                         String.valueOf(time),
-                        advertising_id,wifi,deviceOperator,deviceLanguage,deviceType,deviceModel,deviceOsName,deviceOsVersion,
+                        advertising_id,wifi,deviceOperator,deviceLanguage,deviceModel,deviceOsName,deviceOsVersion,
                         deviceAppVersion,sdkversion,latittude,longitude,androidPlatform,localDateTime,localTimezone
                 );
 

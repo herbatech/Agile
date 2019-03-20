@@ -11,28 +11,11 @@
         android:id="@+id/event_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Event Value" />
-    <EditText
-        android:id="@+id/event_type1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Event Value" />
+        android:hint="Event Type" />
 
     <Button
         android:id="@+id/book1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Submit" />
-
-    <Button
-        android:id="@+id/Transaction"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Transaction" />
-
-
-
-
-
+        android:text="Go To Third Page" />
 </LinearLayout>

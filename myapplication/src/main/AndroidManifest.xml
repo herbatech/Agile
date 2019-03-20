@@ -7,13 +7,16 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
-        android:name="MyApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ForthActivity"></activity>
+        <activity android:name=".ThirdActivity" />
+        <activity android:name=".FirstActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,6 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.agile.sdk.ApplicationId"
             android:value="@string/Agile_App_Id" />
@@ -38,8 +42,7 @@
             </intent-filter>
         </receiver>
         -->
-
-        <activity android:name=".SecondActivity"></activity>
+        <activity android:name=".SecondActivity" />
     </application>
 
 </manifest>

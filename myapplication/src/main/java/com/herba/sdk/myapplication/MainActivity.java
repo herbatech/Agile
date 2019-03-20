@@ -1,6 +1,6 @@
 package com.herba.sdk.myapplication;
 
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -9,18 +9,14 @@ import android.widget.EditText;
 
 import com.ads.agile.AgileLog;
 import com.ads.agile.AgileTransaction;
-import com.ads.agile.room.LogEntity;
-import com.ads.agile.room.LogModel;
-import com.ads.agile.utils.AgileStateMonitor;
 
-import java.util.List;
-import java.util.TimeZone;
 public class MainActivity extends AppCompatActivity {
 
     private String TAG = this.getClass().getSimpleName();
     private AgileLog agileLog;
-
     private AgileTransaction agileTransaction;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +28,19 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.book1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                agileLog.set("bouns_id", "01");
-                agileLog.set("bouns_name", "sample");
-                agileLog.set("bouns_type", "coins");
-                agileLog.trackLog("ag_clicked");
-                /*agileTransaction.set("buyer_name", "yes it is");
-                agileTransaction.set("buyer_address", "buyer_address");
-                agileTransaction.commitTransaction();*/
+                EditText bonusId=findViewById(R.id.event_type);
+                EditText bonusname=findViewById(R.id.event_type1);
+                agileLog.set("bouns_id",bonusId.getText().toString());
+                agileLog.set("bouns_name",bonusname.getText().toString());
+                agileLog.trackEvent("ag_clicked");
+            }
+        });
+
+        findViewById(R.id.Transaction).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(MainActivity.this,FirstActivity.class);
+                startActivity(i);
             }
         });
 
@@ -47,6 +49,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        Log.d(TAG,"onBackPressed");
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy()");
         agileLog.sessionComplete();
+        if (isFinishing()) {
+            Log.d(TAG, "onDestroy() --> isFinishing()");
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop()");
     }
 }

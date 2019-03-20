@@ -540,7 +540,7 @@ public class AgileTransaction {
 
 
 
-        argumentValidation(eventType);  //validation in trackLog
+        argumentValidation(eventType);  //validation in trackEvent
 
         //validate input params
         if (!TextUtils.isEmpty(appId)
@@ -629,7 +629,7 @@ public class AgileTransaction {
                         eventType,
                         values,
                         time,
-                        advertising_id,wifiState,deviceOperator,deviceLanguage,deviceType,deviceModel,deviceOsName,deviceOsVersion,
+                        advertising_id,wifiState,deviceOperator,deviceLanguage,deviceModel,deviceOsName,deviceOsVersion,
                         deviceAppVersion,sdkversion,latittude,longitude,androidPlatform,localDateTime,localTimezone
                 );
         responseBodyCall.enqueue(new Callback<ResponseBody>() {

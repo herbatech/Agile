@@ -63,7 +63,6 @@ public class AgileConfiguration {
                         @Field("wifi") String wifi,
                         @Field("device_brand") String operator,
                         @Field("device_language") String device_language,
-                        @Field("device_name") String device_name,
                         @Field("device_model") String device_model,
                         @Field("os_name") String os_name,
                         @Field("os_version") String os_version,
