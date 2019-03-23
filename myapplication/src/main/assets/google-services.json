@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "948528170945",
+    "firebase_url": "https://gujatri-panchang-69b7a.firebaseio.com",
+    "project_id": "gujatri-panchang-69b7a",
+    "storage_bucket": "gujatri-panchang-69b7a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:948528170945:android:48b426b2d08cb6de",
+        "android_client_info": {
+          "package_name": "gujrati.panchang.astrology.calendar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "948528170945-014qkeko7kj1dn77ers9qchg9tcgvr7b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "gujrati.panchang.astrology.calendar",
+            "certificate_hash": "45603b70808dcfdb52f3e63e0db28cbe1e85021b"
+          }
+        },
+        {
+          "client_id": "948528170945-o3n1n23fd913is7ftite2im2g63dpcjo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkQSmBYc2r5BJe-UjEmvZydFiMxOVbyJ8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "948528170945-o3n1n23fd913is7ftite2im2g63dpcjo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

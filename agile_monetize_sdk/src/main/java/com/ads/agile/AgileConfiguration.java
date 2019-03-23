@@ -68,11 +68,15 @@ public class AgileConfiguration {
                         @Field("os_version") String os_version,
                         @Field("app_version") String app_version,
                         @Field("sdk_version") String sdk_version,
-                        @Field("longitude") String longitude,
-                        @Field("latitude") String latitude,
+                        @Field("cur_longitude") String longitude,
+                        @Field("cur_latitude") String latitude,
                         @Field("platform") String platform,
-                        @Field("device_date_time") String device_date_time,
-                        @Field("device_time_zone") String device_time_zone
+                        @Field("cur_device_date_time") String device_date_time,
+                        @Field("cur_device_time_zone") String device_time_zone ,
+                        @Field("db_longitude") String db_longitude,
+                        @Field("db_latitude") String db_latitude,
+                        @Field("db_device_date_time") String db_device_date_time,
+                        @Field("db_device_time_zone") String db_device_time_zone
 
                 );
     }

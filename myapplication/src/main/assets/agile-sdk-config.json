@@ -1,0 +1,16 @@
+{
+    "client": {
+        "id":"1234",
+        "type": "1"
+    },
+    "app": {
+        "id":"7",
+        "name":"com.herba.sdk.myapplication",
+        "available_on_google_playstore":"1"
+    },
+    "services": {
+        "monitoring": 1,
+        "adwords": 0
+    },
+    "timestamp": "1234567890"
+}

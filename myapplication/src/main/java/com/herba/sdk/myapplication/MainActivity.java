@@ -10,6 +10,14 @@ import android.widget.EditText;
 import com.ads.agile.AgileLog;
 import com.ads.agile.AgileTransaction;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+
 public class MainActivity extends AppCompatActivity {
 
     private String TAG = this.getClass().getSimpleName();
@@ -46,26 +54,4 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Log.d(TAG,"onBackPressed");
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy()");
-        agileLog.sessionComplete();
-        if (isFinishing()) {
-            Log.d(TAG, "onDestroy() --> isFinishing()");
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop()");
-    }
 }

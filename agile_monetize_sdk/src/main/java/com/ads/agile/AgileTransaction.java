@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,12 +22,14 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.ads.agile.room.LogEntity;
 import com.ads.agile.room.LogModel;
+import com.ads.agile.utils.AppLocationService;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.location.FusedLocationProviderClient;
+/*import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -34,7 +37,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.location.SettingsClient;*/
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -42,6 +45,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -101,11 +105,11 @@ public class AgileTransaction {
     private String AndroidPlatform;
 
 
-    private FusedLocationProviderClient mFusedLocationClient;
+  /*  private FusedLocationProviderClient mFusedLocationClient;
     private SettingsClient mSettingsClient;
     private LocationRequest mLocationRequest;
     private LocationSettingsRequest mLocationSettingsRequest;
-    private LocationCallback mLocationCallback;
+    private LocationCallback mLocationCallback;*/
     private Location mCurrentLocation;
 
     public static final long   UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
@@ -116,27 +120,54 @@ public class AgileTransaction {
     private Geocoder                    geocoder;
     private List<Address> addresses;
 
-    private String                      _latitude  = "false",
-            _longitude = "false",
-            address    = "unknown",
-            city       = "unknown",
-            state      = "unknown",
-            country    = "unknown",
-            postalCode = "unknown",
-            _google_token;
+    private String                      _latitude  = "false", _longitude = "false";
+    private String                      _curlatitude  = "false", _curlongitude = "false";
 
-
+    AppLocationService appLocationService;
     public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity, @NonNull String eventType) {
         this.context = context;
         this.eventType = eventType;
         transactionInitFlag = true;
-        Bundle metadata = getMetaData(context);
-        appId= metadata.getString("com.agile.sdk.ApplicationId");
+       /* Bundle metadata = getMetaData(context);
+        appId= metadata.getString("com.agile.sdk.ApplicationId");*/
+
+
+        try {
+            JSONObject obj = new JSONObject(loadJSONFromAsset());
+            JSONObject m_jArry = obj.getJSONObject("app");
+            String IdPacakageName = m_jArry.getString("name");
+            String google_playstore = m_jArry.getString("available_on_google_playstore");
+
+            if (context.getPackageName().equalsIgnoreCase(google_playstore)){
+
+                appId = m_jArry.getString("id");
+               // Log.d(TAG,"DAta GET    ="+AppId+"\n"+IdPacakageName);
+
+            }
+            else {
+                appId = m_jArry.getString("id");
+                Log.e(TAG,"Warning : Googgle Playstore not available in playstore ");
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
 
 
+        appLocationService = new AppLocationService(context);
+        try{
+            Location nwLocation = appLocationService.getLocation(LocationManager.NETWORK_PROVIDER);
 
+            if (nwLocation != null) {
+                _latitude = String.valueOf(nwLocation.getLatitude());
+                _longitude = String.valueOf(nwLocation.getLongitude());
 
+            }
+        }
+        catch (Exception e){
+
+        }
 
         logModel = ViewModelProviders.of(activity).get(LogModel.class);
         logModel.getLiveListAllLog().observe(activity, new Observer<List<LogEntity>>() {
@@ -157,8 +188,26 @@ public class AgileTransaction {
             setPreferences(context, AGILE_CRASH_COUNTER, "1");
             counter = 1;
         }
-        initLocation(activity);
+       // initLocation(activity);
     }
+
+    public String loadJSONFromAsset() {
+        String json = null;
+        try {
+            InputStream is = context.getAssets().open("agile-sdk-config.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        //  Log.d(TAG,"Excption  ="+json);
+        return json;
+    }
+
 
     public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity) {
         this.context = context;
@@ -386,7 +435,7 @@ public class AgileTransaction {
         return WifiState;
     }
 
-    private void initLocation(final Activity context) {
+  /*  private void initLocation(final Activity context) {
 
         geocoder = new Geocoder(context, Locale.getDefault());
 
@@ -469,7 +518,7 @@ public class AgileTransaction {
 
         }
 
-    }
+    }*/
     private static String getOsVersionName() {
         Field[] fields = Build.VERSION_CODES.class.getFields();
         String name =  fields[Build.VERSION.SDK_INT + 1].getName();
@@ -622,6 +671,9 @@ public class AgileTransaction {
 
         argumentValidation(eventType);  //validation in sendLogToServer
 
+
+
+
         AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
         Call<ResponseBody> responseBodyCall = service.createUser
                 (appId,
@@ -630,7 +682,7 @@ public class AgileTransaction {
                         values,
                         time,
                         advertising_id,wifiState,deviceOperator,deviceLanguage,deviceModel,deviceOsName,deviceOsVersion,
-                        deviceAppVersion,sdkversion,latittude,longitude,androidPlatform,localDateTime,localTimezone
+                        deviceAppVersion,sdkversion,_longitude,_latitude,androidPlatform,localDateTime,localTimezone,"false","false","",""
                 );
         responseBodyCall.enqueue(new Callback<ResponseBody>() {
             @Override
