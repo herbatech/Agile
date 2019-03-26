@@ -10,21 +10,12 @@ import android.widget.EditText;
 import com.ads.agile.AgileLog;
 import com.ads.agile.AgileTransaction;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-
 public class MainActivity extends AppCompatActivity {
 
     private String TAG = this.getClass().getSimpleName();
     private AgileLog agileLog;
     private AgileTransaction agileTransaction;
-
-
+    boolean screen_on=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
         agileTransaction = new AgileTransaction(getApplicationContext(), this, "ag_transaction");
         agileLog = new AgileLog(getApplicationContext(), this, agileTransaction);
+
         findViewById(R.id.book1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,7 +43,30 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (screen_on){
+            agileLog.agileAppScreenOn();
+        }
+        else {
+            agileLog.agileAppStart();
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        agileLog.sessionComplete();
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        screen_on=true;
+        agileLog.agileAppScreenOff();
+        Log.d(TAG,"onSaveInstanceState  =");
+        super.onSaveInstanceState(outState);
+    }
+
 
 }

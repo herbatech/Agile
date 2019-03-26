@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.herba.sdk.myapplication">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.READ_LOGS"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -28,20 +29,6 @@
         <meta-data
             android:name="com.agile.sdk.ApplicationId"
             android:value="@string/Agile_App_Id" />
-        <!--
-        <service
-            android:name="com.ads.agile.utils.AgileService"
-            android:label="AgileLog service"
-            android:permission="android.permission.BIND_JOB_SERVICE" >
-        </service>
-
-        <receiver android:name="com.ads.agile.utils.AgileReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="com.journaldev.AN_INTENT"/>
-            </intent-filter>
-        </receiver>
-        -->
         <activity android:name=".SecondActivity" />
     </application>
 

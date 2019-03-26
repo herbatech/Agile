@@ -10,7 +10,6 @@ import com.ads.agile.AgileTransaction;
 public class ForthActivity extends AppCompatActivity {
 
     private String TAG = this.getClass().getSimpleName();
-    private AgileLog agileLog;
 
     private AgileTransaction agileTransaction;
 
@@ -20,7 +19,6 @@ public class ForthActivity extends AppCompatActivity {
         setContentView(R.layout.activity_forth);
 
         agileTransaction = new AgileTransaction(getApplicationContext(), this, "ag_transaction");
-        agileLog = new AgileLog(getApplicationContext(), this, agileTransaction);
         findViewById(R.id.book1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

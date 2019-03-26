@@ -11,7 +11,6 @@ import com.ads.agile.AgileTransaction;
 
 public class FirstActivity extends AppCompatActivity {
     private String TAG = this.getClass().getSimpleName();
-    private AgileLog agileLog;
 
     private AgileTransaction agileTransaction;
     EditText event_type;
@@ -22,7 +21,6 @@ public class FirstActivity extends AppCompatActivity {
         event_type=findViewById(R.id.event_type);
 
         agileTransaction = new AgileTransaction(getApplicationContext(), this, "ag_transaction");
-        agileLog = new AgileLog(getApplicationContext(), this, agileTransaction);
         findViewById(R.id.book1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.ads.agile.room.LogEntity;
 import com.ads.agile.room.LogModel;
 import com.ads.agile.utils.AppLocationService;
+import com.ads.agile.utils.UtilConfig;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 /*import com.google.android.gms.location.FusedLocationProviderClient;
@@ -103,7 +104,7 @@ public class AgileTransaction {
     private String localDateTime;
     private String localTimezone;
     private String AndroidPlatform;
-
+    String packagename;
 
   /*  private FusedLocationProviderClient mFusedLocationClient;
     private SettingsClient mSettingsClient;
@@ -124,6 +125,9 @@ public class AgileTransaction {
     private String                      _curlatitude  = "false", _curlongitude = "false";
 
     AppLocationService appLocationService;
+    UtilConfig dataProccessor;
+
+    int i=0;
     public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity, @NonNull String eventType) {
         this.context = context;
         this.eventType = eventType;
@@ -132,20 +136,24 @@ public class AgileTransaction {
         appId= metadata.getString("com.agile.sdk.ApplicationId");*/
 
 
+          dataProccessor = new UtilConfig(context);
+
         try {
             JSONObject obj = new JSONObject(loadJSONFromAsset());
             JSONObject m_jArry = obj.getJSONObject("app");
             String IdPacakageName = m_jArry.getString("name");
             String google_playstore = m_jArry.getString("available_on_google_playstore");
 
-            if (context.getPackageName().equalsIgnoreCase(google_playstore)){
+            if (google_playstore.equalsIgnoreCase("1")){
 
                 appId = m_jArry.getString("id");
+                packagename="";
                // Log.d(TAG,"DAta GET    ="+AppId+"\n"+IdPacakageName);
 
             }
             else {
                 appId = m_jArry.getString("id");
+                packagename=context.getPackageName();
                 Log.e(TAG,"Warning : Googgle Playstore not available in playstore ");
             }
 
@@ -407,6 +415,10 @@ public class AgileTransaction {
      */
     public void commitTransaction() {
 
+        if (eventType.equalsIgnoreCase("ag_transaction")){
+            i += 1;
+            dataProccessor.setInt("TransactionCount",i);
+        }
         if (isTransaction) {
             transactionInitFlag = false;
             Log.d(TAG, "(commitTransaction) data object = " + jsonObject.toString());
@@ -682,7 +694,7 @@ public class AgileTransaction {
                         values,
                         time,
                         advertising_id,wifiState,deviceOperator,deviceLanguage,deviceModel,deviceOsName,deviceOsVersion,
-                        deviceAppVersion,sdkversion,_longitude,_latitude,androidPlatform,localDateTime,localTimezone,"false","false","",""
+                        deviceAppVersion,sdkversion,_longitude,_latitude,androidPlatform,localDateTime,localTimezone,"","","",""
                 );
         responseBodyCall.enqueue(new Callback<ResponseBody>() {
             @Override
