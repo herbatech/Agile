@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
                 EditText bonusname=findViewById(R.id.event_type1);
                 agileLog.set("bouns_id",bonusId.getText().toString());
                 agileLog.set("bouns_name",bonusname.getText().toString());
-                agileLog.trackEvent("ag_clicked");
+                agileLog.trackEvent("ag_click");
             }
         });
 
@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
         screen_on=true;
         agileLog.agileAppScreenOff();
-        Log.d(TAG,"onSaveInstanceState  =");
         super.onSaveInstanceState(outState);
     }
 

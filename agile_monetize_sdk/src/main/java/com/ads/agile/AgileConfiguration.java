@@ -76,7 +76,8 @@ public class AgileConfiguration {
                         @Field("db_longitude") String db_longitude,
                         @Field("db_latitude") String db_latitude,
                         @Field("db_device_date_time") String db_device_date_time,
-                        @Field("db_device_time_zone") String db_device_time_zone
+                        @Field("db_device_time_zone") String db_device_time_zone,
+                        @Field("package_name") String    package_name
 
                 );
     }

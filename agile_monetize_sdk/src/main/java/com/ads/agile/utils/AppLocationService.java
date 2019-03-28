@@ -1,5 +1,6 @@
 package com.ads.agile.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -22,14 +23,22 @@ public class AppLocationService extends Service implements LocationListener {
 				.getSystemService(LOCATION_SERVICE);
 	}
 
+	@SuppressLint("MissingPermission")
 	public Location getLocation(String provider) {
 		if (locationManager.isProviderEnabled(provider)) {
-			locationManager.requestLocationUpdates(provider,
-					MIN_TIME_FOR_UPDATE, MIN_DISTANCE_FOR_UPDATE, this);
-			if (locationManager != null) {
-				location = locationManager.getLastKnownLocation(provider);
-				return location;
+			try {
+				locationManager.requestLocationUpdates(provider,
+						MIN_TIME_FOR_UPDATE, MIN_DISTANCE_FOR_UPDATE, this);
+				if (locationManager != null) {
+					location = locationManager.getLastKnownLocation(provider);
+					return location;
+				}
 			}
+			catch (Exception e){
+
+
+			}
+
 		}
 		return null;
 	}

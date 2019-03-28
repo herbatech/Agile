@@ -694,7 +694,7 @@ public class AgileTransaction {
                         values,
                         time,
                         advertising_id,wifiState,deviceOperator,deviceLanguage,deviceModel,deviceOsName,deviceOsVersion,
-                        deviceAppVersion,sdkversion,_longitude,_latitude,androidPlatform,localDateTime,localTimezone,"","","",""
+                        deviceAppVersion,sdkversion,_longitude,_latitude,androidPlatform,localDateTime,localTimezone,"","","","",packagename
                 );
         responseBodyCall.enqueue(new Callback<ResponseBody>() {
             @Override
