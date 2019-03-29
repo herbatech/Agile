@@ -1,12 +1,20 @@
 package com.ads.agile;
 
 public class AgEventType {
+
+
+    public static final String AG_EVENT_CLICK = "ag_click";
+    public static final String AG_EVENT_LOG_PAGE = "event_log_page_activity";
+    public static final String AG_EVENT_TRANSACTION = "ag_transaction";
+    public static final String AG_EVENT_SESSION = "event_session";
+    public static final String AG_EVENT_SCRREN_OFF = "event_screen_off";
+    public static final String AG_EVENT_SCRREN_ON = "event_screen_on";
+    public static final String AG_EVENT_SCRREN_START = "event_app_start";
+    public static final String AG_EVENT_INSTALL = "event_install";
 /*
     //constant
     public static final String EVENT_PRODUCT = "PRODUCT";
     public static final String EVENT_COUNTER = "COUNTER";
-
-
     public static final String LOGIN = "ag_login";
     public static final String COMPLETE_REGISTRATION = "ag_complete_registration";
     public static final String PURCHASE = "ag_purchase";

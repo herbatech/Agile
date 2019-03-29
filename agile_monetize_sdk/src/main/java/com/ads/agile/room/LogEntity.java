@@ -35,6 +35,11 @@ public class LogEntity {
     public String android_id;
 
     @NonNull
+    public String Date_time;
+
+
+
+    @NonNull
     public String time = new LogTime().getTime();
 
     @NonNull
@@ -63,6 +68,11 @@ public class LogEntity {
         this.android_id = android_id;
     }
 
+
+    public void setDate_time(String date_time) {
+        this.Date_time = date_time;
+    }
+
     public void setTime(String time) {
         this.time = time;
     }
@@ -85,6 +95,10 @@ public class LogEntity {
 
     public String getTime() {
         return time;
+    }
+
+    public String getDate_time() {
+        return Date_time;
     }
 
 /*    public LogEntity(String event_type, String app_id, String value, String android_id, String time) {

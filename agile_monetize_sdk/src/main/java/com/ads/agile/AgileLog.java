@@ -471,12 +471,12 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             j = event_screen_onsharedpreferences.getInt(event_screen_onvalue,0);
             Transcationcount=dataProccessor.getInt("TransactionCount",0);
 
-            set("param_duration", seconds);
-            set("param_events_count",i);
-            set("param_transaction_count",Transcationcount);
-            set("param_screen_instance_count",j+1);
-            set("param_screen_duration",seconds11);
-            trackEvent("event_session");
+            set(AgEventParameter.AG_PARAMS_DURATION, seconds);
+            set(AgEventParameter.AG_PARAMS_EVENT_COUNT,i);
+            set(AgEventParameter.AG_PARAMS_TRANSACTION_COUNT,Transcationcount);
+            set(AgEventParameter.AG_PARAMS_INSTANCE_COUNT,j+1);
+            set(AgEventParameter.AG_PARAMS_SCREEN_DURATION,seconds11);
+            trackEvent(AgEventType.AG_EVENT_SESSION);
 
 
             editor1.clear();
@@ -500,8 +500,8 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         if (getAdvertisingId() != null) {
             boolean isFirstTime = MyPreferences.isFirst(context);
             if (isFirstTime) {
-                set("param_install_date_time", ApkInstallDate(installed));
-                trackEvent("event_install");
+                set(AgEventParameter.AG_PARAMS_INSTALL_DATE, ApkInstallDate(installed));
+                trackEvent(AgEventType.AG_EVENT_INSTALL);
                 //  Log.d(TAG, "log cant send to server, due to the validation failed in set method of AgileTransaction class111111111");
             }
         }
@@ -510,13 +510,13 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     public void agileAppStart() {
         startRun=true;
         Timer();
-        trackEvent("event_app_start");
+        trackEvent(AgEventType.AG_EVENT_SCRREN_START);
 
     }
 
     public void agileAppScreenOn() {
         startRun=true;
-        trackEvent("event_screen_on");
+        trackEvent(AgEventType.AG_EVENT_SCRREN_ON);
        /* long lasti = last_screen_onsharedpreferences.getLong(last_screen_onvalue, 0);
         long lastval=lasti+t3;
         long seconds = (endtime - starttime) / 1000;
@@ -535,10 +535,10 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             i = sharedpreferences.getInt(value, 0);
             Transcationcount=dataProccessor.getInt("TransactionCount",0);
             //  Log.d(TAG,"doneCount  ="+evntdonecount);
-            set("param_duration",seconds);
-            set("param_events_count",i);
-            set("param_transaction_count",Transcationcount);
-            trackEvent("event_screen_off");
+            set(AgEventParameter.AG_PARAMS_DURATION,seconds);
+            set(AgEventParameter.AG_PARAMS_EVENT_COUNT,i);
+            set(AgEventParameter.AG_PARAMS_TRANSACTION_COUNT,Transcationcount);
+            trackEvent(AgEventType.AG_EVENT_SCRREN_OFF);
         }
         catch (Exception e){
 
@@ -620,12 +620,16 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         /**
          * if the transaction is enable
          */
-        if (eventType.equalsIgnoreCase("ag_click")){
+        if (eventType.equalsIgnoreCase(AgEventType.AG_EVENT_CLICK)){
             i += 1;
             editor1.putInt(value, i);
             editor1.apply();
         }
-        if (eventType.equalsIgnoreCase("event_screen_on")){
+        if (eventType.equalsIgnoreCase(AgEventType.AG_EVENT_LOG_PAGE)){
+            set(AgEventParameter.AG_PARAMS_ACTIVITY_PAGE,activity.getClass().getSimpleName());
+
+        }
+        if (eventType.equalsIgnoreCase(AgEventType.AG_EVENT_SCRREN_ON)){
             j += 1;
             event_screen_oneditor1.putInt(event_screen_onvalue, j);
             event_screen_oneditor1.apply();
@@ -699,23 +703,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             Longitude = _longitude;
             SDkVersion = "1.1.3";
             WifiState = checkNetworkStatus(context);
-
-
-          /*  Log.d(TAG, "WifiState  =" + checkNetworkStatus(context));
-            Log.d(TAG, "DeviceLanguage  =" + DeviceLanguage);
-            Log.d(TAG, "DeviceType  =" + DeviceType);
-            Log.d(TAG, "DeviceModel  =" + DeviceModel);
-            Log.d(TAG, "DeviceOsVersion  =" + DeviceOsVersion);
-            Log.d(TAG, "DeviceOsName  =" + DeviceOsName);
-            Log.d(TAG, "DeviceAppVersion  =" + DeviceAppVersion);
-            Log.d(TAG, "Latittude  =" + _latitude);
-            Log.d(TAG, "Longitude  =" + _longitude);
-            Log.d(TAG, "AndroidPlatform  =" + AndroidPlatform);
-            Log.d(TAG, "localDateTime  =" + localDateTime);
-            Log.d(TAG, "localTimezone  =" + localTimezone);
-            Log.d(TAG, "DeviceBrand  =" + DeviceBrand);
-            Log.d(TAG, "SDkVersion  =" + SDkVersion);*/
-
             argumentValidation(eventType);  //validation in trackEvent
 
             //validate input params
@@ -734,14 +721,8 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-    /*
-        Log.d(TAG, "appId           = " + appId);
-        Log.d(TAG, "android_id      = " + android_id);
-        Log.d(TAG, "eventType       = " + eventType);
-        Log.d(TAG, "time            = " + time);
-        Log.d(TAG, "advertising_id  = " + advertising_id);*/
 
-    }
+       }
 
     /**
      * check for internet connection then perform required operation
@@ -874,6 +855,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         logEntity.setApp_id(appId);
         logEntity.setEvent_type(eventType);
         logEntity.setValue(values);
+        logEntity.setDate_time(localDateTime);
         logEntity.setAndroid_id(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
         logModel.insertLog(logEntity);
         clearLogEvent();
@@ -918,6 +900,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 String eventType = logModel.getLiveListAllLog().getValue().get(i).getEvent_type();
                 String appId = logModel.getLiveListAllLog().getValue().get(i).getApp_id();
                 String value = logModel.getLiveListAllLog().getValue().get(i).getValue();
+                String date_time = logModel.getLiveListAllLog().getValue().get(i).getDate_time();
                 long time = Long.parseLong(logModel.getLiveListAllLog().getValue().get(i).getTime());
 
              /*    Log.d(TAG, "id               = " + id);
@@ -930,7 +913,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 //call webservice to add data to database
                 eventProductLogServiceOffline(id, appId, eventType, value, time,
                         WifiState, DeviceLanguage, DeviceType, DeviceModel, DeviceOsVersion, DeviceOsName,
-                        DeviceAppVersion, _latitude, _longitude, AndroidPlatform, localDateTime, localTimezone,
+                        DeviceAppVersion, _latitude, _longitude, AndroidPlatform, date_time, localTimezone,
                         DeviceBrand, SDkVersion);
             }
             return null;
@@ -954,16 +937,9 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         String advertising_id = getAdvertisingId();
         time = (System.currentTimeMillis() - time) / 1000;
         String wifi = checkNetworkStatus(context);
-/*
-        Log.d(TAG, "id              = " + id);
-        Log.d(TAG, "eventType       = " + eventType);
-        Log.d(TAG, "appId           = " + appId);
-        Log.d(TAG, "eventalues      = " + values);
-        Log.d(TAG, "android_id      = " + Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
-        Log.d(TAG, "time            = " + time);
-        Log.d(TAG, "advertising_id  = " + advertising_id);*/
 
-        argumentValidation(eventType);  //validation in eventProductLogServiceOffline
+
+           argumentValidation(eventType);  //validation in eventProductLogServiceOffline
 
             Location nwLocation = appLocationService.getLocation(LocationManager.NETWORK_PROVIDER);
 
@@ -992,12 +968,12 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-                 Log.d(TAG, "response code, id = " + id + " = " + response.code());
+                // Log.d(TAG, "response code, id = " + id + " = " + response.code());
 
                     try {
 
                         String responseString = response.body().string();
-                            Log.d(TAG, "response body " + id + " = " + responseString);
+                         //   Log.d(TAG, "response body " + id + " = " + responseString);
 
                         JSONObject object = new JSONObject(responseString);
                         boolean status = object.getBoolean("status");
@@ -1125,6 +1101,14 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
      * @param value String data type
      */
     public void set(String key, String value) {
+        try {
+            jsonObject.put(key, value);
+        } catch (Exception e) {
+            Log.d(TAG, "(set) String String catch error = " + e.getMessage());
+        }
+    }
+
+    public void set(String key, JSONObject value) {
         try {
             jsonObject.put(key, value);
         } catch (Exception e) {

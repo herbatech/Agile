@@ -447,90 +447,6 @@ public class AgileTransaction {
         return WifiState;
     }
 
-  /*  private void initLocation(final Activity context) {
-
-        geocoder = new Geocoder(context, Locale.getDefault());
-
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
-        mSettingsClient = LocationServices.getSettingsClient(context);
-
-        mLocationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                // location is received
-                mCurrentLocation = locationResult.getLastLocation();
-                mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-
-                updateLocation();
-
-            }
-        };
-
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
-        builder.addLocationRequest(mLocationRequest);
-        mLocationSettingsRequest = builder.build();
-
-        startLocation(context);
-
-    }
-
-    private void startLocation(final Activity context) {
-        mSettingsClient
-                .checkLocationSettings(mLocationSettingsRequest)
-                .addOnSuccessListener(context, new OnSuccessListener<LocationSettingsResponse>() {
-                    @SuppressLint("MissingPermission")
-                    @Override
-                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-
-                        Log.d(TAG, "Started location updates!");
-
-                        //noinspection MissingPermission
-                        mFusedLocationClient.requestLocationUpdates(mLocationRequest,mLocationCallback, Looper.myLooper());
-
-                        updateLocation();
-                    }
-                })
-                .addOnFailureListener(context, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        int statusCode = ((ApiException) e).getStatusCode();
-                        switch (statusCode) {
-                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                                Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade location settings ");
-                                try {
-                                    // Show the dialog by calling startResolutionForResult(), and check the
-                                    // result in onActivityResult().
-                                    ResolvableApiException rae = (ResolvableApiException) e;
-                                    rae.startResolutionForResult( context, REQUEST_CHECK_SETTINGS);
-                                } catch (IntentSender.SendIntentException sie) {
-                                    Log.d(TAG, "PendingIntent unable to execute request.");
-                                }
-                                break;
-                            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                                String errorMessage = "Location settings are inadequate, and cannot be fixed here. Fix in Settings.";
-                                Log.e(TAG, errorMessage);
-                        }
-
-                        updateLocation();
-                    }
-                });
-    }
-
-
-    private void updateLocation(){
-        if (mCurrentLocation != null) {
-            _latitude    = String.valueOf(mCurrentLocation.getLatitude());
-            _longitude   = String.valueOf(mCurrentLocation.getLongitude());
-
-        }
-
-    }*/
     private static String getOsVersionName() {
         Field[] fields = Build.VERSION_CODES.class.getFields();
         String name =  fields[Build.VERSION.SDK_INT + 1].getName();
@@ -582,24 +498,6 @@ public class AgileTransaction {
         Longitude=_longitude;
         SDkVersion="1.1.3";
         WifiState=checkNetworkStatus(context);
-
-/*
-        Log.d(TAG,"WifiState  ="+checkNetworkStatus(context));
-        Log.d(TAG,"DeviceLanguage  ="+DeviceLanguage);
-        Log.d(TAG,"DeviceType  ="+DeviceType);
-        Log.d(TAG,"DeviceModel  ="+DeviceModel);
-        Log.d(TAG,"DeviceOsVersion  ="+DeviceOsVersion);
-        Log.d(TAG,"DeviceOsName  ="+DeviceOsName);
-        Log.d(TAG,"DeviceAppVersion  ="+DeviceAppVersion);
-        Log.d(TAG,"Latittude  ="+_latitude);
-        Log.d(TAG,"Longitude  ="+_longitude);
-        Log.d(TAG,"AndroidPlatform  ="+AndroidPlatform );
-        Log.d(TAG,"localDateTime  ="+localDateTime);
-        Log.d(TAG,"localTimezone  ="+localTimezone);
-        Log.d(TAG,"DeviceBrand  ="+ DeviceBrand);
-        Log.d(TAG,"SDkVersion  ="+SDkVersion);*/
-
-
 
         argumentValidation(eventType);  //validation in trackEvent
 

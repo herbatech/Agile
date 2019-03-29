@@ -2,6 +2,16 @@ package com.ads.agile;
 
 public class AgEventParameter {
 
+    public static final String AG_PARAMS_PAGE_NAME = "param_page_name";
+    public static final String AG_PARAMS_PAGE_DETAILS = "param_page_details";
+    public static final String AG_PARAMS_INSTALL_DATE = "param_install_date_time";
+    public static final String AG_PARAMS_DURATION = "param_duration";
+    public static final String AG_PARAMS_EVENT_COUNT = "param_events_count";
+    public static final String AG_PARAMS_TRANSACTION_COUNT = "param_transaction_count";
+    public static final String AG_PARAMS_INSTANCE_COUNT = "param_screen_instance_count";
+    public static final String AG_PARAMS_SCREEN_DURATION = "param_screen_duration";
+    public static final String AG_PARAMS_ACTIVITY_PAGE = "param_activity_page_name";
+
 /*    public static final String REGSITRATION_METHOD = "ag_registration_method";
     public static final String REVENUE = "ag_revenue ";
     public static final String QUANTITY = "ag_quantity";
