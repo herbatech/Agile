@@ -53,6 +53,9 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;*/
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -158,6 +161,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
     private static final int DEFAULT_BLOCK_TIME = 1000;
     private boolean mIsBlockClick;
+
     /**
      * parametric constructor
      *
@@ -181,6 +185,8 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             isTransaction = false;
         }
         appLocationService = new AppLocationService(context);
+        FirebaseApp.initializeApp(context);
+
 
 
         try{
@@ -500,8 +506,21 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         if (getAdvertisingId() != null) {
             boolean isFirstTime = MyPreferences.isFirst(context);
             if (isFirstTime) {
-                set(AgEventParameter.AG_PARAMS_INSTALL_DATE, ApkInstallDate(installed));
-                trackEvent(AgEventType.AG_EVENT_INSTALL);
+
+                FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                    @Override
+                    public void onSuccess(InstanceIdResult instanceIdResult) {
+                        String token = instanceIdResult.getToken();
+
+                        Log.d(TAG,"Token Id   get   ="+token);
+                        // send it to server
+
+                        set(AgEventParameter.AG_PARAMS_INSTALL_DATE, ApkInstallDate(installed));
+                        set(AgEventParameter.AG_PARAMS_INSTALL_TOKEN, token);
+                        trackEvent(AgEventType.AG_EVENT_INSTALL);
+                    }
+                });
+
                 //  Log.d(TAG, "log cant send to server, due to the validation failed in set method of AgileTransaction class111111111");
             }
         }

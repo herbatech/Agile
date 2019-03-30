@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.ads.agile.AgEventType;
 import com.ads.agile.AgileLog;
 import com.ads.agile.AgileTransaction;
 
@@ -18,7 +19,7 @@ public class ForthActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forth);
 
-        agileTransaction = new AgileTransaction(getApplicationContext(), this, "ag_transaction");
+        agileTransaction = new AgileTransaction(getApplicationContext(), this,AgEventType.AG_EVENT_TRANSACTION);
         findViewById(R.id.book1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

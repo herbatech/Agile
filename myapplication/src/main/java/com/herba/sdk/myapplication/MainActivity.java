@@ -7,8 +7,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import com.ads.agile.AgEventParameter;
+import com.ads.agile.AgEventType;
 import com.ads.agile.AgileLog;
 import com.ads.agile.AgileTransaction;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        agileTransaction = new AgileTransaction(getApplicationContext(), this, "ag_transaction");
+        agileTransaction = new AgileTransaction(getApplicationContext(), this, AgEventType.AG_EVENT_TRANSACTION);
         agileLog = new AgileLog(getApplicationContext(), this, agileTransaction);
 
         findViewById(R.id.book1).setOnClickListener(new View.OnClickListener() {
@@ -30,9 +37,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 EditText bonusId=findViewById(R.id.event_type);
                 EditText bonusname=findViewById(R.id.event_type1);
+
                 agileLog.set("bouns_id",bonusId.getText().toString());
                 agileLog.set("bouns_name",bonusname.getText().toString());
-                agileLog.trackEvent("ag_click");
+                agileLog.trackEvent(AgEventType.AG_EVENT_CLICK);
+
             }
         });
 
@@ -41,6 +50,27 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i=new Intent(MainActivity.this,FirstActivity.class);
                 startActivity(i);
+            }
+        });
+
+        findViewById(R.id.PageLoad).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                try {
+                    JSONObject page_details=new JSONObject();
+                    page_details.put("ProductId", "10");
+                    page_details.put("cost", "500");
+
+                    agileLog.set(AgEventParameter.AG_PARAMS_PAGE_NAME,"ProductPage");
+                    agileLog.set(AgEventParameter.AG_PARAMS_PAGE_DETAILS,page_details);
+                    agileLog.trackEvent(AgEventType.AG_EVENT_LOG_PAGE);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
     }
