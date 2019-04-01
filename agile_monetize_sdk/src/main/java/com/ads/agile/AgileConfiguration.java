@@ -145,12 +145,9 @@ public class AgileConfiguration {
             char c = param.charAt(i);
 
             if (Character.isLetterOrDigit(c) || c == '_' || c == '-') {
-                //print valid character
-                //Log.d(TAG, c + " is valid");
+
             } else {
-                //print invalid character and
-                //break the loop and throw exception
-                //Log.d(TAG, c + " is invalid, break the loop");
+
                 throw new IllegalArgumentException(param + " only supports a-z or A-Z or 0-9 or _ or - ");
             }
         }

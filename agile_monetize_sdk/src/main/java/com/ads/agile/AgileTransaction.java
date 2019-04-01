@@ -106,21 +106,6 @@ public class AgileTransaction {
     private String AndroidPlatform;
     String packagename;
 
-  /*  private FusedLocationProviderClient mFusedLocationClient;
-    private SettingsClient mSettingsClient;
-    private LocationRequest mLocationRequest;
-    private LocationSettingsRequest mLocationSettingsRequest;
-    private LocationCallback mLocationCallback;*/
-    private Location mCurrentLocation;
-
-    public static final long   UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
-    public static final long   FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
-    public static final int    REQUEST_CHECK_SETTINGS = 100;
-
-    private String                      mLastUpdateTime;
-    private Geocoder                    geocoder;
-    private List<Address> addresses;
-
     private String                      _latitude  = "false", _longitude = "false";
     private String                      _curlatitude  = "false", _curlongitude = "false";
 
@@ -132,11 +117,8 @@ public class AgileTransaction {
         this.context = context;
         this.eventType = eventType;
         transactionInitFlag = true;
-       /* Bundle metadata = getMetaData(context);
-        appId= metadata.getString("com.agile.sdk.ApplicationId");*/
 
-
-          dataProccessor = new UtilConfig(context);
+        dataProccessor = new UtilConfig(context);
 
         try {
             JSONObject obj = new JSONObject(loadJSONFromAsset());
@@ -181,7 +163,7 @@ public class AgileTransaction {
         logModel.getLiveListAllLog().observe(activity, new Observer<List<LogEntity>>() {
             @Override
             public void onChanged(List<LogEntity> notes) {
-                Log.d(TAG, "size count = " + notes.size());
+               // Log.d(TAG, "size count = " + notes.size());
                 size = notes.size();
             }
         });
@@ -224,7 +206,7 @@ public class AgileTransaction {
         logModel.getLiveListAllLog().observe(activity, new Observer<List<LogEntity>>() {
             @Override
             public void onChanged(List<LogEntity> notes) {
-                Log.d(TAG, "size count = " + notes.size());
+              //  Log.d(TAG, "size count = " + notes.size());
                 size = notes.size();
             }
         });
@@ -258,7 +240,7 @@ public class AgileTransaction {
             try {
                 jsonObject.put(key, value);
             } catch (JSONException e) {
-                Log.d(TAG, "(set) String int catch error = " + e.getMessage());
+               // Log.d(TAG, "(set) String int catch error = " + e.getMessage());
             }
         } else {
             if (String.valueOf(counter).equalsIgnoreCase("1")) {
@@ -266,7 +248,7 @@ public class AgileTransaction {
                 throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
             } else {
                 //setPreferences(context,AGILE_CRASH_COUNTER,"1");
-                Log.d(TAG, "crash suppressed");
+              //  Log.d(TAG, "crash suppressed");
             }
         }
     }
@@ -281,7 +263,7 @@ public class AgileTransaction {
             try {
                 jsonObject.put(key, value);
             } catch (JSONException e) {
-                Log.d(TAG, "(set) String float catch error = " + e.getMessage());
+               // Log.d(TAG, "(set) String float catch error = " + e.getMessage());
             }
         } else {
             if (String.valueOf(counter).equalsIgnoreCase("1")) {
@@ -289,7 +271,7 @@ public class AgileTransaction {
                 throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
             } else {
                 //setPreferences(context,AGILE_CRASH_COUNTER,"1");
-                Log.d(TAG, "crash suppressed");
+                //Log.d(TAG, "crash suppressed");
             }
         }
     }
@@ -304,7 +286,7 @@ public class AgileTransaction {
             try {
                 jsonObject.put(key, value);
             } catch (JSONException e) {
-                Log.d(TAG, "(set) String long catch error = " + e.getMessage());
+               // Log.d(TAG, "(set) String long catch error = " + e.getMessage());
             }
         } else {
             if (String.valueOf(counter).equalsIgnoreCase("1")) {
@@ -312,7 +294,7 @@ public class AgileTransaction {
                 throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
             } else {
                 //setPreferences(context,AGILE_CRASH_COUNTER,"1");
-                Log.d(TAG, "crash suppressed");
+               // Log.d(TAG, "crash suppressed");
             }
         }
     }
@@ -327,7 +309,7 @@ public class AgileTransaction {
             try {
                 jsonObject.put(key, value);
             } catch (Exception e) {
-                Log.d(TAG, "(set) String String catch error = " + e.getMessage());
+                //Log.d(TAG, "(set) String String catch error = " + e.getMessage());
             }
         } else {
             if (String.valueOf(counter).equalsIgnoreCase("1")) {
@@ -335,7 +317,7 @@ public class AgileTransaction {
                 throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
             } else {
                 //setPreferences(context,AGILE_CRASH_COUNTER,"1");
-                Log.d(TAG, "crash suppressed");
+               // Log.d(TAG, "crash suppressed");
             }
         }
     }
@@ -350,7 +332,7 @@ public class AgileTransaction {
             try {
                 jsonObject.put(key, value);
             } catch (Exception e) {
-                Log.d(TAG, "(set) String boolean catch error = " + e.getMessage());
+               // Log.d(TAG, "(set) String boolean catch error = " + e.getMessage());
             }
         } else {
             if (String.valueOf(counter).equalsIgnoreCase("1")) {
@@ -358,7 +340,7 @@ public class AgileTransaction {
                 throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
             } else {
                 //setPreferences(context,AGILE_CRASH_COUNTER,"1");
-                Log.d(TAG, "crash suppressed");
+                //Log.d(TAG, "crash suppressed");
             }
         }
     }
@@ -373,7 +355,7 @@ public class AgileTransaction {
             try {
                 jsonObject.put(key, value);
             } catch (Exception e) {
-                Log.d(TAG, "(set) String short catch error = " + e.getMessage());
+               // Log.d(TAG, "(set) String short catch error = " + e.getMessage());
             }
         } else {
             if (String.valueOf(counter).equalsIgnoreCase("1")) {
@@ -381,7 +363,7 @@ public class AgileTransaction {
                 throw new IllegalStateException(key + " => " + value + ", transaction can not be initiated, since the transaction is not started");
             } else {
                 //setPreferences(context,AGILE_CRASH_COUNTER,"1");
-                Log.d(TAG, "crash suppressed");
+              //  Log.d(TAG, "crash suppressed");
             }
         }
     }
@@ -421,10 +403,10 @@ public class AgileTransaction {
         }
         if (isTransaction) {
             transactionInitFlag = false;
-            Log.d(TAG, "(commitTransaction) data object = " + jsonObject.toString());
+          //  Log.d(TAG, "(commitTransaction) data object = " + jsonObject.toString());
             trackTransaction(eventType, appId);
         } else {
-            Log.d(TAG, "transaction terminated, due to not found instance of AgileTransaction");
+        //    Log.d(TAG, "transaction terminated, due to not found instance of AgileTransaction");
         }
     }
 
@@ -509,7 +491,7 @@ public class AgileTransaction {
         ) {
             sendLog(appId, android_id, eventType, getTransaction(), time, advertising_id);
         } else {
-            Log.d(TAG, "params is empty");
+           // Log.d(TAG, "params is empty");
             throw new IllegalArgumentException("param is empty for trackTransaction method");
         }
 
@@ -537,7 +519,7 @@ public class AgileTransaction {
 
         long l = prefs.getLong(dateTimeKey, new Date().getTime());
 
-        Log.d(TAG, "currentTimeValue     =="+l);
+      //  Log.d(TAG, "currentTimeValue     =="+l);
 
        if (isConnected(context)) {
             sendLogToServer
@@ -554,7 +536,7 @@ public class AgileTransaction {
                     );
         } else {
             //save data into sqlite database
-            Log.d(TAG, "network not connected");
+         //   Log.d(TAG, "network not connected");
             sendLogToDatabase
                     (
                             appId,

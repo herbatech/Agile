@@ -178,10 +178,10 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
         //check for transaction instance
         if (agileTransaction instanceof AgileTransaction) {
-            Log.d(TAG, "instance agileTransaction exist");
+           // Log.d(TAG, "instance agileTransaction exist");
             isTransaction = true;
         } else {
-            Log.d(TAG, "instance not agileTransaction exist");
+            //Log.d(TAG, "instance not agileTransaction exist");
             isTransaction = false;
         }
         appLocationService = new AppLocationService(context);
@@ -209,18 +209,25 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             JSONObject m_obj = obj.getJSONObject("app");
             String IdPacakageName = m_obj.getString("name");
             String google_playstore = m_obj.getString("available_on_google_playstore");
+            String trace_app_uninstall = m_obj.getString("trace_app_uninstall");
 
             if (google_playstore.equalsIgnoreCase("1")){
-
                 AppId = m_obj.getString("id");
                 packagename="";
-                Log.d(TAG,"DAta GET    ="+AppId+"\n"+IdPacakageName);
+               // Log.d(TAG,"DAta GET    ="+AppId+"\n"+IdPacakageName);
+                if (trace_app_uninstall.equalsIgnoreCase("1")){
+                    agileUninstall();
+                }
 
             }
             else {
                 AppId = m_obj.getString("id");
                 packagename=context.getPackageName();
-                Log.e(TAG,"Warning : Googgle Playstore not available Your App");
+
+                if (trace_app_uninstall.equalsIgnoreCase("1")){
+                    agileUninstall();
+                }
+                Log.e(TAG,"Warning : Googgle Playstore not available on Your App");
             }
 
         } catch (JSONException e) {
@@ -261,7 +268,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         logModel.getLiveListAllLog().observe(activity, new Observer<List<LogEntity>>() {
             @Override
             public void onChanged(List<LogEntity> notes) {
-                Log.d(TAG, "size count = " + notes.size());
+               // Log.d(TAG, "size count = " + notes.size());
                 size = notes.size();
             }
         });
@@ -344,11 +351,11 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
         if (!TextUtils.isEmpty(getPreferences(context, AGILE_ID)))//if it is not empty
         {
-            Log.d(TAG, "google adv id found, now accesing to it");
+          //  Log.d(TAG, "google adv id found, now accesing to it");
             result[0] = getPreferences(context, AGILE_ID);
         } else//if it is empty
         {
-            Log.d(TAG, "google adv id not found, now accesing to it");
+          //  Log.d(TAG, "google adv id not found, now accesing to it");
             if (checkForPlayService(context)) {
 
                 new Thread(new Runnable() {
@@ -357,19 +364,19 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                             AdvertisingIdClient.AdInfo adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context);
                             String advertisingId = adInfo.getId();
                             result[0] = advertisingId;
-                            Log.d(TAG, "(getAdvertisingId) Google advertisingId = " + advertisingId);
+                          //  Log.d(TAG, "(getAdvertisingId) Google advertisingId = " + advertisingId);
                             boolean optOutEnabled = adInfo.isLimitAdTrackingEnabled();
                             //save google ad id into shared preference
                             setPreferences(context, AGILE_ID, advertisingId);
                             firstTime = true;
-                            Log.d(TAG, "(getAdvertisingId) Google optOutEnabled = " + optOutEnabled);
+                           // Log.d(TAG, "(getAdvertisingId) Google optOutEnabled = " + optOutEnabled);
                         } catch (Exception e) {
-                            Log.d(TAG, "(getAdvertisingId) catch error" + e.getMessage());
+                           // Log.d(TAG, "(getAdvertisingId) catch error" + e.getMessage());
                         }
                     }
                 }).start();
             } else {
-                Log.d(TAG, "play service have some issue");
+               // Log.d(TAG, "play service have some issue");
             }
         }
         return result[0];
@@ -466,10 +473,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
       //  Log.d(TAG,"Timer Date  ="+seconds11);
         try {
 
-          /*  int hours = (int) (mills / (1000 * 60 * 60));
-            int mins = (int) (mills / (1000 * 60)) % 60;
-            String diff = hours + ":" + mins; // updated value every1 second*/
-
             Date date2 = new Date();
             long mills = date2.getTime() - date1.getTime();
             seconds = TimeUnit.MILLISECONDS.toSeconds(mills);
@@ -477,7 +480,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             j = event_screen_onsharedpreferences.getInt(event_screen_onvalue,0);
             Transcationcount=dataProccessor.getInt("TransactionCount",0);
 
-            set(AgEventParameter.AG_PARAMS_DURATION, seconds);
+            set(AgEventParameter.AG_PARAMS_DURATION, seconds+1);
             set(AgEventParameter.AG_PARAMS_EVENT_COUNT,i);
             set(AgEventParameter.AG_PARAMS_TRANSACTION_COUNT,Transcationcount);
             set(AgEventParameter.AG_PARAMS_INSTANCE_COUNT,j+1);
@@ -500,30 +503,39 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
     }
 
+    public void agileUninstall(){
+        try {
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                String token = instanceIdResult.getToken();
+                // send it to server
+                boolean isFirstTime = MyPreferencesToken.isFirstToken(context);
+                if (isFirstTime) {
+                    set(AgEventParameter.AG_PARAMS_INSTALL_TOKEN, token);
+                    trackEvent(AgEventType.AG_EVENT_UNINSTALL);
+                }
+            }
+        });
+
+    }
+    catch (Exception e){
+
+        //Log.d(TAG,"Excption  ="+e.getMessage());
+
+        }
+    }
+
     public void agileInstall() {
-        //  isFirstTime();
-        //   Log.d(TAG, "log cant send to server, due to the validation failed in set method of AgileTransaction class111111111  "+  BuildConfig.Base_URL);
-        if (getAdvertisingId() != null) {
+       if (getAdvertisingId() != null) {
+
             boolean isFirstTime = MyPreferences.isFirst(context);
             if (isFirstTime) {
+                set(AgEventParameter.AG_PARAMS_INSTALL_DATE, ApkInstallDate(installed));
+                trackEvent(AgEventType.AG_EVENT_INSTALL);
 
-                FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
-                    @Override
-                    public void onSuccess(InstanceIdResult instanceIdResult) {
-                        String token = instanceIdResult.getToken();
-
-                        Log.d(TAG,"Token Id   get   ="+token);
-                        // send it to server
-
-                        set(AgEventParameter.AG_PARAMS_INSTALL_DATE, ApkInstallDate(installed));
-                        set(AgEventParameter.AG_PARAMS_INSTALL_TOKEN, token);
-                        trackEvent(AgEventType.AG_EVENT_INSTALL);
-                    }
-                });
-
-                //  Log.d(TAG, "log cant send to server, due to the validation failed in set method of AgileTransaction class111111111");
             }
-        }
+       }
     }
 
     public void agileAppStart() {
@@ -536,13 +548,8 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     public void agileAppScreenOn() {
         startRun=true;
         trackEvent(AgEventType.AG_EVENT_SCRREN_ON);
-       /* long lasti = last_screen_onsharedpreferences.getLong(last_screen_onvalue, 0);
-        long lastval=lasti+t3;
-        long seconds = (endtime - starttime) / 1000;
-        Log.d(TAG,"last time  last22   ="+ seconds);
-        starttime = System.currentTimeMillis();*/
 
-    }
+      }
 
     public void agileAppScreenOff() {
         startRun=false;
@@ -587,7 +594,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
     @Override
     public void onConnected() {
-        Log.d(TAG, "MainActivity connected to network via AgileLog");
+       // Log.d(TAG, "MainActivity connected to network via AgileLog");
 
         try {
             syncLog();
@@ -619,7 +626,22 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     }
 
 
+    public static class MyPreferencesToken {
 
+        private static final String MY_PREFERENCES_TOKEN = "my_preferences_TOKEN";
+
+        public static boolean isFirstToken(Context context) {
+            final SharedPreferences reader = context.getSharedPreferences(MY_PREFERENCES_TOKEN, Context.MODE_PRIVATE);
+            final boolean first = reader.getBoolean("is_first_toktn", true);
+            if (first) {
+                final SharedPreferences.Editor editor = reader.edit();
+                editor.putBoolean("is_first_toktn", false);
+                editor.commit();
+            }
+            return first;
+        }
+
+    }
 
     /**
      * validate input param
@@ -754,7 +776,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
      * @param advertising_id is google adv id
      */
     private void sendLog(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id) {
-        Log.d(TAG, "currentTimeValue11     ==" + appId);
+     //   Log.d(TAG, "currentTimeValue11     ==" + appId);
         // Log.d(TAG, "android_Id     =="+packgeId);
         argumentValidation(eventType);  //validation in sendLog
 
@@ -773,7 +795,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                     );
         } else {
             //save data into sqlite database
-            Log.d(TAG, "network not connected");
+         //   Log.d(TAG, "network not connected");
             sendLogToDatabase
                     (
                             appId,
@@ -832,7 +854,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                     String responseString = response.body().string();
 
-                   //  Log.d(TAG, "response body = " + responseString);
+                    // Log.d(TAG, "response body = " + responseString);
 
                     JSONObject object = new JSONObject(responseString);
                     boolean status = object.getBoolean("status");
@@ -841,9 +863,9 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
 
                 } catch (IOException e) {
-                    Log.d(TAG, "IOException = " + e.getMessage());
+                   // Log.d(TAG, "IOException = " + e.getMessage());
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSONException = " + e.getMessage());
+                   // Log.d(TAG, "JSONException = " + e.getMessage());
                 } finally {
                     response.body().close();
                     //     Log.d(TAG, "retrofit connection closed");
@@ -1087,7 +1109,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             jsonObject.put(key, value);
         } catch (JSONException e) {
-            Log.d(TAG, "(set) String int catch error = " + e.getMessage());
+            //Log.d(TAG, "(set) String int catch error = " + e.getMessage());
         }
     }
 
@@ -1099,7 +1121,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             jsonObject.put(key, value);
         } catch (JSONException e) {
-            Log.d(TAG, "(set) String float catch error = " + e.getMessage());
+           // Log.d(TAG, "(set) String float catch error = " + e.getMessage());
         }
     }
 
@@ -1111,7 +1133,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             jsonObject.put(key, value);
         } catch (JSONException e) {
-            Log.d(TAG, "(set) String long catch error = " + e.getMessage());
+            //Log.d(TAG, "(set) String long catch error = " + e.getMessage());
         }
     }
 
@@ -1123,7 +1145,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             jsonObject.put(key, value);
         } catch (Exception e) {
-            Log.d(TAG, "(set) String String catch error = " + e.getMessage());
+           // Log.d(TAG, "(set) String String catch error = " + e.getMessage());
         }
     }
 
@@ -1131,7 +1153,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             jsonObject.put(key, value);
         } catch (Exception e) {
-            Log.d(TAG, "(set) String String catch error = " + e.getMessage());
+           // Log.d(TAG, "(set) String String catch error = " + e.getMessage());
         }
     }
 
@@ -1143,7 +1165,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             jsonObject.put(key, value);
         } catch (Exception e) {
-            Log.d(TAG, "(set) String boolean catch error = " + e.getMessage());
+           // Log.d(TAG, "(set) String boolean catch error = " + e.getMessage());
         }
     }
 
@@ -1155,7 +1177,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             jsonObject.put(key, value);
         } catch (Exception e) {
-            Log.d(TAG, "(set) String short catch error = " + e.getMessage());
+            //Log.d(TAG, "(set) String short catch error = " + e.getMessage());
         }
     }
 
@@ -1187,7 +1209,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             jsonObject.put(key, value);
         } catch (Exception e) {
-            Log.d(TAG, "(set) String short catch error = " + e.getMessage());
+           // Log.d(TAG, "(set) String short catch error = " + e.getMessage());
         }
     }
 

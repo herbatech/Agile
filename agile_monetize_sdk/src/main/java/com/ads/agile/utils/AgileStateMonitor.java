@@ -6,14 +6,18 @@ import android.net.LinkProperties;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class AgileStateMonitor extends ConnectivityManager.NetworkCallback {
 
     private static final String TAG = AgileStateMonitor.class.getSimpleName();
     private final NetworkRequest networkRequest;
     public NetworkCallBack callBack;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public AgileStateMonitor(NetworkCallBack callBack) {
         this.callBack = callBack;
         networkRequest = new NetworkRequest.Builder()
@@ -22,6 +26,7 @@ public class AgileStateMonitor extends ConnectivityManager.NetworkCallback {
                 .addTransportType(NetworkCapabilities.TRANSPORT_WIFI).build();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void enable(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         connectivityManager.registerNetworkCallback(networkRequest, this);
@@ -55,6 +60,7 @@ public class AgileStateMonitor extends ConnectivityManager.NetworkCallback {
         Log.d(TAG, "onUnavailable");
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
         super.onCapabilitiesChanged(network, networkCapabilities);

@@ -19,23 +19,7 @@ public class AgileApplication   {
 
     private AgileApplication() {}
 
-    private static AgileApplication sAgileApplication;
-
     public static  String TAG= AgileApplication.class.getSimpleName();
-
-    Context context;
-
-   /* public static AgileApplication getInstance()
-    {
-        if (sAgileApplication == null)
-        {
-            sAgileApplication = new AgileApplication();
-        }
-
-        return sAgileApplication;
-    }*/
-
-
     public static void init(Application application)
 
     {
