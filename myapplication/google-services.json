@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "73357852487",
+    "firebase_url": "https://test-app-363c2.firebaseio.com",
+    "project_id": "test-app-363c2",
+    "storage_bucket": "test-app-363c2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:73357852487:android:8e653655281ffb28",
+        "android_client_info": {
+          "package_name": "com.herba.sdk.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "73357852487-e5enuuu09cse3g8d2cc63s8faf1h4udu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.herba.sdk.myapplication",
+            "certificate_hash": "45603b70808dcfdb52f3e63e0db28cbe1e85021b"
+          }
+        },
+        {
+          "client_id": "73357852487-lip4lgmlj4c70pv8hli2ciiq5fnt1e56.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCftImSmMH_g_fSB-VLtSYjuOdahKSUSDs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "73357852487-lip4lgmlj4c70pv8hli2ciiq5fnt1e56.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

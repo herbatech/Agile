@@ -3,19 +3,16 @@ package com.herba.sdk.myapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
-import com.ads.agile.AgEventParameter;
-import com.ads.agile.AgEventType;
+import com.ads.agile.AgileEventParameter;
+import com.ads.agile.AgileEventType;
 import com.ads.agile.AgileLog;
 import com.ads.agile.AgileTransaction;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        agileTransaction = new AgileTransaction(getApplicationContext(), this, AgEventType.AG_EVENT_TRANSACTION);
+        agileTransaction = new AgileTransaction(getApplicationContext(), this, AgileEventType.AGILE_EVENT_TRANSACTION);
         agileLog = new AgileLog(getApplicationContext(), this, agileTransaction);
 
         findViewById(R.id.book1).setOnClickListener(new View.OnClickListener() {
@@ -40,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
                 agileLog.set("bouns_id",bonusId.getText().toString());
                 agileLog.set("bouns_name",bonusname.getText().toString());
-                agileLog.trackEvent(AgEventType.AG_EVENT_CLICK);
+                agileLog.trackEvent(AgileEventType.AGILE_EVENT_CLICK);
 
             }
         });
@@ -63,9 +60,9 @@ public class MainActivity extends AppCompatActivity {
                     page_details.put("ProductId", "10");
                     page_details.put("cost", "500");
 
-                    agileLog.set(AgEventParameter.AG_PARAMS_PAGE_NAME,"ProductPage");
-                    agileLog.set(AgEventParameter.AG_PARAMS_PAGE_DETAILS,page_details);
-                    agileLog.trackEvent(AgEventType.AG_EVENT_LOG_PAGE);
+                    agileLog.set(AgileEventParameter.AGILE_PARAMS_PAGE_NAME,"ProductPage");
+                    agileLog.set(AgileEventParameter.AGILE_PARAMS_PAGE_DETAILS,page_details);
+                    agileLog.trackEvent(AgileEventType.AGILE_EVENT_LOG_PAGE);
 
                 } catch (JSONException e) {
                     e.printStackTrace();

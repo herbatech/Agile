@@ -37,42 +37,42 @@ public class AgileStateMonitor extends ConnectivityManager.NetworkCallback {
     @Override
     public void onAvailable(Network network) {
         // Do what you need to do here
-        Log.d(TAG, "onAvailable");
+       // Log.d(TAG, "onAvailable");
         callBack.onConnected();
     }
 
     @Override
     public void onLosing(Network network, int maxMsToLive) {
         super.onLosing(network, maxMsToLive);
-        Log.d(TAG, "onLosing");
+       // Log.d(TAG, "onLosing");
     }
 
     @Override
     public void onLost(Network network) {
         super.onLost(network);
-        Log.d(TAG, "onLost");
+       // Log.d(TAG, "onLost");
         callBack.onDisconnected();
     }
 
     @Override
     public void onUnavailable() {
         super.onUnavailable();
-        Log.d(TAG, "onUnavailable");
+       // Log.d(TAG, "onUnavailable");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
         super.onCapabilitiesChanged(network, networkCapabilities);
-        Log.d(TAG, "onCapabilitiesChanged");
+       /* Log.d(TAG, "onCapabilitiesChanged");
         Log.d(TAG, "Upload   = " + networkCapabilities.getLinkUpstreamBandwidthKbps() + " kbps");
-        Log.d(TAG, "Download = " + networkCapabilities.getLinkDownstreamBandwidthKbps() + " kbps");
+        Log.d(TAG, "Download = " + networkCapabilities.getLinkDownstreamBandwidthKbps() + " kbps");*/
     }
 
     @Override
     public void onLinkPropertiesChanged(Network network, LinkProperties linkProperties) {
         super.onLinkPropertiesChanged(network, linkProperties);
-        Log.d(TAG, "onLinkPropertiesChanged");
+       // Log.d(TAG, "onLinkPropertiesChanged");
     }
 
     public interface NetworkCallBack {

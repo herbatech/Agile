@@ -1,18 +1,13 @@
 package com.ads.agile;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -20,17 +15,12 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
-import android.os.Looper;
-import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.ads.agile.room.LogEntity;
 import com.ads.agile.room.LogModel;
@@ -40,8 +30,6 @@ import com.ads.agile.utils.AppLocationService;
 import com.ads.agile.utils.UtilConfig;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.ResolvableApiException;
 /*import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -51,13 +39,11 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;*/
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -68,7 +54,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -480,12 +465,12 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             j = event_screen_onsharedpreferences.getInt(event_screen_onvalue,0);
             Transcationcount=dataProccessor.getInt("TransactionCount",0);
 
-            set(AgEventParameter.AG_PARAMS_DURATION, seconds+1);
-            set(AgEventParameter.AG_PARAMS_EVENT_COUNT,i);
-            set(AgEventParameter.AG_PARAMS_TRANSACTION_COUNT,Transcationcount);
-            set(AgEventParameter.AG_PARAMS_INSTANCE_COUNT,j+1);
-            set(AgEventParameter.AG_PARAMS_SCREEN_DURATION,seconds11);
-            trackEvent(AgEventType.AG_EVENT_SESSION);
+            set(AgileEventParameter.AGILE_PARAMS_DURATION, seconds+1);
+            set(AgileEventParameter.AGILE_PARAMS_EVENT_COUNT,i);
+            set(AgileEventParameter.AGILE_PARAMS_TRANSACTION_COUNT,Transcationcount);
+            set(AgileEventParameter.AGILE_PARAMS_INSTANCE_COUNT,j+1);
+            set(AgileEventParameter.AGILE_PARAMS_SCREEN_DURATION,seconds11);
+            trackEvent(AgileEventType.AGILE_EVENT_SESSION);
 
 
             editor1.clear();
@@ -512,8 +497,8 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 // send it to server
                 boolean isFirstTime = MyPreferencesToken.isFirstToken(context);
                 if (isFirstTime) {
-                    set(AgEventParameter.AG_PARAMS_INSTALL_TOKEN, token);
-                    trackEvent(AgEventType.AG_EVENT_UNINSTALL);
+                    set(AgileEventParameter.AGILE_PARAMS_INSTALL_TOKEN, token);
+                    trackEvent(AgileEventType.AGILE_EVENT_UNINSTALL);
                 }
             }
         });
@@ -531,8 +516,8 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
             boolean isFirstTime = MyPreferences.isFirst(context);
             if (isFirstTime) {
-                set(AgEventParameter.AG_PARAMS_INSTALL_DATE, ApkInstallDate(installed));
-                trackEvent(AgEventType.AG_EVENT_INSTALL);
+                set(AgileEventParameter.AGILE_PARAMS_INSTALL_DATE, ApkInstallDate(installed));
+                trackEvent(AgileEventType.AGILE_EVENT_INSTALL);
 
             }
        }
@@ -541,13 +526,13 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     public void agileAppStart() {
         startRun=true;
         Timer();
-        trackEvent(AgEventType.AG_EVENT_SCRREN_START);
+        trackEvent(AgileEventType.AGILE_EVENT_SCRREN_START);
 
     }
 
     public void agileAppScreenOn() {
         startRun=true;
-        trackEvent(AgEventType.AG_EVENT_SCRREN_ON);
+        trackEvent(AgileEventType.AGILE_EVENT_SCRREN_ON);
 
       }
 
@@ -561,10 +546,10 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             i = sharedpreferences.getInt(value, 0);
             Transcationcount=dataProccessor.getInt("TransactionCount",0);
             //  Log.d(TAG,"doneCount  ="+evntdonecount);
-            set(AgEventParameter.AG_PARAMS_DURATION,seconds);
-            set(AgEventParameter.AG_PARAMS_EVENT_COUNT,i);
-            set(AgEventParameter.AG_PARAMS_TRANSACTION_COUNT,Transcationcount);
-            trackEvent(AgEventType.AG_EVENT_SCRREN_OFF);
+            set(AgileEventParameter.AGILE_PARAMS_DURATION,seconds);
+            set(AgileEventParameter.AGILE_PARAMS_EVENT_COUNT,i);
+            set(AgileEventParameter.AGILE_PARAMS_TRANSACTION_COUNT,Transcationcount);
+            trackEvent(AgileEventType.AGILE_EVENT_SCRREN_OFF);
         }
         catch (Exception e){
 
@@ -661,16 +646,16 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         /**
          * if the transaction is enable
          */
-        if (eventType.equalsIgnoreCase(AgEventType.AG_EVENT_CLICK)){
+        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_CLICK)){
             i += 1;
             editor1.putInt(value, i);
             editor1.apply();
         }
-        if (eventType.equalsIgnoreCase(AgEventType.AG_EVENT_LOG_PAGE)){
-            set(AgEventParameter.AG_PARAMS_ACTIVITY_PAGE,activity.getClass().getSimpleName());
+        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_LOG_PAGE)){
+            set(AgileEventParameter.AGILE_PARAMS_ACTIVITY_PAGE,activity.getClass().getSimpleName());
 
         }
-        if (eventType.equalsIgnoreCase(AgEventType.AG_EVENT_SCRREN_ON)){
+        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_ON)){
             j += 1;
             event_screen_oneditor1.putInt(event_screen_onvalue, j);
             event_screen_oneditor1.apply();

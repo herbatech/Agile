@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-import com.ads.agile.AgileLog;
+import com.ads.agile.AgileEventType;
 import com.ads.agile.AgileTransaction;
 
 public class ThirdActivity extends AppCompatActivity {
@@ -21,7 +21,7 @@ public class ThirdActivity extends AppCompatActivity {
         setContentView(R.layout.activity_third);
         event_type=findViewById(R.id.event_type);
 
-        agileTransaction = new AgileTransaction(getApplicationContext(), this, "ag_transaction");
+        agileTransaction = new AgileTransaction(getApplicationContext(),this, AgileEventType.AGILE_EVENT_TRANSACTION);
         findViewById(R.id.book1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

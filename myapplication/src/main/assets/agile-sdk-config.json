@@ -6,7 +6,8 @@
     "app": {
         "id":"7",
         "name":"com.herba.sdk.myapplication",
-        "available_on_google_playstore":"1"
+        "available_on_google_playstore":"1",
+        "trace_app_uninstall":"1"
     },
     "services": {
         "monitoring": 1,

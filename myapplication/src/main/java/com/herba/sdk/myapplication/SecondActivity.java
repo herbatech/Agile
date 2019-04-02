@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.ads.agile.AgileEventType;
 import com.ads.agile.AgileLog;
 import com.ads.agile.AgileTransaction;
 
@@ -21,7 +22,7 @@ public class SecondActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
 
-        agileTransaction = new AgileTransaction(getApplicationContext(), this, "SecondActivityEventType");
+        agileTransaction = new AgileTransaction(getApplicationContext(), this, AgileEventType.AGILE_EVENT_TRANSACTION);
         agileLog = new AgileLog(getApplicationContext(), this, agileTransaction);
 
         findViewById(R.id.btnSubmit).setOnClickListener(new View.OnClickListener() {
