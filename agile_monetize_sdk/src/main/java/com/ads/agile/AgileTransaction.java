@@ -20,6 +20,7 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -106,6 +107,18 @@ public class AgileTransaction {
     private String AndroidPlatform;
     String packagename;
 
+    private String ImeiFirstslot;
+    private String ImeiSecondslot;
+
+
+    private String GPSAddress;
+    private String GPSLocality;
+    private String GPSPostalCode;
+    private String GPSCountryName;
+    private String GPSCountryCode;
+    String gpsAdd,gpslocality,gpspostalcode,gpscountryname,gpscountrycode;
+
+
     private String                      _latitude  = "false", _longitude = "false";
     private String                      _curlatitude  = "false", _curlongitude = "false";
 
@@ -143,7 +156,8 @@ public class AgileTransaction {
             e.printStackTrace();
         }
 
-
+        IMEINUMBER();
+        GPSADDRESS();
 
         appLocationService = new AppLocationService(context);
         try{
@@ -198,7 +212,84 @@ public class AgileTransaction {
         return json;
     }
 
+    @SuppressLint("MissingPermission")
+    public   void IMEINUMBER(){
 
+        try {
+
+            //IMEI
+            TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                ImeiFirstslot=telephonyManager.getDeviceId(0);
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                ImeiSecondslot=telephonyManager.getDeviceId(1);
+            }
+            Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot+"\n"+ImeiSecondslot);
+
+
+
+        }
+        catch (Exception e){
+            ImeiFirstslot="";
+            ImeiSecondslot="";
+            Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot);
+            Log.d(TAG,"IMEI NUMBER   =11"+ ImeiSecondslot);
+
+        }
+
+
+    }
+
+    public  void GPSADDRESS(){
+
+        try {
+
+
+
+            //location
+            Location nwLocation = appLocationService.getLocation(LocationManager.NETWORK_PROVIDER);
+            if (nwLocation != null) {
+                _latitude = String.valueOf(nwLocation.getLatitude());
+                _longitude = String.valueOf(nwLocation.getLongitude());
+
+                getAddress(nwLocation.getLatitude(),nwLocation.getLongitude());
+                Log.d(TAG, "Address  =" + GPSLocality);
+            }
+            else {
+                GPSLocality="";
+                GPSPostalCode= "";
+                GPSCountryName="";
+                GPSCountryCode="";
+                Log.d(TAG, "Address  =" + GPSLocality);
+
+            }
+        }
+        catch (Exception e){
+
+            // Log.d(TAG,"IMEI NUMBER   =11"+   e.getMessage());
+        }
+    }
+
+    public void getAddress(double lat, double lng) {
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+            Address obj = addresses.get(0);
+            String add = obj.getAddressLine(0);
+
+            GPSAddress=obj.getAddressLine(0);
+            GPSLocality=obj.getLocality();
+            GPSPostalCode= obj.getPostalCode();
+            GPSCountryName=obj.getCountryName();
+            GPSCountryCode=obj.getCountryCode();
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+         //   Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
     public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity) {
         this.context = context;
 
@@ -563,7 +654,25 @@ public class AgileTransaction {
 
         argumentValidation(eventType);  //validation in sendLogToServer
 
+        if (GPSAddress !=null){
 
+            gpsAdd=GPSAddress;
+            gpslocality=GPSLocality;
+            gpspostalcode=GPSPostalCode;
+            gpscountryname=GPSCountryName;
+            gpscountrycode=GPSCountryCode;
+
+
+        }
+        else {
+            gpsAdd="";
+            gpslocality="";
+            gpspostalcode="";
+            gpscountryname="";
+            gpscountrycode="";
+
+
+        }
 
 
         AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
@@ -574,7 +683,8 @@ public class AgileTransaction {
                         values,
                         time,
                         advertising_id,wifiState,deviceOperator,deviceLanguage,deviceModel,deviceOsName,deviceOsVersion,
-                        deviceAppVersion,sdkversion,_longitude,_latitude,androidPlatform,localDateTime,localTimezone,"","","","",packagename
+                        deviceAppVersion,sdkversion,_longitude,_latitude,androidPlatform,localDateTime,localTimezone,"","","","",packagename,gpsAdd,gpslocality,
+                        gpspostalcode,gpscountrycode,GPSCountryCode,ImeiFirstslot,ImeiSecondslot
                 );
         responseBodyCall.enqueue(new Callback<ResponseBody>() {
             @Override

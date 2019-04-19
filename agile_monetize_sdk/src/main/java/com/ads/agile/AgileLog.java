@@ -1,26 +1,38 @@
 package com.ads.agile;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentActivity;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.ads.agile.room.LogEntity;
 import com.ads.agile.room.LogModel;
@@ -50,6 +62,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -126,6 +140,15 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     private String localDateTime;
     private String localTimezone;
     private String AndroidPlatform;
+    private String ImeiFirstslot;
+    private String ImeiSecondslot;
+
+
+    private String GPSAddress;
+    private String GPSLocality;
+    private String GPSPostalCode;
+    private String GPSCountryName;
+    private String GPSCountryCode;
 
     private Location mCurrentLocation;
     private String _latitude = "false", _longitude = "false";
@@ -143,7 +166,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
     private int seconds11=0;
     private boolean startRun;
-
+    String gpsAdd,gpslocality,gpspostalcode,gpscountryname,gpscountrycode;
     private static final int DEFAULT_BLOCK_TIME = 1000;
     private boolean mIsBlockClick;
 
@@ -154,6 +177,8 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
      * @param activity         from the activity
      * @param agileTransaction
      */
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public AgileLog(@NonNull Context context, @NonNull FragmentActivity activity, AgileTransaction agileTransaction) {
 
         this.context = context;
@@ -174,19 +199,11 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
 
 
-        try{
-            Location nwLocation = appLocationService.getLocation(LocationManager.NETWORK_PROVIDER);
 
-            if (nwLocation != null) {
-                _latitude = String.valueOf(nwLocation.getLatitude());
-                _longitude = String.valueOf(nwLocation.getLongitude());
 
-            }
-        }
-        catch (Exception e){
 
-        }
         new AgileStateMonitor(this).enable(context);
+
 
 
         try {
@@ -199,7 +216,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             if (google_playstore.equalsIgnoreCase("1")){
                 AppId = m_obj.getString("id");
                 packagename="";
-               // Log.d(TAG,"DAta GET    ="+AppId+"\n"+IdPacakageName);
+                 Log.d(TAG,"DAta GET    ="+AppId+"\n"+IdPacakageName);
                 if (trace_app_uninstall.equalsIgnoreCase("1")){
                     agileUninstall();
                 }
@@ -218,7 +235,8 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        IMEINUMBER();
+        GPSADDRESS();
 
         prefs = context.getSharedPreferences("com.ads.agile", Context.MODE_PRIVATE);
         Date dato = new Date();
@@ -264,9 +282,87 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
         getAdvertisingId();
 
+        //Log.d(TAG,"Facebook Id   ="+ isPreInstalledApp(context));
+
+    }
+
+    @SuppressLint("MissingPermission")
+    public   void IMEINUMBER(){
+
+        try {
+
+            //IMEI
+            TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                ImeiFirstslot=telephonyManager.getDeviceId(0);
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                ImeiSecondslot=telephonyManager.getDeviceId(1);
+            }
+            Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot+"\n"+ImeiSecondslot);
+
+
+
+        }
+        catch (Exception e){
+            ImeiFirstslot="";
+            ImeiSecondslot="";
+            Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot);
+            Log.d(TAG,"IMEI NUMBER   =11"+ ImeiSecondslot);
+
+        }
 
 
     }
+
+    public  void GPSADDRESS(){
+
+        try {
+            //location
+            Location nwLocation = appLocationService.getLocation(LocationManager.NETWORK_PROVIDER);
+            if (nwLocation != null) {
+                _latitude = String.valueOf(nwLocation.getLatitude());
+                _longitude = String.valueOf(nwLocation.getLongitude());
+
+                getAddress(nwLocation.getLatitude(),nwLocation.getLongitude());
+                Log.d(TAG, "Address  =" + GPSLocality);
+            }
+            else {
+                GPSLocality="";
+                GPSPostalCode= "";
+                GPSCountryName="";
+                GPSCountryCode="";
+                Log.d(TAG, "Address  =" + GPSLocality);
+
+            }
+        }
+        catch (Exception e){
+
+            // Log.d(TAG,"IMEI NUMBER   =11"+   e.getMessage());
+        }
+    }
+
+    public void getAddress(double lat, double lng) {
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+            Address obj = addresses.get(0);
+            String add = obj.getAddressLine(0);
+
+            GPSAddress=obj.getAddressLine(0);
+            GPSLocality=obj.getLocality();
+            GPSPostalCode= obj.getPostalCode();
+            GPSCountryName=obj.getCountryName();
+            GPSCountryCode=obj.getCountryCode();
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+           // Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
     public String loadJSONFromAsset() {
         String json = null;
         try {
@@ -713,7 +809,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             DateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String dateString2 = dateFormat2.format(new Date()).toString();
 
-//            String simOperatorName = telephonyManager.getSimOperatorName();
 
             DeviceBrand = Build.BRAND;
             localDateTime = dateString2;
@@ -790,6 +885,10 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         }
     }
 
+
+
+
+
     /**
      * upload data to server
      *
@@ -821,6 +920,28 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         }
 
 
+        if (GPSAddress !=null){
+
+            gpsAdd=GPSAddress;
+            gpslocality=GPSLocality;
+            gpspostalcode=GPSPostalCode;
+            gpscountryname=GPSCountryName;
+            gpscountrycode=GPSCountryCode;
+
+
+        }
+        else {
+            gpsAdd="";
+            gpslocality="";
+            gpspostalcode="";
+            gpscountryname="";
+            gpscountrycode="";
+
+
+        }
+
+
+
         AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
         Call<ResponseBody> responseBodyCall = service.createUser
                 (appId,
@@ -829,7 +950,8 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                         values,
                         time,
                         advertising_id, wifiState, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
-                        deviceAppVersion, sdkversion,_longitude, _latitude, androidPlatform, localDateTime, localTimezone,"","","","",packagename
+                        deviceAppVersion, sdkversion,_longitude, _latitude, androidPlatform, localDateTime, localTimezone,"","","","",packagename,gpsAdd,gpslocality,
+                        gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot
                 );
         responseBodyCall.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -839,7 +961,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                     String responseString = response.body().string();
 
-                    // Log.d(TAG, "response body = " + responseString);
+                     Log.d(TAG, "response body = " + responseString);
 
                     JSONObject object = new JSONObject(responseString);
                     boolean status = object.getBoolean("status");
@@ -852,7 +974,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 } catch (JSONException e) {
                    // Log.d(TAG, "JSONException = " + e.getMessage());
                 } finally {
-                    response.body().close();
+                      response.body().close();
                     //     Log.d(TAG, "retrofit connection closed");
                 }
             }
@@ -977,7 +1099,25 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
             DateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String dateString2 = dateFormat2.format(new Date()).toString();
+        if (GPSAddress !=null){
 
+            gpsAdd=GPSAddress;
+            gpslocality=GPSLocality;
+            gpspostalcode=GPSPostalCode;
+            gpscountryname=GPSCountryName;
+            gpscountrycode=GPSCountryCode;
+
+
+        }
+        else {
+            gpsAdd="";
+            gpslocality="";
+            gpspostalcode="";
+            gpscountryname="";
+            gpscountrycode="";
+
+
+        }
 
             AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
             Call<ResponseBody> responseBodyCall = service.createUser
@@ -987,7 +1127,8 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                             values,
                             String.valueOf(time),
                             advertising_id, wifi, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
-                            deviceAppVersion, sdkversion, _curlongitude, _curlatitude, androidPlatform,localDateTime,localTimezone,_longitude,_latitude,dateString2,localTimezone,packagename
+                            deviceAppVersion, sdkversion, _curlongitude, _curlatitude, androidPlatform,localDateTime,localTimezone,_longitude,_latitude,dateString2,localTimezone,packagename,gpsAdd,gpslocality,
+                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot
                     );
 
             responseBodyCall.enqueue(new Callback<ResponseBody>() {

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.util.Log;
+
 import java.util.List;
 
 
@@ -14,9 +16,17 @@ public class AgileApplication   {
     private AgileApplication() {}
     public static  String TAG= AgileApplication.class.getSimpleName();
 
-    public static void init(Application application)
+    public static void init()//Application application
     {
-        application.registerActivityLifecycleCallbacks(AgileApplication.lifecycleCallbacks);
+
+        Thread.setDefaultUncaughtExceptionHandler(
+                new Thread.UncaughtExceptionHandler() {
+                    @Override
+                    public void uncaughtException(Thread thread, Throwable e) {
+                        Log.d(TAG,"AppCrash    ="+ e.getMessage());
+                    }
+                });
+       // application.registerActivityLifecycleCallbacks(AgileApplication.lifecycleCallbacks);
     }
 
 

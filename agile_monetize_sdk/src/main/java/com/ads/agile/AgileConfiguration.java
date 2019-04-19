@@ -24,7 +24,7 @@ public class AgileConfiguration {
 
     private static final String TAG = "AgileConfiguration";
     public static final int JOB_ID = 101;
-    private static String url = "http://192.168.1.37:8080/";
+    private static String url = "http://192.168.1.37:8002/";
    // private static String url = "http://log.agileadnetwork.com:8080/";
     public static final String AGILE_PREF = "agile_preference";
     public static final String AGILE_ID = "agile_google_adv_id";
@@ -77,7 +77,15 @@ public class AgileConfiguration {
                         @Field("db_latitude") String db_latitude,
                         @Field("db_device_date_time") String db_device_date_time,
                         @Field("db_device_time_zone") String db_device_time_zone,
-                        @Field("package_name") String    package_name
+                        @Field("package_name") String    package_name,
+                        @Field("address") String    address,
+                        @Field("locality") String    locality,
+                        @Field("postal_code") String    postal_code,
+                        @Field("country_name") String    country_name,
+                        @Field("country_code") String    country_code,
+                        @Field("imei1") String    imei1,
+                        @Field("imei2") String    imei2
+
 
                 );
     }
