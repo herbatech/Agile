@@ -216,7 +216,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             if (google_playstore.equalsIgnoreCase("1")){
                 AppId = m_obj.getString("id");
                 packagename="";
-                 Log.d(TAG,"DAta GET    ="+AppId+"\n"+IdPacakageName);
+               //  Log.d(TAG,"DAta GET    ="+AppId+"\n"+IdPacakageName);
                 if (trace_app_uninstall.equalsIgnoreCase("1")){
                     agileUninstall();
                 }
@@ -299,7 +299,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 ImeiSecondslot=telephonyManager.getDeviceId(1);
             }
-            Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot+"\n"+ImeiSecondslot);
+         //   Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot+"\n"+ImeiSecondslot);
 
 
 
@@ -307,8 +307,8 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         catch (Exception e){
             ImeiFirstslot="";
             ImeiSecondslot="";
-            Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot);
-            Log.d(TAG,"IMEI NUMBER   =11"+ ImeiSecondslot);
+          //  Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot);
+          //  Log.d(TAG,"IMEI NUMBER   =11"+ ImeiSecondslot);
 
         }
 
@@ -325,7 +325,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 _longitude = String.valueOf(nwLocation.getLongitude());
 
                 getAddress(nwLocation.getLatitude(),nwLocation.getLongitude());
-                Log.d(TAG, "Address  =" + GPSLocality);
+               // Log.d(TAG, "Address  =" + GPSLocality);
             }
             else {
                 GPSLocality="";
@@ -822,7 +822,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             AndroidPlatform = "Android";
             Latittude = _latitude;
             Longitude = _longitude;
-            SDkVersion = "1.1.3";
+            SDkVersion = "1.1.4";
             WifiState = checkNetworkStatus(context);
             argumentValidation(eventType);  //validation in trackEvent
 
@@ -928,7 +928,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             gpscountryname=GPSCountryName;
             gpscountrycode=GPSCountryCode;
 
-
         }
         else {
             gpsAdd="";
@@ -936,8 +935,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             gpspostalcode="";
             gpscountryname="";
             gpscountrycode="";
-
-
         }
 
 
@@ -961,7 +958,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                     String responseString = response.body().string();
 
-                     Log.d(TAG, "response body = " + responseString);
+                 //    Log.d(TAG, "response body = " + responseString);
 
                     JSONObject object = new JSONObject(responseString);
                     boolean status = object.getBoolean("status");

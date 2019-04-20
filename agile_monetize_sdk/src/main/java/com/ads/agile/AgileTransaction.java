@@ -225,7 +225,7 @@ public class AgileTransaction {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 ImeiSecondslot=telephonyManager.getDeviceId(1);
             }
-            Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot+"\n"+ImeiSecondslot);
+           // Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot+"\n"+ImeiSecondslot);
 
 
 
@@ -233,8 +233,8 @@ public class AgileTransaction {
         catch (Exception e){
             ImeiFirstslot="";
             ImeiSecondslot="";
-            Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot);
-            Log.d(TAG,"IMEI NUMBER   =11"+ ImeiSecondslot);
+           // Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot);
+            //Log.d(TAG,"IMEI NUMBER   =11"+ ImeiSecondslot);
 
         }
 
@@ -254,14 +254,14 @@ public class AgileTransaction {
                 _longitude = String.valueOf(nwLocation.getLongitude());
 
                 getAddress(nwLocation.getLatitude(),nwLocation.getLongitude());
-                Log.d(TAG, "Address  =" + GPSLocality);
+              //  Log.d(TAG, "Address  =" + GPSLocality);
             }
             else {
                 GPSLocality="";
                 GPSPostalCode= "";
                 GPSCountryName="";
                 GPSCountryCode="";
-                Log.d(TAG, "Address  =" + GPSLocality);
+             //   Log.d(TAG, "Address  =" + GPSLocality);
 
             }
         }
@@ -569,7 +569,7 @@ public class AgileTransaction {
         AndroidPlatform="Android";
         Latittude=_latitude;
         Longitude=_longitude;
-        SDkVersion="1.1.3";
+        SDkVersion = "1.1.4";
         WifiState=checkNetworkStatus(context);
 
         argumentValidation(eventType);  //validation in trackEvent

@@ -38,7 +38,7 @@ public abstract class LogDatabase extends RoomDatabase {
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
-            Log.d("LogDatabase", "migrate 1,2 called");
+        //    Log.d("LogDatabase", "migrate 1,2 called");
             //database.execSQL("CREATE TABLE `Fruit` (`id` INTEGER,`name` TEXT, PRIMARY KEY(`id`))");
             //database.execSQL("ALTER TABLE `tblLog` ADD COLUMN `product_id` TEXT");
             database.execSQL("CREATE TABLE sample (product_id TEXT, time TEXT) ");
@@ -52,7 +52,7 @@ public abstract class LogDatabase extends RoomDatabase {
     static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
-            Log.d("LogDatabase", "migrate 2,3 called");
+         //   Log.d("LogDatabase", "migrate 2,3 called");
             //database.execSQL("CREATE TABLE `Fruit` (`id` INTEGER,`name` TEXT, PRIMARY KEY(`id`))");
             //database.execSQL("ALTER TABLE `tblLog` ADD COLUMN `product_id` TEXT");
             //database.execSQL("CREATE TABLE sample (product_id TEXT, time TEXT) ");
@@ -68,7 +68,7 @@ public abstract class LogDatabase extends RoomDatabase {
     static final Migration MIGRATION_3_4 = new Migration(3, 4) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
-            Log.d("LogDatabase", "migrate 3,4 called");
+        //    Log.d("LogDatabase", "migrate 3,4 called");
             //database.execSQL("CREATE TABLE `Fruit` (`id` INTEGER,`name` TEXT, PRIMARY KEY(`id`))");
             database.execSQL("ALTER TABLE `tblLog` ADD COLUMN `product_id` TEXT");
         }

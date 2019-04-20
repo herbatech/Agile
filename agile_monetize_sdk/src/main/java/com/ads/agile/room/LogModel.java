@@ -67,7 +67,7 @@ public class LogModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        Log.d(TAG, "onCleared called");
+      //  Log.d(TAG, "onCleared called");
     }
 
     /**
