@@ -822,7 +822,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             AndroidPlatform = "Android";
             Latittude = _latitude;
             Longitude = _longitude;
-            SDkVersion = "1.1.4";
+            SDkVersion = "1.1.5";
             WifiState = checkNetworkStatus(context);
             argumentValidation(eventType);  //validation in trackEvent
 
