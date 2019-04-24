@@ -163,12 +163,13 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     long starttime;
     long  endtime ;
     long t3;
-
+    String trace_app_uninstall;
     private int seconds11=0;
     private boolean startRun;
     String gpsAdd,gpslocality,gpspostalcode,gpscountryname,gpscountrycode;
     private static final int DEFAULT_BLOCK_TIME = 1000;
     private boolean mIsBlockClick;
+    boolean installdata=false;
 
     /**
      * parametric constructor
@@ -178,7 +179,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
      * @param agileTransaction
      */
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+
     public AgileLog(@NonNull Context context, @NonNull FragmentActivity activity, AgileTransaction agileTransaction) {
 
         this.context = context;
@@ -198,12 +199,9 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         FirebaseApp.initializeApp(context);
 
 
-
-
-
-
-        new AgileStateMonitor(this).enable(context);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            new AgileStateMonitor(this).enable(context);
+        }
 
 
         try {
@@ -211,24 +209,22 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             JSONObject m_obj = obj.getJSONObject("app");
             String IdPacakageName = m_obj.getString("name");
             String google_playstore = m_obj.getString("available_on_google_playstore");
-            String trace_app_uninstall = m_obj.getString("trace_app_uninstall");
+             trace_app_uninstall = m_obj.getString("trace_app_uninstall");
 
             if (google_playstore.equalsIgnoreCase("1")){
                 AppId = m_obj.getString("id");
                 packagename="";
-               //  Log.d(TAG,"DAta GET    ="+AppId+"\n"+IdPacakageName);
-                if (trace_app_uninstall.equalsIgnoreCase("1")){
-                    agileUninstall();
-                }
+
+
 
             }
             else {
                 AppId = m_obj.getString("id");
                 packagename=context.getPackageName();
-
+/*
                 if (trace_app_uninstall.equalsIgnoreCase("1")){
-                    agileUninstall();
-                }
+                  //  agileUninstall();
+                }*/
                 Log.e(TAG,"Warning : Googgle Playstore not available on Your App");
             }
 
@@ -286,20 +282,18 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
     }
 
-    @SuppressLint("MissingPermission")
+    @SuppressLint({"MissingPermission", "NewApi"})
     public   void IMEINUMBER(){
 
         try {
 
             //IMEI
             TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
                 ImeiFirstslot=telephonyManager.getDeviceId(0);
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 ImeiSecondslot=telephonyManager.getDeviceId(1);
-            }
-         //   Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot+"\n"+ImeiSecondslot);
+
+            Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot+"\n"+ImeiSecondslot);
 
 
 
@@ -584,40 +578,57 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
     }
 
-    public void agileUninstall(){
-        try {
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
-            @Override
-            public void onSuccess(InstanceIdResult instanceIdResult) {
-                String token = instanceIdResult.getToken();
-                // send it to server
-                boolean isFirstTime = MyPreferencesToken.isFirstToken(context);
+
+    public void agileInstall() {
+        if (installdata){
+            if (getAdvertisingId() != null) {
+
+                boolean isFirstTime = MyPreferences.isFirst(context);
                 if (isFirstTime) {
-                    set(AgileEventParameter.AGILE_PARAMS_INSTALL_TOKEN, token);
-                    trackEvent(AgileEventType.AGILE_EVENT_UNINSTALL);
+                    set(AgileEventParameter.AGILE_PARAMS_INSTALL_DATE, ApkInstallDate(installed));
+                    trackEvent(AgileEventType.AGILE_EVENT_INSTALL);
+
                 }
             }
-        });
+        }
+         if (trace_app_uninstall.equalsIgnoreCase("1")){
+
+             final Handler handler = new Handler();
+             handler.postDelayed(new Runnable() {
+                 @Override
+                 public void run() {
+                     //Do something after 1 second
+                     agileUninstall();
+                 }
+             }, 1000);
+
+        }
+
 
     }
-    catch (Exception e){
 
-        //Log.d(TAG,"Excption  ="+e.getMessage());
+    public void agileUninstall(){
+        try {
+            FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                @Override
+                public void onSuccess(InstanceIdResult instanceIdResult) {
+                    String token = instanceIdResult.getToken();
+                    // send it to server
+                    boolean isFirstTime = MyPreferencesToken.isFirstToken(context);
+                    if (isFirstTime) {
+                        set(AgileEventParameter.AGILE_PARAMS_INSTALL_TOKEN, token);
+                        trackEvent(AgileEventType.AGILE_EVENT_FIREBASE_TOKEN);
+                    }
+                }
+            });
+
+
+        }
+        catch (Exception e){
 
         }
     }
 
-    public void agileInstall() {
-       if (getAdvertisingId() != null) {
-
-            boolean isFirstTime = MyPreferences.isFirst(context);
-            if (isFirstTime) {
-                set(AgileEventParameter.AGILE_PARAMS_INSTALL_DATE, ApkInstallDate(installed));
-                trackEvent(AgileEventType.AGILE_EVENT_INSTALL);
-
-            }
-       }
-    }
 
     public void agileAppStart() {
         startRun=true;
@@ -963,6 +974,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                     JSONObject object = new JSONObject(responseString);
                     boolean status = object.getBoolean("status");
                     clearLogEvent();
+                    installdata=true;
                     agileInstall();
 
 

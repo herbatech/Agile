@@ -36,7 +36,6 @@ public class AppLocationService extends Service implements LocationListener {
 			}
 			catch (Exception e){
 
-
 			}
 
 		}

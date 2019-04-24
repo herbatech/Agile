@@ -1,42 +1,38 @@
 -- Merging decision tree log ---
 manifest
-ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
-INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
-INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
-INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
-INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
-INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
-INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
+ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
+INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
+INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
+INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
+INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
+INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
+INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
 	package
 		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:2:5-42
 		INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
 		INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
 	android:versionName
 		INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
-		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
+		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
 		INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
 	android:versionCode
 		INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
-		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
+		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
 		INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:11-69
-uses-permission#android.permission.ACCESS_FINE_LOCATION
-ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:4:5-79
-	android:name
-		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:4:22-76
 uses-permission#android.permission.INTERNET
-ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:5:5-66
+ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:4:5-66
 	android:name
-		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:5:22-64
+		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:4:22-64
 uses-permission#android.permission.ACCESS_NETWORK_STATE
-ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:6:5-78
+ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:5:5-78
 	android:name
-		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:6:22-76
+		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:5:22-76
 uses-permission#android.permission.RECEIVE_BOOT_COMPLETED
-ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:7:5-80
+ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:6:5-80
 	android:name
-		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:7:22-78
+		ADDED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:6:22-78
 uses-sdk
 INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from D:\Download\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml

@@ -17,7 +17,7 @@ public class AgileStateMonitor extends ConnectivityManager.NetworkCallback {
     private final NetworkRequest networkRequest;
     public NetworkCallBack callBack;
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+
     public AgileStateMonitor(NetworkCallBack callBack) {
         this.callBack = callBack;
         networkRequest = new NetworkRequest.Builder()
@@ -26,7 +26,7 @@ public class AgileStateMonitor extends ConnectivityManager.NetworkCallback {
                 .addTransportType(NetworkCapabilities.TRANSPORT_WIFI).build();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+
     public void enable(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         connectivityManager.registerNetworkCallback(networkRequest, this);
