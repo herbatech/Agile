@@ -528,8 +528,8 @@ public class AgileTransaction {
         if(name.equals("N")) name = "Nougat";
         if(name.equals("M")) name = "Marshmallow";
 
-        if(name.startsWith("O_")) name = "Oreo++";
-        if(name.startsWith("N_")) name = "Nougat++";
+        if(name.startsWith("O_")) name = "Oreo";
+        if(name.startsWith("N_")) name = "Nougat";
 
         return name;
     }

@@ -290,8 +290,12 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             //IMEI
             TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
-                ImeiFirstslot=telephonyManager.getDeviceId(0);
-                ImeiSecondslot=telephonyManager.getDeviceId(1);
+            ImeiFirstslot=telephonyManager.getDeviceId(0);
+            ImeiSecondslot=telephonyManager.getDeviceId(1);
+
+            if (ImeiFirstslot.equals(ImeiSecondslot)){
+                    ImeiSecondslot="";
+                }
 
             Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot+"\n"+ImeiSecondslot);
 
@@ -326,13 +330,12 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 GPSPostalCode= "";
                 GPSCountryName="";
                 GPSCountryCode="";
-                Log.d(TAG, "Address  =" + GPSLocality);
 
             }
         }
         catch (Exception e){
 
-            // Log.d(TAG,"IMEI NUMBER   =11"+   e.getMessage());
+
         }
     }
 
@@ -341,7 +344,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
             Address obj = addresses.get(0);
-            String add = obj.getAddressLine(0);
+           // String add = obj.getAddressLine(0);
 
             GPSAddress=obj.getAddressLine(0);
             GPSLocality=obj.getLocality();
@@ -400,8 +403,8 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         if (name.equals("N")) name = "Nougat";
         if (name.equals("M")) name = "Marshmallow";
 
-        if (name.startsWith("O_")) name = "Oreo++";
-        if (name.startsWith("N_")) name = "Nougat++";
+        if (name.startsWith("O_")) name = "Oreo";
+        if (name.startsWith("N_")) name = "Nougat";
 
         return name;
     }
@@ -1108,7 +1111,8 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
             DateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String dateString2 = dateFormat2.format(new Date()).toString();
-        if (GPSAddress !=null){
+
+            if (GPSAddress !=null){
 
             gpsAdd=GPSAddress;
             gpslocality=GPSLocality;
@@ -1118,6 +1122,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
 
         }
+
         else {
             gpsAdd="";
             gpslocality="";
@@ -1143,8 +1148,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             responseBodyCall.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                // Log.d(TAG, "response code, id = " + id + " = " + response.code());
 
                     try {
 
@@ -1370,7 +1373,5 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     public void clearLogEventType() {
         jsonObject = new JSONObject();
     }
-
-
 
 }
