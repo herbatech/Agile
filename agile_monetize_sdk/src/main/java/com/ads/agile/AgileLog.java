@@ -205,32 +205,32 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
 
         try {
+            if (loadJSONFromAsset()==null){
+                Log.e(context.getPackageName(),"agile-sdk-config.json is Required");
+            }
             JSONObject obj = new JSONObject(loadJSONFromAsset());
             JSONObject m_obj = obj.getJSONObject("app");
             String IdPacakageName = m_obj.getString("name");
             String google_playstore = m_obj.getString("available_on_google_playstore");
              trace_app_uninstall = m_obj.getString("trace_app_uninstall");
 
+
             if (google_playstore.equalsIgnoreCase("1")){
                 AppId = m_obj.getString("id");
                 packagename="";
-
-
 
             }
             else {
                 AppId = m_obj.getString("id");
                 packagename=context.getPackageName();
-/*
-                if (trace_app_uninstall.equalsIgnoreCase("1")){
-                  //  agileUninstall();
-                }*/
                 Log.e(TAG,"Warning : Googgle Playstore not available on Your App");
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
+
         }
+
         IMEINUMBER();
         GPSADDRESS();
 
@@ -271,10 +271,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 size = notes.size();
             }
         });
-
-        //get add id while initialization
-        //initialization of transaction
-        //initTransaction();
 
         getAdvertisingId();
 

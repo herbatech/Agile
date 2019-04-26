@@ -17,10 +17,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ForthActivity"></activity>
-        <activity android:name=".ThirdActivity" />
-        <activity android:name=".FirstActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".ForthActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".ThirdActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".FirstActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

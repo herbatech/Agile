@@ -134,10 +134,14 @@ public class AgileTransaction {
         dataProccessor = new UtilConfig(context);
 
         try {
+            if (loadJSONFromAsset()==null){
+                Log.e(context.getPackageName(),"agile-sdk-config.json is Required");
+            }
             JSONObject obj = new JSONObject(loadJSONFromAsset());
             JSONObject m_jArry = obj.getJSONObject("app");
             String IdPacakageName = m_jArry.getString("name");
             String google_playstore = m_jArry.getString("available_on_google_playstore");
+
 
             if (google_playstore.equalsIgnoreCase("1")){
 
@@ -154,6 +158,8 @@ public class AgileTransaction {
 
         } catch (JSONException e) {
             e.printStackTrace();
+
+
         }
 
         IMEINUMBER();
