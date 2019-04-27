@@ -644,22 +644,32 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
     public void agileAppScreenOff() {
         startRun=false;
-        Date date2 = new Date();
-        long mills = date2.getTime() - date1.getTime();
-        seconds = TimeUnit.MILLISECONDS.toSeconds(mills);
 
-        try {
-            i = sharedpreferences.getInt(value, 0);
-            Transcationcount=dataProccessor.getInt("TransactionCount",0);
-            //  Log.d(TAG,"doneCount  ="+evntdonecount);
-            set(AgileEventParameter.AGILE_PARAMS_DURATION,seconds);
-            set(AgileEventParameter.AGILE_PARAMS_EVENT_COUNT,i);
-            set(AgileEventParameter.AGILE_PARAMS_TRANSACTION_COUNT,Transcationcount);
-            trackEvent(AgileEventType.AGILE_EVENT_SCRREN_OFF);
-        }
-        catch (Exception e){
 
-        }
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after 1 second
+                Date date2 = new Date();
+                long mills = date2.getTime() - date1.getTime();
+                seconds = TimeUnit.MILLISECONDS.toSeconds(mills);
+
+                try {
+                    i = sharedpreferences.getInt(value, 0);
+                    Transcationcount=dataProccessor.getInt("TransactionCount",0);
+                    //  Log.d(TAG,"doneCount  ="+evntdonecount);
+                    set(AgileEventParameter.AGILE_PARAMS_DURATION,seconds);
+                    set(AgileEventParameter.AGILE_PARAMS_EVENT_COUNT,i);
+                    set(AgileEventParameter.AGILE_PARAMS_TRANSACTION_COUNT,Transcationcount);
+                    trackEvent(AgileEventType.AGILE_EVENT_SCRREN_OFF);
+                }
+                catch (Exception e){
+
+                }
+            }
+        }, 1000);
+
 
 
 
@@ -968,7 +978,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                     String responseString = response.body().string();
 
-                 //    Log.d(TAG, "response body = " + responseString);
+                     Log.d(TAG, "response body = " + responseString);
 
                     JSONObject object = new JSONObject(responseString);
                     boolean status = object.getBoolean("status");
@@ -989,7 +999,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //   Log.d(TAG, "onFailure = " + t.getMessage());
+                   Log.d(TAG, "onFailure = " + t.getMessage());
                // sendLogToDatabase(eventType, appId, values);
             }
         });
