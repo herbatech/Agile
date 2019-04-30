@@ -12,5 +12,6 @@ public class AgileEventType {
     public static final String AGILE_EVENT_SCRREN_START = "event_app_start";
     public static final String AGILE_EVENT_INSTALL = "event_install";
     public static final String AGILE_EVENT_FIREBASE_TOKEN = "event_firebase_token";
+    public static final String AGILE_EVENT_CRASH = "event_crash";
 
 }

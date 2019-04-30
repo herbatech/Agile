@@ -24,8 +24,8 @@ public class AgileConfiguration {
 
     private static final String TAG = "AgileConfiguration";
     public static final int JOB_ID = 101;
-   // private static String url = "http://192.168.1.3:8002/";
-    private static String url = "http://54.202.203.141:8080/";
+    private static String url = "http://192.168.1.37:8002/";
+   // private static String url = "http://54.202.203.141:8080/";
     public static final String AGILE_PREF = "agile_preference";
     public static final String AGILE_ID = "agile_google_adv_id";
     public static final String AGILE_CRASH_COUNTER = "agile_crash_counter";

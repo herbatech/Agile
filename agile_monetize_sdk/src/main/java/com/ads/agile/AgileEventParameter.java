@@ -13,4 +13,5 @@ public class AgileEventParameter {
     public static final String AGILE_PARAMS_INSTANCE_COUNT = "param_screen_instance_count";
     public static final String AGILE_PARAMS_SCREEN_DURATION = "param_screen_duration";
     public static final String AGILE_PARAMS_ACTIVITY_PAGE = "param_activity_page_name";
+    public static final String AGILE_PARAMS_CRASH = "param_crash_details";
 }

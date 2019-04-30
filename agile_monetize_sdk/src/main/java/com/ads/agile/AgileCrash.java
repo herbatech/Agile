@@ -2,6 +2,7 @@ package com.ads.agile;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -17,8 +18,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -29,7 +28,6 @@ import android.util.Log;
 import com.ads.agile.room.LogEntity;
 import com.ads.agile.room.LogModel;
 import com.ads.agile.system.AdvertisingIdClient;
-import com.ads.agile.utils.AgileStateMonitor;
 import com.ads.agile.utils.AppLocationService;
 import com.ads.agile.utils.UtilConfig;
 import com.google.android.gms.common.ConnectionResult;
@@ -43,10 +41,6 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;*/
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,12 +50,10 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -70,41 +62,26 @@ import retrofit2.Response;
 
 import static com.ads.agile.AgileConfiguration.AGILE_ID;
 import static com.ads.agile.AgileConfiguration.AGILE_PREF;
+import static com.ads.agile.AgileConfiguration.argumentValidation;
 import static com.ads.agile.AgileConfiguration.isLog;
 import static com.ads.agile.AgileConfiguration.isTransaction;
 
 
-public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallBack {
+public class AgileCrash extends Activity  {
 
     private final String TAG = this.getClass().getSimpleName();
 
     private Context context;
-    private FragmentActivity activity;
+
     private LogModel logModel;
     private int size;
-    private SynchroniseLogEvent synchroniseLogEvent;
     private static JSONObject jsonObject = new JSONObject();
 
     private Date date1;
     long seconds;
     SharedPreferences prefs;
 
-    SharedPreferences sharedpreferences;
-    SharedPreferences.Editor editor1;
-    public static final String MyPREFERENCES = "myprefs";
-    public static final  String value = "key";
-    int i=0;
 
-    SharedPreferences event_screen_onsharedpreferences;
-    SharedPreferences.Editor event_screen_oneditor1;
-    public static final String event_screen_onMyPREFERENCES = "event_screen_onmyprefs";
-    public static final  String event_screen_onvalue = "key";
-    int j=0;
-
-    SharedPreferences last_screen_onsharedpreferences;
-    SharedPreferences.Editor last_screen_oneditor1;
-    public static final String last_screen_onMyPREFERENCES = "last_screen_onmyprefs";
-    public static final  String last_screen_onvalue = "lastkey";
 
 
 
@@ -165,34 +142,17 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
      * parametric constructor
      *
      * @param context          from the activity
-     * @param activity         from the activity
-     * @param agileTransaction
+
      */
-
-
-    public AgileLog(@NonNull Context context, @NonNull FragmentActivity activity, AgileTransaction agileTransaction) {
+    public AgileCrash(@NonNull Context context) {
 
         this.context = context;
-        this.activity = activity;
+
       /*  Bundle metadata = getMetaData(context);
         AppId = metadata.getString("com.agile.sdk.ApplicationId");*/
 
-        //check for transaction instance
-        if (agileTransaction instanceof AgileTransaction) {
-           // Log.d(TAG, "instance agileTransaction exist");
-            isTransaction = true;
-        } else {
-            //Log.d(TAG, "instance not agileTransaction exist");
-            isTransaction = false;
-        }
+
         appLocationService = new AppLocationService(context);
-        FirebaseApp.initializeApp(context);
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            new AgileStateMonitor(this).enable(context);
-        }
-
 
         try {
             if (loadJSONFromAsset()==null){
@@ -202,7 +162,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             JSONObject m_obj = obj.getJSONObject("app");
             String IdPacakageName = m_obj.getString("name");
             String google_playstore = m_obj.getString("available_on_google_playstore");
-             trace_app_uninstall = m_obj.getString("trace_app_uninstall");
+            trace_app_uninstall = m_obj.getString("trace_app_uninstall");
 
 
             if (google_playstore.equalsIgnoreCase("1")){
@@ -230,16 +190,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         long l = prefs.getLong(dateTimeKey, new Date().getTime());
         date1 = new Date(l);
 
-        sharedpreferences = context.getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        editor1 = sharedpreferences.edit();
-
-        event_screen_onsharedpreferences = context.getSharedPreferences(event_screen_onMyPREFERENCES, Context.MODE_PRIVATE);
-        event_screen_oneditor1 = event_screen_onsharedpreferences.edit();
-
-        last_screen_onsharedpreferences = context.getSharedPreferences(last_screen_onMyPREFERENCES, Context.MODE_PRIVATE);
-        last_screen_oneditor1 = last_screen_onsharedpreferences.edit();
-
-
         dataProccessor = new UtilConfig(context);
 
         try {
@@ -253,14 +203,20 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         }
 
 
-        logModel = ViewModelProviders.of(activity).get(LogModel.class);
-        logModel.getLiveListAllLog().observe(activity, new Observer<List<LogEntity>>() {
-            @Override
-            public void onChanged(List<LogEntity> notes) {
-               // Log.d(TAG, "size count = " + notes.size());
-                size = notes.size();
-            }
-        });
+       /* if(context instanceof Activity){
+
+            logModel = ViewModelProviders.of(context).get(LogModel.class);
+            logModel.getLiveListAllLog().observe(this, new Observer<List<LogEntity>>() {
+                @Override
+                public void onChanged(List<LogEntity> notes) {
+                    // Log.d(TAG, "size count = " + notes.size());
+                    size = notes.size();
+                }
+            });
+
+        }*/
+
+
 
         getAdvertisingId();
 
@@ -280,10 +236,9 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             ImeiSecondslot=telephonyManager.getDeviceId(1);
 
             if (ImeiFirstslot.equals(ImeiSecondslot)){
-                    ImeiSecondslot="";
-                }
+                ImeiSecondslot="";
+            }
 
-            Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot+"\n"+ImeiSecondslot);
 
 
 
@@ -291,8 +246,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         catch (Exception e){
             ImeiFirstslot="";
             ImeiSecondslot="";
-          //  Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot);
-          //  Log.d(TAG,"IMEI NUMBER   =11"+ ImeiSecondslot);
+
 
         }
 
@@ -309,7 +263,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 _longitude = String.valueOf(nwLocation.getLongitude());
 
                 getAddress(nwLocation.getLatitude(),nwLocation.getLongitude());
-               // Log.d(TAG, "Address  =" + GPSLocality);
+                // Log.d(TAG, "Address  =" + GPSLocality);
             }
             else {
                 GPSLocality="";
@@ -330,7 +284,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
             Address obj = addresses.get(0);
-           // String add = obj.getAddressLine(0);
+            // String add = obj.getAddressLine(0);
 
             GPSAddress=obj.getAddressLine(0);
             GPSLocality=obj.getLocality();
@@ -341,7 +295,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-           // Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -362,25 +316,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         return json;
     }
 
-
-    public String ApkInstallDate(long timestamp) {
-        String sDate = "";
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        Calendar c = Calendar.getInstance();
-        Date netDate = null;
-        try {
-            netDate = (new Date(timestamp));
-            sdf.format(netDate);
-            sDate = sdf.format(netDate);
-            String currentDateTimeString = sdf.format(c.getTime());
-            c.add(Calendar.DATE, -1);
-
-        } catch (Exception e) {
-            System.err.println("There's an error in the Date!");
-        }
-        return sDate;
-    }
-
     private static String getOsVersionName() {
         Field[] fields = Build.VERSION_CODES.class.getFields();
         String name = fields[Build.VERSION.SDK_INT + 1].getName();
@@ -395,14 +330,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         return name;
     }
 
-    public static Bundle getMetaData(Context context) {
-        try {
-            return context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA).metaData;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     /**
      * get Google advertising id on background thread
@@ -415,11 +342,11 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
         if (!TextUtils.isEmpty(getPreferences(context, AGILE_ID)))//if it is not empty
         {
-          //  Log.d(TAG, "google adv id found, now accesing to it");
+            //  Log.d(TAG, "google adv id found, now accesing to it");
             result[0] = getPreferences(context, AGILE_ID);
         } else//if it is empty
         {
-          //  Log.d(TAG, "google adv id not found, now accesing to it");
+            //  Log.d(TAG, "google adv id not found, now accesing to it");
             if (checkForPlayService(context)) {
 
                 new Thread(new Runnable() {
@@ -428,19 +355,19 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                             AdvertisingIdClient.AdInfo adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context);
                             String advertisingId = adInfo.getId();
                             result[0] = advertisingId;
-                          //  Log.d(TAG, "(getAdvertisingId) Google advertisingId = " + advertisingId);
+                            //  Log.d(TAG, "(getAdvertisingId) Google advertisingId = " + advertisingId);
                             boolean optOutEnabled = adInfo.isLimitAdTrackingEnabled();
                             //save google ad id into shared preference
                             setPreferences(context, AGILE_ID, advertisingId);
                             firstTime = true;
-                           // Log.d(TAG, "(getAdvertisingId) Google optOutEnabled = " + optOutEnabled);
+                            // Log.d(TAG, "(getAdvertisingId) Google optOutEnabled = " + optOutEnabled);
                         } catch (Exception e) {
-                           // Log.d(TAG, "(getAdvertisingId) catch error" + e.getMessage());
+                            // Log.d(TAG, "(getAdvertisingId) catch error" + e.getMessage());
                         }
                     }
                 }).start();
             } else {
-               // Log.d(TAG, "play service have some issue");
+                // Log.d(TAG, "play service have some issue");
             }
         }
         return result[0];
@@ -533,208 +460,10 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         return cm.getActiveNetworkInfo();
     }
 
-    public void sessionComplete() {
-      //  Log.d(TAG,"Timer Date  ="+seconds11);
-        try {
-
-            Date date2 = new Date();
-            long mills = date2.getTime() - date1.getTime();
-            seconds = TimeUnit.MILLISECONDS.toSeconds(mills);
-            i = sharedpreferences.getInt(value,0);
-            j = event_screen_onsharedpreferences.getInt(event_screen_onvalue,0);
-            Transcationcount=dataProccessor.getInt("TransactionCount",0);
-
-            set(AgileEventParameter.AGILE_PARAMS_DURATION, seconds+1);
-            set(AgileEventParameter.AGILE_PARAMS_EVENT_COUNT,i);
-            set(AgileEventParameter.AGILE_PARAMS_TRANSACTION_COUNT,Transcationcount);
-            set(AgileEventParameter.AGILE_PARAMS_INSTANCE_COUNT,j+1);
-            set(AgileEventParameter.AGILE_PARAMS_SCREEN_DURATION,seconds11);
-            trackEvent(AgileEventType.AGILE_EVENT_SESSION);
-
-
-            editor1.clear();
-            editor1.commit();
-            event_screen_oneditor1.clear();
-            event_screen_oneditor1.commit();
-            startRun=false;
-            seconds11=0;
-            UtilConfig.clearprefernce();
-           // Log.d(TAG, "ApkInstaaled   =" + ApkInstallDate(installed));
-        }
-        catch (Exception e){
-
-        }
-
-    }
-
-
-    public void agileInstall() {
-        if (installdata){
-            if (getAdvertisingId() != null) {
-
-                boolean isFirstTime = MyPreferences.isFirst(context);
-                if (isFirstTime) {
-                    set(AgileEventParameter.AGILE_PARAMS_INSTALL_DATE, ApkInstallDate(installed));
-                    trackEvent(AgileEventType.AGILE_EVENT_INSTALL);
-
-                }
-            }
-        }
-         if (trace_app_uninstall.equalsIgnoreCase("1")){
-
-             final Handler handler = new Handler();
-             handler.postDelayed(new Runnable() {
-                 @Override
-                 public void run() {
-                     //Do something after 1 second
-                     agileUninstall();
-                 }
-             }, 1000);
-
-        }
-
-
-    }
-
-    public void agileUninstall(){
-        try {
-            FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
-                @Override
-                public void onSuccess(InstanceIdResult instanceIdResult) {
-                    String token = instanceIdResult.getToken();
-                    // send it to server
-                    boolean isFirstTime = MyPreferencesToken.isFirstToken(context);
-                    if (isFirstTime) {
-                        set(AgileEventParameter.AGILE_PARAMS_INSTALL_TOKEN, token);
-                        trackEvent(AgileEventType.AGILE_EVENT_FIREBASE_TOKEN);
-                    }
-                }
-            });
-
-
-        }
-        catch (Exception e){
-
-        }
-    }
-
-
-    public void agileAppStart() {
-        startRun=true;
-        Timer();
-        trackEvent(AgileEventType.AGILE_EVENT_SCRREN_START);
-
-    }
-
-    public void agileAppScreenOn() {
-        startRun=true;
-        trackEvent(AgileEventType.AGILE_EVENT_SCRREN_ON);
-
-      }
-
-    public void agileAppScreenOff() {
-        startRun=false;
-
-
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //Do something after 1 second
-                Date date2 = new Date();
-                long mills = date2.getTime() - date1.getTime();
-                seconds = TimeUnit.MILLISECONDS.toSeconds(mills);
-
-                try {
-                    i = sharedpreferences.getInt(value, 0);
-                    Transcationcount=dataProccessor.getInt("TransactionCount",0);
-                    //  Log.d(TAG,"doneCount  ="+evntdonecount);
-                    set(AgileEventParameter.AGILE_PARAMS_DURATION,seconds);
-                    set(AgileEventParameter.AGILE_PARAMS_EVENT_COUNT,i);
-                    set(AgileEventParameter.AGILE_PARAMS_TRANSACTION_COUNT,Transcationcount);
-                    trackEvent(AgileEventType.AGILE_EVENT_SCRREN_OFF);
-                }
-                catch (Exception e){
-
-                }
-            }
-        }, 1000);
 
 
 
 
-    }
-
-
-
-    private void Timer(){
-
-        final Handler handler = new Handler();
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-            if(startRun){
-                    seconds11++;
-
-            }
-
-                handler.postDelayed(this, 1000);
-            }
-        });
-
-    }
-
-    @Override
-    public void onConnected() {
-       // Log.d(TAG, "MainActivity connected to network via AgileLog");
-
-        try {
-            syncLog();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onDisconnected() {
-
-    }
-
-    public static class MyPreferences {
-
-        private static final String MY_PREFERENCES = "my_preferences";
-
-        public static boolean isFirst(Context context) {
-            final SharedPreferences reader = context.getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
-            final boolean first = reader.getBoolean("is_first", true);
-            if (first) {
-                final SharedPreferences.Editor editor = reader.edit();
-                editor.putBoolean("is_first", false);
-                editor.commit();
-            }
-            return first;
-        }
-
-    }
-
-
-    public static class MyPreferencesToken {
-
-        private static final String MY_PREFERENCES_TOKEN = "my_preferences_TOKEN";
-
-        public static boolean isFirstToken(Context context) {
-            final SharedPreferences reader = context.getSharedPreferences(MY_PREFERENCES_TOKEN, Context.MODE_PRIVATE);
-            final boolean first = reader.getBoolean("is_first_toktn", true);
-            if (first) {
-                final SharedPreferences.Editor editor = reader.edit();
-                editor.putBoolean("is_first_toktn", false);
-                editor.commit();
-            }
-            return first;
-        }
-
-    }
 
     /**
      * validate input param
@@ -743,31 +472,10 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
      */
     public  void trackEvent(@NonNull final String eventType) {
 
-/*        long mLastClickTime = 1;
-        if (SystemClock.elapsedRealtime() - mLastClickTime <1) {
-            Log.d(TAG,"do your action  ");
-            return;
-        }
-        mLastClickTime = SystemClock.elapsedRealtime();
-        Log.d(TAG,"do your action  ="+mLastClickTime);*/
-
         /**
          * if the transaction is enable
          */
-        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_CLICK)){
-            i += 1;
-            editor1.putInt(value, i);
-            editor1.apply();
-        }
-        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_LOG_PAGE)){
-            set(AgileEventParameter.AGILE_PARAMS_ACTIVITY_PAGE,activity.getClass().getSimpleName());
 
-        }
-        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_ON)){
-            j += 1;
-            event_screen_oneditor1.putInt(event_screen_onvalue, j);
-            event_screen_oneditor1.apply();
-        }
         if (isTransaction) {
             if (isLog) {
 
@@ -855,7 +563,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             e.printStackTrace();
         }
 
-       }
+    }
 
     /**
      * check for internet connection then perform required operation
@@ -868,7 +576,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
      * @param advertising_id is google adv id
      */
     private void sendLog(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id) {
-     //   Log.d(TAG, "currentTimeValue11     ==" + appId);
+        //   Log.d(TAG, "currentTimeValue11     ==" + appId);
         // Log.d(TAG, "android_Id     =="+packgeId);
         argumentValidation(eventType);  //validation in sendLog
 
@@ -887,13 +595,13 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                     );
         } else {
             //save data into sqlite database
-         //   Log.d(TAG, "network not connected");
-            sendLogToDatabase
+            //   Log.d(TAG, "network not connected");
+           /* sendLogToDatabase
                     (
                             appId,
                             eventType,
                             values
-                    );
+                    );*/
         }
     }
 
@@ -970,29 +678,29 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                     String responseString = response.body().string();
 
-                     Log.d(TAG, "response body = " + responseString);
+                    Log.d(TAG, "response body = " + responseString);
 
                     JSONObject object = new JSONObject(responseString);
                     boolean status = object.getBoolean("status");
                     clearLogEvent();
-                    installdata=true;
-                    agileInstall();
+
+
 
 
                 } catch (IOException e) {
-                   // Log.d(TAG, "IOException = " + e.getMessage());
+                    // Log.d(TAG, "IOException = " + e.getMessage());
                 } catch (JSONException e) {
-                   // Log.d(TAG, "JSONException = " + e.getMessage());
+                    // Log.d(TAG, "JSONException = " + e.getMessage());
                 } finally {
-                      response.body().close();
+                    response.body().close();
                     //     Log.d(TAG, "retrofit connection closed");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                   Log.d(TAG, "onFailure = " + t.getMessage());
-               // sendLogToDatabase(eventType, appId, values);
+                Log.d(TAG, "onFailure = " + t.getMessage());
+                // sendLogToDatabase(eventType, appId, values);
             }
         });
     }
@@ -1008,12 +716,11 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
         argumentValidation(eventType);  //validation in sendLogToDatabase
 
-        // Log.d(TAG, "insert log into database");
+        //Log.d(TAG, "insert log into database");
         LogEntity logEntity = new LogEntity();
         logEntity.setApp_id(appId);
         logEntity.setEvent_type(eventType);
         logEntity.setValue(values);
-        logEntity.setDate_time(localDateTime);
         logEntity.setAndroid_id(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
         logModel.insertLog(logEntity);
         clearLogEvent();
@@ -1031,52 +738,12 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     /**
      * perform operation on background thread
      */
-    public void syncLog() throws Exception {
 
-        //  Log.d(TAG, "(syncLog) called ,size = " + size);
-        synchroniseLogEvent = new SynchroniseLogEvent(size);
-        synchroniseLogEvent.execute();
-    }
 
     /**
      * to sync the local database information with server database on background thread
      */
-    private class SynchroniseLogEvent extends AsyncTask<Void, Void, Void> {
 
-        int size;
-
-        public SynchroniseLogEvent(int size) {
-            this.size = size;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-
-            for (int i = 0; i < size; i++) {
-
-                int id = logModel.getLiveListAllLog().getValue().get(i).getId();
-                String eventType = logModel.getLiveListAllLog().getValue().get(i).getEvent_type();
-                String appId = logModel.getLiveListAllLog().getValue().get(i).getApp_id();
-                String value = logModel.getLiveListAllLog().getValue().get(i).getValue();
-                String date_time = logModel.getLiveListAllLog().getValue().get(i).getDate_time();
-                long time = Long.parseLong(logModel.getLiveListAllLog().getValue().get(i).getTime());
-
-             /*    Log.d(TAG, "id               = " + id);
-                Log.d(TAG, "event type       = " + eventType);
-                Log.d(TAG, "app id           = " + appId);
-                Log.d(TAG, "event value      = " + value);
-                Log.d(TAG, "event time       = " + time);
-                Log.d(TAG, "****************************************`*********************************************");*/
-
-                //call webservice to add data to database
-                eventProductLogServiceOffline(id, appId, eventType, value, time,
-                        WifiState, DeviceLanguage, DeviceType, DeviceModel, DeviceOsVersion, DeviceOsName,
-                        DeviceAppVersion, _latitude, _longitude, AndroidPlatform, date_time, localTimezone,
-                        DeviceBrand, SDkVersion);
-            }
-            return null;
-        }
-    }
 
     /**
      * send data from local database to live database when connected to internet
@@ -1087,98 +754,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
      * @param values    could be additional information which describe the eventType in more details
      * @param time      would be always zero if it send directly to the server or else will send the difference of current and stored entry into room database
      */
-    private void eventProductLogServiceOffline(@NonNull final int id, @NonNull String appId, @NonNull String eventType, @NonNull String values, @NonNull long time,
-                                               @NonNull String wifiState, @NonNull String deviceLanguage, @NonNull String deviceType, @NonNull String deviceModel, @NonNull String deviceOsVersion,
-                                               @NonNull String deviceOsName, @NonNull String deviceAppVersion, @NonNull String latittude, @NonNull String longitude, @NonNull String androidPlatform,
-                                               @NonNull String localDateTime, @NonNull String localTimezone, @NonNull String deviceOperator, @NonNull String sdkversion) {
-
-        String advertising_id = getAdvertisingId();
-        time = (System.currentTimeMillis() - time) / 1000;
-        String wifi = checkNetworkStatus(context);
-
-
-           argumentValidation(eventType);  //validation in eventProductLogServiceOffline
-
-            Location nwLocation = appLocationService.getLocation(LocationManager.NETWORK_PROVIDER);
-
-            if (nwLocation != null) {
-                _curlatitude = String.valueOf(nwLocation.getLatitude());
-                _curlongitude = String.valueOf(nwLocation.getLongitude());
-
-            }
-
-            DateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String dateString2 = dateFormat2.format(new Date()).toString();
-
-            if (GPSAddress !=null){
-
-            gpsAdd=GPSAddress;
-            gpslocality=GPSLocality;
-            gpspostalcode=GPSPostalCode;
-            gpscountryname=GPSCountryName;
-            gpscountrycode=GPSCountryCode;
-
-
-        }
-
-        else {
-            gpsAdd="";
-            gpslocality="";
-            gpspostalcode="";
-            gpscountryname="";
-            gpscountrycode="";
-
-
-        }
-
-            AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
-            Call<ResponseBody> responseBodyCall = service.createUser
-                    (appId,
-                            Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID),
-                            eventType,
-                            values,
-                            String.valueOf(time),
-                            advertising_id, wifi, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
-                            deviceAppVersion, sdkversion, _curlongitude, _curlatitude, androidPlatform,localDateTime,localTimezone,_longitude,_latitude,dateString2,localTimezone,packagename,gpsAdd,gpslocality,
-                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot
-                    );
-
-            responseBodyCall.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                    try {
-
-                        String responseString = response.body().string();
-                         //   Log.d(TAG, "response body " + id + " = " + responseString);
-
-                        JSONObject object = new JSONObject(responseString);
-                        boolean status = object.getBoolean("status");
-                        //     Log.d(TAG, "status = " + status);
-
-                        if (status) {
-                            //delete record from the database if the response is true
-                            logModel.singleDeleteLog(id);
-                        } else {
-                            //do not delete record from the database if the response is false
-                        }
-
-                    } catch (IOException e) {
-                        //     Log.d(TAG, "IOException = " + e.getMessage());
-                        synchroniseLogEvent.cancel(true);
-                    } catch (JSONException e) {
-                        //    Log.d(TAG, "JSONException = " + e.getMessage());
-                        synchroniseLogEvent.cancel(true);
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //  Log.d(TAG, "onFailure = " + t.getMessage());
-                    synchroniseLogEvent.cancel(true);
-                }
-            });
-        }
 
     /**
      * set value to shared preference i.e. Google advertising id
@@ -1257,7 +832,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             jsonObject.put(key, value);
         } catch (JSONException e) {
-           // Log.d(TAG, "(set) String float catch error = " + e.getMessage());
+            // Log.d(TAG, "(set) String float catch error = " + e.getMessage());
         }
     }
 
@@ -1281,7 +856,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             jsonObject.put(key, value);
         } catch (Exception e) {
-           // Log.d(TAG, "(set) String String catch error = " + e.getMessage());
+            // Log.d(TAG, "(set) String String catch error = " + e.getMessage());
         }
     }
 
@@ -1289,7 +864,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             jsonObject.put(key, value);
         } catch (Exception e) {
-           // Log.d(TAG, "(set) String String catch error = " + e.getMessage());
+            // Log.d(TAG, "(set) String String catch error = " + e.getMessage());
         }
     }
 
@@ -1301,7 +876,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             jsonObject.put(key, value);
         } catch (Exception e) {
-           // Log.d(TAG, "(set) String boolean catch error = " + e.getMessage());
+            // Log.d(TAG, "(set) String boolean catch error = " + e.getMessage());
         }
     }
 
@@ -1345,7 +920,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             jsonObject.put(key, value);
         } catch (Exception e) {
-           // Log.d(TAG, "(set) String short catch error = " + e.getMessage());
+            // Log.d(TAG, "(set) String short catch error = " + e.getMessage());
         }
     }
 

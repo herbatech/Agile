@@ -201,6 +201,9 @@ public class AgileTransaction {
        // initLocation(activity);
     }
 
+    public static void trackTransaction(String agileEventScrrenCrash) {
+    }
+
     public String loadJSONFromAsset() {
         String json = null;
         try {
@@ -419,6 +422,8 @@ public class AgileTransaction {
         }
     }
 
+
+
     /**
      * @param key   String data type
      * @param value boolean data type
@@ -506,6 +511,8 @@ public class AgileTransaction {
         //    Log.d(TAG, "transaction terminated, due to not found instance of AgileTransaction");
         }
     }
+
+
 
     private String checkNetworkStatus(Context context) {
 

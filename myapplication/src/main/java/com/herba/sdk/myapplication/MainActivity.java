@@ -1,5 +1,6 @@
 package com.herba.sdk.myapplication;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     private AgileLog agileLog;
     private AgileTransaction agileTransaction;
     boolean screen_on=false;
+    EditText editText;
+    Context context;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -31,6 +34,18 @@ public class MainActivity extends AppCompatActivity {
 
         agileTransaction = new AgileTransaction(getApplicationContext(), this, AgileEventType.AGILE_EVENT_TRANSACTION);
         agileLog = new AgileLog(getApplicationContext(), this, agileTransaction);
+
+
+
+
+        findViewById(R.id.indexOutOfBound).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Double num1 = Double.parseDouble(editText.getText().toString());
+               /* Object x[] = new String[3];
+                x[0] = new Integer(0);*/
+            }
+        });
 
         findViewById(R.id.book1).setOnClickListener(new View.OnClickListener() {
             @Override
