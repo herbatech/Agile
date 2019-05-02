@@ -1,5 +1,6 @@
 package com.ads.agile.AgileCrashAnalytic;
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.ads.agile.AgileCrashAnalytic.utils.AgileCrashReporterExceptionHandler;
@@ -9,26 +10,27 @@ import com.ads.agile.AgileCrashAnalytic.utils.AgileCrashReporterNotInitializedEx
 public class AgileCrashReporter {
     public  static  String TAG= AgileCrashReporter.class.getSimpleName();
 
-    private static Context applicationContext;
+    private static Activity applicationContext;
+    private static Activity activity1;
 
     private static String crashReportPath;
 
     private static boolean isNotificationEnabled = true;
 
-    private AgileCrashReporter() {
+    public AgileCrashReporter() {
         // This class in not publicly instantiable
     }
 
-    public static void initialize(Context context) {
-        applicationContext = context;
+    public static void initialize(Activity activity) {
+        applicationContext = activity;
         setUpExceptionHandler();
     }
 
-    public static void initialize(Context context, String crashReportSavePath) {
+  /*  public static void initialize(Context context, String crashReportSavePath) {
         applicationContext = context;
         crashReportPath = crashReportSavePath;
         setUpExceptionHandler();
-    }
+    }*/
 
     private static void setUpExceptionHandler() {
         if (!(Thread.getDefaultUncaughtExceptionHandler() instanceof AgileCrashReporterExceptionHandler)) {

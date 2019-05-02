@@ -16,7 +16,7 @@ public class AgileCrashApplication extends Application {
 
         if (BuildConfig.DEBUG) {
 
-            AgileCrashReporter.initialize(this);
+         //   AgileCrashReporter.initialize(this);
         }
     }
 }

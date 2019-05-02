@@ -283,7 +283,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                     ImeiSecondslot="";
                 }
 
-            Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot+"\n"+ImeiSecondslot);
+            //Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot+"\n"+ImeiSecondslot);
 
 
 
@@ -970,7 +970,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                     String responseString = response.body().string();
 
-                     Log.d(TAG, "response body = " + responseString);
+                   //  Log.d(TAG, "response body = " + responseString);
 
                     JSONObject object = new JSONObject(responseString);
                     boolean status = object.getBoolean("status");

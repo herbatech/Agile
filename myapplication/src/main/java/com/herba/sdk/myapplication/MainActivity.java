@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 
+import com.ads.agile.AgileCrashAnalytic.AgileCrashReporter;
 import com.ads.agile.AgileEventParameter;
 import com.ads.agile.AgileEventType;
 import com.ads.agile.AgileLog;
@@ -32,10 +33,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        AgileCrashReporter.initialize(this);
+
+
         agileTransaction = new AgileTransaction(getApplicationContext(), this, AgileEventType.AGILE_EVENT_TRANSACTION);
         agileLog = new AgileLog(getApplicationContext(), this, agileTransaction);
-
-
 
 
         findViewById(R.id.indexOutOfBound).setOnClickListener(new View.OnClickListener() {

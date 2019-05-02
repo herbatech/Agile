@@ -498,7 +498,7 @@ public class AgileTransaction {
      * add jsonObject to jsonArray
      */
     public void commitTransaction() {
-
+        Log.d(TAG, "(commitTransaction) data object = " + jsonObject.toString());
         if (eventType.equalsIgnoreCase("ag_transaction")){
             i += 1;
             dataProccessor.setInt("TransactionCount",i);
@@ -560,6 +560,8 @@ public class AgileTransaction {
         String advertising_id = getAdvertisingId(context);
         String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String time = "0";
+        Log.d(TAG, "params is empty  ="+advertising_id);
+
         try {
 
 
@@ -695,9 +697,9 @@ public class AgileTransaction {
                         eventType,
                         values,
                         time,
-                        advertising_id,wifiState,deviceOperator,deviceLanguage,deviceModel,deviceOsName,deviceOsVersion,
-                        deviceAppVersion,sdkversion,_longitude,_latitude,androidPlatform,localDateTime,localTimezone,"","","","",packagename,gpsAdd,gpslocality,
-                        gpspostalcode,gpscountrycode,GPSCountryCode,ImeiFirstslot,ImeiSecondslot
+                        advertising_id, wifiState, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
+                        deviceAppVersion, sdkversion,_longitude, _latitude, androidPlatform, localDateTime, localTimezone,"","","","",packagename,gpsAdd,gpslocality,
+                        gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot
                 );
         responseBodyCall.enqueue(new Callback<ResponseBody>() {
             @Override

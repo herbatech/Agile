@@ -31,5 +31,15 @@ public class FirstActivity extends AppCompatActivity {
 
             }
         });
+
+
+        findViewById(R.id.indexOutOfBound).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Double num1 = Double.parseDouble(editText.getText().toString());
+                Object x[] = new String[3];
+                x[0] = new Integer(0);
+            }
+        });
     }
 }
