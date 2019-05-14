@@ -1,8 +1,6 @@
 package com.ads.agile.AgileCrashAnalytic.utils;
 
-/**
- * Created by bali on 02/08/17.
- */
+
 
 /**
  * Represents an error condition specific to the Crash Reporter for Android.

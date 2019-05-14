@@ -760,6 +760,9 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             editor1.apply();
         }
         if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_LOG_PAGE)){
+            i += 1;
+            editor1.putInt(value, i);
+            editor1.apply();
             set(AgileEventParameter.AGILE_PARAMS_ACTIVITY_PAGE,activity.getClass().getSimpleName());
 
         }
@@ -792,13 +795,13 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         final android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
         if (wifi.isConnectedOrConnecting()) {
             WifiState = "wifi";
-            //  Toast.makeText(this, "Wifi", Toast.LENGTH_LONG).show();
+
         } else if (mobile.isConnectedOrConnecting()) {
             WifiState = "Data";
-            //  Toast.makeText(this, "Mobile 3G ", Toast.LENGTH_LONG).show();
+
         } else {
             WifiState = "false";
-            //   Toast.makeText(this, "No Network ", Toast.LENGTH_LONG).show();
+
         }
         return WifiState;
     }
@@ -868,8 +871,8 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
      * @param advertising_id is google adv id
      */
     private void sendLog(@NonNull final String appId, @NonNull String android_id, @NonNull final String eventType, @NonNull final String values, @NonNull final String time, @NonNull String advertising_id) {
-     //   Log.d(TAG, "currentTimeValue11     ==" + appId);
-        // Log.d(TAG, "android_Id     =="+packgeId);
+
+
         argumentValidation(eventType);  //validation in sendLog
 
         if (isConnected(context)) {
@@ -887,7 +890,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                     );
         } else {
             //save data into sqlite database
-         //   Log.d(TAG, "network not connected");
+
             sendLogToDatabase
                     (
                             appId,

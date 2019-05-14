@@ -1,8 +1,6 @@
 package com.ads.agile.AgileCrashAnalytic.utils;
 
-/**
- * Created by bali on 02/08/17.
- */
+
 
 /**
  * An Exception indicating that the Crash Reporter has not been correctly initialized.
