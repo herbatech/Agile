@@ -837,7 +837,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             AndroidPlatform = "Android";
             Latittude = _latitude;
             Longitude = _longitude;
-            SDkVersion = "1.1.7";
+            SDkVersion = "1.1.9";
             WifiState = checkNetworkStatus(context);
             argumentValidation(eventType);  //validation in trackEvent
 
@@ -973,7 +973,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                     String responseString = response.body().string();
 
-                   //  Log.d(TAG, "response body = " + responseString);
+                    // Log.d(TAG, "response body = " + responseString);
 
                     JSONObject object = new JSONObject(responseString);
                     boolean status = object.getBoolean("status");
