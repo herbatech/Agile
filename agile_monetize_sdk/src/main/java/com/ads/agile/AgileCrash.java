@@ -318,8 +318,18 @@ public class AgileCrash extends Activity  {
 
     private static String getOsVersionName() {
         Field[] fields = Build.VERSION_CODES.class.getFields();
-        String name = fields[Build.VERSION.SDK_INT + 1].getName();
+        String name = "UNKNOWN";
+        for (Field field : fields) {
+            try {
+                if (field.getInt(Build.VERSION_CODES.class) == Build.VERSION.SDK_INT) {
+                    name = field.getName();
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
 
+        if (name.equals("P")) name = "Pie";
         if (name.equals("O")) name = "Oreo";
         if (name.equals("N")) name = "Nougat";
         if (name.equals("M")) name = "Marshmallow";
