@@ -25,8 +25,10 @@ public class AgileConfiguration {
     private static final String TAG = "AgileConfiguration";
     public static final int JOB_ID = 101;
    // private static String url = "http://192.168.1.37:8002/";
-    private static String url = "https://log.agileadnetwork.com:8080/";
+    //private static String url = "https://log.agileadnetwork.com:8080/";
+    private static String url = "https://sandbox.agileadnetwork.com/";
     public static final String AGILE_PREF = "agile_preference";
+    public static final String AGILE_URL = "agile_preference";
     public static final String AGILE_ID = "agile_google_adv_id";
     public static final String AGILE_CRASH_COUNTER = "agile_crash_counter";
     public static boolean isTransaction = false;
@@ -42,7 +44,7 @@ public class AgileConfiguration {
 //        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(url)//BuildConfig.Base_URL
+                .baseUrl(AgileLog.AGILE_ADD_NETWORK)//BuildConfig.Base_URL
                 //.client(client)
                 .build();
         return retrofit;
@@ -50,6 +52,47 @@ public class AgileConfiguration {
 
     //interface for retrofit
     public interface ServiceInterface {
+        @FormUrlEncoded
+        @POST("log.php")
+        Call<ResponseBody> createUser
+                (
+                        @Field("app_id") String app_id,
+                        @Field("android_id") String android_id,
+                        @Field("event_type") String event_type,
+                        @Field("event_value") String event_value,
+                        @Field("timestamp_diff") String timestamp_diff,
+                        @Field("advertising_id") String advertising_id,
+                        @Field("wifi") String wifi,
+                        @Field("device_brand") String operator,
+                        @Field("device_language") String device_language,
+                        @Field("device_model") String device_model,
+                        @Field("os_name") String os_name,
+                        @Field("os_version") String os_version,
+                        @Field("app_version") String app_version,
+                        @Field("sdk_version") String sdk_version,
+                        @Field("cur_longitude") String longitude,
+                        @Field("cur_latitude") String latitude,
+                        @Field("platform") String platform,
+                        @Field("cur_device_date_time") String device_date_time,
+                        @Field("cur_device_time_zone") String device_time_zone ,
+                        @Field("db_longitude") String db_longitude,
+                        @Field("db_latitude") String db_latitude,
+                        @Field("db_device_date_time") String db_device_date_time,
+                        @Field("db_device_time_zone") String db_device_time_zone,
+                        @Field("package_name") String    package_name,
+                        @Field("address") String    address,
+                        @Field("locality") String    locality,
+                        @Field("postal_code") String    postal_code,
+                        @Field("country_name") String    country_name,
+                        @Field("country_code") String    country_code,
+                        @Field("imei1") String    imei1,
+                        @Field("imei2") String    imei2
+
+
+                );
+    }
+
+    public interface ServiceInterface1 {
         @FormUrlEncoded
         @POST("log.js")
         Call<ResponseBody> createUser
@@ -89,6 +132,8 @@ public class AgileConfiguration {
 
                 );
     }
+
+
 
     /**
      * get Google advertising id on background thread

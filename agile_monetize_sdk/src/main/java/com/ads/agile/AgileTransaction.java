@@ -22,6 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -124,6 +125,7 @@ public class AgileTransaction {
 
     AppLocationService appLocationService;
     UtilConfig dataProccessor;
+    String ValidateInterface,trace_app_sandbox;
 
     int i=0;
     public AgileTransaction(@NonNull Context context, @NonNull FragmentActivity activity, @NonNull String eventType) {
@@ -141,6 +143,7 @@ public class AgileTransaction {
             JSONObject m_jArry = obj.getJSONObject("app");
             String IdPacakageName = m_jArry.getString("name");
             String google_playstore = m_jArry.getString("available_on_google_playstore");
+            trace_app_sandbox = m_jArry.getString("sandbox");
 
 
             if (google_playstore.equalsIgnoreCase("1")){
@@ -154,6 +157,17 @@ public class AgileTransaction {
                 appId = m_jArry.getString("id");
                 packagename=context.getPackageName();
                 Log.e(TAG,"Warning : Googgle Playstore not available in playstore ");
+            }
+
+            if(trace_app_sandbox.equalsIgnoreCase("1")){
+
+                ValidateInterface ="log.php";
+
+            }
+
+            else {
+
+                ValidateInterface= "log.js";
             }
 
         } catch (JSONException e) {
@@ -590,7 +604,7 @@ public class AgileTransaction {
         DeviceModel=Build.MODEL;
         DeviceOsVersion=Build.VERSION.RELEASE;
         DeviceOsName=getOsVersionName();
-        DeviceAppVersion=verCode;
+        DeviceAppVersion=version;
         AndroidPlatform="Android";
         Latittude=_latitude;
         Longitude=_longitude;
@@ -699,52 +713,105 @@ public class AgileTransaction {
 
         }
 
+        if (ValidateInterface.equalsIgnoreCase("log.php")){
+            Log.d(TAG, "ValidateInterface response code = " + ValidateInterface);
 
-        AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
-        Call<ResponseBody> responseBodyCall = service.createUser
-                (appId,
-                        android_id,
-                        eventType,
-                        values,
-                        time,
-                        advertising_id, wifiState, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
-                        deviceAppVersion, sdkversion,_longitude, _latitude, androidPlatform, localDateTime, localTimezone,"","","","",packagename,gpsAdd,gpslocality,
-                        gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot
-                );
-        responseBodyCall.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-              //  Log.d(TAG, "response code = " + response.code());
-                try {
+            AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
+            Call<ResponseBody> responseBodyCall = service.createUser
+                    (appId,
+                            android_id,
+                            eventType,
+                            values,
+                            time,
+                            advertising_id, wifiState, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
+                            deviceAppVersion, sdkversion,_longitude, _latitude, androidPlatform, localDateTime, localTimezone,"","","","",packagename,gpsAdd,gpslocality,
+                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot
+                    );
+            responseBodyCall.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    //  Log.d(TAG, "response code = " + response.code());
+                    try {
 
-                    String responseString = response.body().string();
+                        String responseString = response.body().string();
 
-                    //Log.d(TAG, "response body = " + responseString);
+                        //Log.d(TAG, "response body = " + responseString);
 
-                    JSONObject object = new JSONObject(responseString);
-                    boolean status = object.getBoolean("status");
-                 //   Log.d(TAG, "status = " + status);
+                        JSONObject object = new JSONObject(responseString);
+                        boolean status = object.getBoolean("status");
+                        //   Log.d(TAG, "status = " + status);
 
-                    //clearLogEvent the log
-                    clearTransaction();
+                        //clearLogEvent the log
+                        clearTransaction();
 
 
-                } catch (IOException e) {
-                  //  Log.d(TAG, "IOException = " + e.getMessage());
-                } catch (JSONException e) {
-                  //  Log.d(TAG, "JSONException = " + e.getMessage());
-                } finally {
-                    response.body().close();
-                 //   Log.d(TAG, "retrofit connection closed");
+                    } catch (IOException e) {
+                        //  Log.d(TAG, "IOException = " + e.getMessage());
+                    } catch (JSONException e) {
+                        //  Log.d(TAG, "JSONException = " + e.getMessage());
+                    } finally {
+                        response.body().close();
+                        //   Log.d(TAG, "retrofit connection closed");
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-             //   Log.d(TAG, "onFailure = " + t.getMessage());
-                sendLogToDatabase(eventType, appId, values);
-            }
-        });
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    //   Log.d(TAG, "onFailure = " + t.getMessage());
+                    sendLogToDatabase(eventType, appId, values);
+                }
+            });
+        }
+        else{
+
+            AgileConfiguration.ServiceInterface1 service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface1.class);
+            Call<ResponseBody> responseBodyCall = service.createUser
+                    (appId,
+                            android_id,
+                            eventType,
+                            values,
+                            time,
+                            advertising_id, wifiState, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
+                            deviceAppVersion, sdkversion,_longitude, _latitude, androidPlatform, localDateTime, localTimezone,"","","","",packagename,gpsAdd,gpslocality,
+                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot
+                    );
+            responseBodyCall.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    //  Log.d(TAG, "response code = " + response.code());
+                    try {
+
+                        String responseString = response.body().string();
+
+                        //Log.d(TAG, "response body = " + responseString);
+
+                        JSONObject object = new JSONObject(responseString);
+                        boolean status = object.getBoolean("status");
+                        //   Log.d(TAG, "status = " + status);
+
+                        //clearLogEvent the log
+                        clearTransaction();
+
+
+                    } catch (IOException e) {
+                        //  Log.d(TAG, "IOException = " + e.getMessage());
+                    } catch (JSONException e) {
+                        //  Log.d(TAG, "JSONException = " + e.getMessage());
+                    } finally {
+                        response.body().close();
+                        //   Log.d(TAG, "retrofit connection closed");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    //   Log.d(TAG, "onFailure = " + t.getMessage());
+                    sendLogToDatabase(eventType, appId, values);
+                }
+            });
+        }
+
+
     }
 
     /**
@@ -758,12 +825,20 @@ public class AgileTransaction {
 
         argumentValidation(eventType);  //validation in sendLogToDatabase
 
+
+        String androidId=Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String appIdencodedString = Base64.encodeToString(appId.getBytes(), Base64.DEFAULT );
+        String eventTypeencodedString = Base64.encodeToString(eventType.getBytes(), Base64.DEFAULT );
+        String valuesencodedString = Base64.encodeToString(values.getBytes(), Base64.DEFAULT );
+        String localDateTimeencodedString = Base64.encodeToString(localDateTime.getBytes(), Base64.DEFAULT );
+        String androidIdencodedString = Base64.encodeToString(androidId.getBytes(), Base64.DEFAULT );
+
         //Log.d(TAG, "insert log into database");
         LogEntity logEntity = new LogEntity();
-        logEntity.setApp_id(appId);
+        logEntity.setApp_id(appIdencodedString);
         logEntity.setEvent_type(eventType);
-        logEntity.setValue(values);
-        logEntity.setAndroid_id(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
+        logEntity.setValue(valuesencodedString);
+        logEntity.setAndroid_id(androidIdencodedString);
         logModel.insertLog(logEntity);
         clearTransaction();
     }

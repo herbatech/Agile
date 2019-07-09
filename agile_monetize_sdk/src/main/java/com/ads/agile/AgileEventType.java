@@ -14,4 +14,8 @@ public class AgileEventType {
     public static final String AGILE_EVENT_FIREBASE_TOKEN = "event_firebase_token";
     public static final String AGILE_EVENT_CRASH = "event_crash";
 
+
+    public static final String AGILE_ADD_INTERFACE="";
+    public static final String AGILE_ADD_NETWORK ="";
+
 }
