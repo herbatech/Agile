@@ -1104,11 +1104,13 @@ else {
         LogEntity logEntity = new LogEntity();
 
         String androidId=Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        String appIdencodedString = Base64.encodeToString(appId.getBytes(), Base64.DEFAULT );
-        String eventTypeencodedString = Base64.encodeToString(eventType.getBytes(), Base64.DEFAULT );
-        String valuesencodedString = Base64.encodeToString(values.getBytes(), Base64.DEFAULT );
-        String localDateTimeencodedString = Base64.encodeToString(localDateTime.getBytes(), Base64.DEFAULT );
-        String androidIdencodedString = Base64.encodeToString(androidId.getBytes(), Base64.DEFAULT );
+        String appIdencodedString = AgileAESHelper.encryption(appId);
+        String eventTypeencodedString =AgileAESHelper.encryption(eventType);
+        String valuesencodedString = AgileAESHelper.encryption(values);;
+        String localDateTimeencodedString =AgileAESHelper.encryption(localDateTime);;
+        String androidIdencodedString = AgileAESHelper.encryption(androidId);;
+
+
 
         Log.d(TAG,"appIdencodedString   ="+appIdencodedString);
         Log.d(TAG,"eventTypeencodedString   ="+eventTypeencodedString);
@@ -1118,7 +1120,7 @@ else {
 
 
         logEntity.setApp_id(appIdencodedString);
-        logEntity.setEvent_type(eventType);
+        logEntity.setEvent_type(eventTypeencodedString);
         logEntity.setValue(valuesencodedString);
         logEntity.setDate_time(localDateTimeencodedString);
         logEntity.setAndroid_id(androidIdencodedString);
@@ -1158,7 +1160,7 @@ else {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            String appIddatatext = null,valuedatatext=null,date_timedatatext=null,timedatatext=null;
+            String appIddatatext = null,valuedatatext=null,date_timedatatext=null,timedatatext=null,eventTypedatadatatext=null;
             for (int i = 0; i < size; i++) {
 
                 int id = logModel.getLiveListAllLog().getValue().get(i).getId();
@@ -1171,33 +1173,23 @@ else {
 
 
 
-                byte[] appIddata = Base64.decode(appId, Base64.DEFAULT);
-                byte[] valuedata = Base64.decode(value, Base64.DEFAULT);
-                byte[] date_timedata = Base64.decode(date_time, Base64.DEFAULT);
-                byte[] timedata = Base64.decode(date_time, Base64.DEFAULT);
 
-                try {
-                     appIddatatext = new String(appIddata, "UTF-8");
-                     valuedatatext = new String(valuedata, "UTF-8");
-                     date_timedatatext = new String(date_timedata, "UTF-8");
-                     timedatatext = new String(timedata, "UTF-8");
-                    Log.d(TAG,"appIddatatext String  ="+appIddatatext);
-                    Log.d(TAG,"valuedatatext String  ="+valuedatatext);
-                    Log.d(TAG,"date_timedatatext String  ="+date_timedatatext);
-                    Log.d(TAG,"timedatatext String  ="+timedatatext);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
 
-             /*    Log.d(TAG, "id               = " + id);
-                Log.d(TAG, "event type       = " + eventType);
-                Log.d(TAG, "app id           = " + appId);
-                Log.d(TAG, "event value      = " + value);
-                Log.d(TAG, "event time       = " + time);
-                Log.d(TAG, "****************************************`*********************************************");*/
+                appIddatatext = AgileAESHelper.decryption(appId);
+                eventTypedatadatatext = AgileAESHelper.decryption(eventType);
+                valuedatatext = AgileAESHelper.decryption(value);
+                timedatatext = AgileAESHelper.decryption(date_time);
+
+
+                Log.d(TAG,"appIddatatext String  ="+appIddatatext);
+                Log.d(TAG,"valuedatatext String  ="+valuedatatext);
+                //Log.d(TAG,"date_timedatatext String  ="+date_timedatatext);
+                Log.d(TAG,"timedatatext String  ="+timedatatext);
+                Log.d(TAG,"eventTypedatadatatext String  ="+eventTypedatadatatext);
+
 
                 //call webservice to add data to database
-                eventProductLogServiceOffline(id, appIddatatext, eventType, valuedatatext, time,
+                eventProductLogServiceOffline(id, appIddatatext, eventTypedatadatatext, valuedatatext, time,
                         WifiState, DeviceLanguage, DeviceType, DeviceModel, DeviceOsVersion, DeviceOsName,
                         DeviceAppVersion, _latitude, _longitude, AndroidPlatform, timedatatext, localTimezone,
                         DeviceBrand, SDkVersion);

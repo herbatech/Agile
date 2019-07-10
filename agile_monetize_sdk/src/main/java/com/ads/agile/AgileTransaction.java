@@ -827,16 +827,16 @@ public class AgileTransaction {
 
 
         String androidId=Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        String appIdencodedString = Base64.encodeToString(appId.getBytes(), Base64.DEFAULT );
-        String eventTypeencodedString = Base64.encodeToString(eventType.getBytes(), Base64.DEFAULT );
-        String valuesencodedString = Base64.encodeToString(values.getBytes(), Base64.DEFAULT );
-        String localDateTimeencodedString = Base64.encodeToString(localDateTime.getBytes(), Base64.DEFAULT );
-        String androidIdencodedString = Base64.encodeToString(androidId.getBytes(), Base64.DEFAULT );
+        String appIdencodedString = AgileAESHelper.encryption(appId);
+        String eventTypeencodedString =AgileAESHelper.encryption(eventType);
+        String valuesencodedString = AgileAESHelper.encryption(values);;
+        String localDateTimeencodedString =AgileAESHelper.encryption(localDateTime);;
+        String androidIdencodedString = AgileAESHelper.encryption(androidId);;
 
         //Log.d(TAG, "insert log into database");
         LogEntity logEntity = new LogEntity();
         logEntity.setApp_id(appIdencodedString);
-        logEntity.setEvent_type(eventType);
+        logEntity.setEvent_type(eventTypeencodedString);
         logEntity.setValue(valuesencodedString);
         logEntity.setAndroid_id(androidIdencodedString);
         logModel.insertLog(logEntity);
