@@ -774,17 +774,11 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
      */
     public  void trackEvent(@NonNull final String eventType) {
 
-/*        long mLastClickTime = 1;
-        if (SystemClock.elapsedRealtime() - mLastClickTime <1) {
-            Log.d(TAG,"do your action  ");
-            return;
-        }
-        mLastClickTime = SystemClock.elapsedRealtime();
-        Log.d(TAG,"do your action  ="+mLastClickTime);*/
-
         /**
          * if the transaction is enable
          */
+        argumentValidation(eventType);  //validation in sendLog
+
         if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_CLICK)){
             i += 1;
             editor1.putInt(value, i);
@@ -802,20 +796,177 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             event_screen_oneditor1.putInt(event_screen_onvalue, j);
             event_screen_oneditor1.apply();
         }
-        if (isTransaction) {
-            if (isLog) {
 
-                validateLog(eventType, AppId);
-            } else {
 
+
+
+        if (isConnected(context)) {
+            //////////////////////////////
+
+            if(ValidateInterface.equalsIgnoreCase("log.php")){
+                AgileConfiguration.ServiceInterfaceEnable service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterfaceEnable.class);
+                Call<ResponseBody> responseBodyCall = service.createUser1(AppId);
+                responseBodyCall.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        Log.d(TAG, "response code enable = " + response.code());
+                        try {
+
+                            String responseString = response.body().string();
+
+                            Log.d(TAG, "response body enable = " + responseString);
+
+                            JSONObject object = new JSONObject(responseString);
+                            boolean status = object.getBoolean("get_app_status");
+
+                            if (status){
+
+                                if (isTransaction) {
+                                    if (isLog) {
+
+                                        validateLog(eventType, AppId);
+                                    } else {
+
+                                    }
+                                }
+                                /**
+                                 * if the transaction is disable
+                                 */
+                                else {
+                                    validateLog(eventType, AppId);
+                                }
+                            }
+
+                            else {
+
+                                agileInstall();
+                                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)||eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_FIREBASE_TOKEN)){
+
+                                    if (isTransaction) {
+                                        if (isLog) {
+
+                                            validateLog(eventType, AppId);
+                                        } else {
+
+                                        }
+                                    }
+                                    /**
+                                     * if the transaction is disable
+                                     */
+                                    else {
+                                        validateLog(eventType, AppId);
+                                    }
+                                }
+
+                            }
+
+                        } catch (IOException e) {
+                            Log.d(TAG, "IOException = " + e.getMessage());
+                        } catch (JSONException e) {
+                            Log.d(TAG, "JSONException = " + e.getMessage());
+                        } finally {
+                            response.body().close();
+                            //      Log.d(TAG, "retrofit connection closed");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.d(TAG, "onFailure = " + t.getMessage());
+                        // sendLogToDatabase(eventType, appId, values);
+                    }
+                });
             }
+            else {
+                AgileConfiguration.ServiceInterfaceEnable1 service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterfaceEnable1.class);
+                Call<ResponseBody> responseBodyCall = service.createUser1(AppId);
+                responseBodyCall.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        Log.d(TAG, "response code enable = " + response.code());
+                        try {
+
+                            String responseString = response.body().string();
+
+                            Log.d(TAG, "response body enable = " + responseString);
+
+                            JSONObject object = new JSONObject(responseString);
+                            boolean status = object.getBoolean("get_app_status");
+
+                            if (status){
+
+                                if (isTransaction) {
+                                    if (isLog) {
+
+                                        validateLog(eventType, AppId);
+                                    } else {
+
+                                    }
+                                }
+                                /**
+                                 * if the transaction is disable
+                                 */
+                                else {
+                                    validateLog(eventType, AppId);
+                                }
+                            }
+
+                            else {
+                                Log.d(TAG, "eventType body enable = " + eventType);
+                                agileInstall();
+                                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)||eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_FIREBASE_TOKEN)){
+
+                                    if (isTransaction) {
+                                        if (isLog) {
+
+                                            validateLog(eventType, AppId);
+                                        } else {
+
+                                        }
+                                    }
+                                    /**
+                                     * if the transaction is disable
+                                     */
+                                    else {
+                                        validateLog(eventType, AppId);
+                                    }
+                                }
+
+                            }
+
+                        } catch (IOException e) {
+                            Log.d(TAG, "IOException = " + e.getMessage());
+                        } catch (JSONException e) {
+                            Log.d(TAG, "JSONException = " + e.getMessage());
+                        } finally {
+                            response.body().close();
+                            //      Log.d(TAG, "retrofit connection closed");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.d(TAG, "onFailure = " + t.getMessage());
+                        // sendLogToDatabase(eventType, appId, values);
+                    }
+                });
+            }
+
+
+    //////////////////////////////
+        } else {
+            //save data into sqlite database
+
+            sendLogToDatabase
+                    (
+                            AppId,
+                            eventType,
+                            getLogEvent()
+                    );
         }
-        /**
-         * if the transaction is disable
-         */
-        else {
-            validateLog(eventType, AppId);
-        }
+
+
+
     }
 
     private String checkNetworkStatus(Context context) {
@@ -1002,12 +1153,12 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     responseBodyCall.enqueue(new Callback<ResponseBody>() {
         @Override
         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-            //  Log.d(TAG, "response code = " + response.code());
+              Log.d(TAG, "response code = " + response.code());
             try {
 
                 String responseString = response.body().string();
 
-                //Log.d(TAG, "response body = " + responseString);
+                Log.d(TAG, "response body = " + responseString);
 
                 JSONObject object = new JSONObject(responseString);
                 // boolean status = object.getBoolean("status");
@@ -1053,12 +1204,12 @@ else {
     responseBodyCall.enqueue(new Callback<ResponseBody>() {
         @Override
         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-            //  Log.d(TAG, "response code = " + response.code());
+              Log.d(TAG, "response code = " + response.code());
             try {
 
                 String responseString = response.body().string();
 
-                //Log.d(TAG, "response body = " + responseString);
+                Log.d(TAG, "response body = " + responseString);
 
                 JSONObject object = new JSONObject(responseString);
                 // boolean status = object.getBoolean("status");
@@ -1163,24 +1314,20 @@ else {
             String appIddatatext = null,valuedatatext=null,date_timedatatext=null,timedatatext=null,eventTypedatadatatext=null;
             for (int i = 0; i < size; i++) {
 
-                int id = logModel.getLiveListAllLog().getValue().get(i).getId();
-                String eventType = logModel.getLiveListAllLog().getValue().get(i).getEvent_type();
-                String appId = logModel.getLiveListAllLog().getValue().get(i).getApp_id();
-                String value = logModel.getLiveListAllLog().getValue().get(i).getValue();
-                String date_time = logModel.getLiveListAllLog().getValue().get(i).getDate_time();
-                long time = Long.parseLong(logModel.getLiveListAllLog().getValue().get(i).getTime());
+                  final   int id = logModel.getLiveListAllLog().getValue().get(i).getId();
+                  String eventType = logModel.getLiveListAllLog().getValue().get(i).getEvent_type();
+                 String appId = logModel.getLiveListAllLog().getValue().get(i).getApp_id();
+                 String value = logModel.getLiveListAllLog().getValue().get(i).getValue();
+                  String date_time = logModel.getLiveListAllLog().getValue().get(i).getDate_time();
+                 final long time = Long.parseLong(logModel.getLiveListAllLog().getValue().get(i).getTime());
 
 
-
-
-
-
-                appIddatatext = AgileAESHelper.decryption(appId);
+                 appIddatatext = AgileAESHelper.decryption(appId);
                 eventTypedatadatatext = AgileAESHelper.decryption(eventType);
                 valuedatatext = AgileAESHelper.decryption(value);
                 timedatatext = AgileAESHelper.decryption(date_time);
 
-
+               // Log.d(TAG,"SecretKKey   ="+AgileAESHelper.SecretKey);
                 Log.d(TAG,"appIddatatext String  ="+appIddatatext);
                 Log.d(TAG,"valuedatatext String  ="+valuedatatext);
                 //Log.d(TAG,"date_timedatatext String  ="+date_timedatatext);
@@ -1188,11 +1335,116 @@ else {
                 Log.d(TAG,"eventTypedatadatatext String  ="+eventTypedatadatatext);
 
 
-                //call webservice to add data to database
-                eventProductLogServiceOffline(id, appIddatatext, eventTypedatadatatext, valuedatatext, time,
-                        WifiState, DeviceLanguage, DeviceType, DeviceModel, DeviceOsVersion, DeviceOsName,
-                        DeviceAppVersion, _latitude, _longitude, AndroidPlatform, timedatatext, localTimezone,
-                        DeviceBrand, SDkVersion);
+                //////////////////////////////////////
+                if(ValidateInterface.equalsIgnoreCase("log.php")){
+                    AgileConfiguration.ServiceInterfaceEnable service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterfaceEnable.class);
+                    Call<ResponseBody> responseBodyCall = service.createUser1(AppId);
+                    final String finalAppIddatatext = appIddatatext;
+                    final String finalEventTypedatadatatext = eventTypedatadatatext;
+                    final String finalValuedatatext = valuedatatext;
+                    final String finalTimedatatext = timedatatext;
+                    responseBodyCall.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            Log.d(TAG, "response code enable = " + response.code());
+                            try {
+
+                                String responseString = response.body().string();
+
+                                Log.d(TAG, "response body enable = " + responseString);
+
+                                JSONObject object = new JSONObject(responseString);
+                                boolean status = object.getBoolean("get_app_status");
+
+                                if (status){
+                                    //call webservice to add data to database
+                                    eventProductLogServiceOffline(id, finalAppIddatatext, finalEventTypedatadatatext, finalValuedatatext, time,
+                                            WifiState, DeviceLanguage, DeviceType, DeviceModel, DeviceOsVersion, DeviceOsName,
+                                            DeviceAppVersion, _latitude, _longitude, AndroidPlatform, finalTimedatatext, localTimezone,
+                                            DeviceBrand, SDkVersion);
+
+                                }
+                                else {
+                                    logModel.singleDeleteLog(id);
+                                }
+
+                            } catch (IOException e) {
+                                Log.d(TAG, "IOException = " + e.getMessage());
+                            } catch (JSONException e) {
+                                Log.d(TAG, "JSONException = " + e.getMessage());
+                            } finally {
+                                response.body().close();
+                                //      Log.d(TAG, "retrofit connection closed");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Log.d(TAG, "onFailure = " + t.getMessage());
+                            // sendLogToDatabase(eventType, appId, values);
+                        }
+                    });
+                }
+
+                else {
+                    AgileConfiguration.ServiceInterfaceEnable1 service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterfaceEnable1.class);
+                    Call<ResponseBody> responseBodyCall = service.createUser1(AppId);
+                    final String finalAppIddatatext = appIddatatext;
+                    final String finalEventTypedatadatatext = eventTypedatadatatext;
+                    final String finalValuedatatext = valuedatatext;
+                    final String finalTimedatatext = timedatatext;
+                    responseBodyCall.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            Log.d(TAG, "response code enable = " + response.code());
+                            try {
+
+                                String responseString = response.body().string();
+
+                                Log.d(TAG, "response body enable = " + responseString);
+
+                                JSONObject object = new JSONObject(responseString);
+                                boolean status = object.getBoolean("get_app_status");
+
+                                if (status){
+                                    //call webservice to add data to database
+                                    eventProductLogServiceOffline(id, finalAppIddatatext, finalEventTypedatadatatext, finalValuedatatext, time,
+                                            WifiState, DeviceLanguage, DeviceType, DeviceModel, DeviceOsVersion, DeviceOsName,
+                                            DeviceAppVersion, _latitude, _longitude, AndroidPlatform, finalTimedatatext, localTimezone,
+                                            DeviceBrand, SDkVersion);
+
+                                }
+                                else {
+                                    logModel.singleDeleteLog(id);
+                                }
+
+                            } catch (IOException e) {
+                                Log.d(TAG, "IOException = " + e.getMessage());
+                            } catch (JSONException e) {
+                                Log.d(TAG, "JSONException = " + e.getMessage());
+                            } finally {
+                                response.body().close();
+                                //      Log.d(TAG, "retrofit connection closed");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Log.d(TAG, "onFailure = " + t.getMessage());
+                            // sendLogToDatabase(eventType, appId, values);
+                        }
+                    });
+
+                }
+
+
+
+
+
+
+                /////////////////////////////////////
+
+
             }
             return null;
         }
@@ -1251,6 +1503,8 @@ else {
 
         }
 
+
+        if(ValidateInterface.equalsIgnoreCase("log.php")){
             AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
             Call<ResponseBody> responseBodyCall = service.createUser
                     (appId,
@@ -1270,7 +1524,7 @@ else {
                     try {
 
                         String responseString = response.body().string();
-                         //   Log.d(TAG, "response body " + id + " = " + responseString);
+                          Log.d(TAG, "response body11     =" + id + " = " + responseString);
 
                         JSONObject object = new JSONObject(responseString);
                         boolean status = object.getBoolean("status");
@@ -1298,6 +1552,60 @@ else {
                     synchroniseLogEvent.cancel(true);
                 }
             });
+        }
+
+        else {
+            AgileConfiguration.ServiceInterface1 service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface1.class);
+            Call<ResponseBody> responseBodyCall = service.createUser
+                    (appId,
+                            Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID),
+                            eventType,
+                            values,
+                            String.valueOf(time),
+                            advertising_id, wifi, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
+                            deviceAppVersion, sdkversion, _curlongitude, _curlatitude, androidPlatform,localDateTime,localTimezone,_longitude,_latitude,dateString2,localTimezone,packagename,gpsAdd,gpslocality,
+                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot
+                    );
+
+            responseBodyCall.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                    try {
+
+                        String responseString = response.body().string();
+                           Log.d(TAG, "response body22   =" + id + " = " + responseString);
+
+                        JSONObject object = new JSONObject(responseString);
+                        boolean status = object.getBoolean("status");
+                        //     Log.d(TAG, "status = " + status);
+
+                        if (status) {
+                            //delete record from the database if the response is true
+                            logModel.singleDeleteLog(id);
+                        } else {
+                            //do not delete record from the database if the response is false
+                        }
+
+                    } catch (IOException e) {
+                        //     Log.d(TAG, "IOException = " + e.getMessage());
+                        synchroniseLogEvent.cancel(true);
+                    } catch (JSONException e) {
+                        //    Log.d(TAG, "JSONException = " + e.getMessage());
+                        synchroniseLogEvent.cancel(true);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    //  Log.d(TAG, "onFailure = " + t.getMessage());
+                    synchroniseLogEvent.cancel(true);
+                }
+            });
+
+        }
+
+
         }
 
     /**

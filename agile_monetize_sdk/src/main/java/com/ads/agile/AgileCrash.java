@@ -137,6 +137,7 @@ public class AgileCrash extends Activity  {
     private static final int DEFAULT_BLOCK_TIME = 1000;
     private boolean mIsBlockClick;
     boolean installdata=false;
+    String ValidateInterface,trace_app_sandbox;
 
     /**
      * parametric constructor
@@ -163,7 +164,7 @@ public class AgileCrash extends Activity  {
             String IdPacakageName = m_obj.getString("name");
             String google_playstore = m_obj.getString("available_on_google_playstore");
             trace_app_uninstall = m_obj.getString("trace_app_uninstall");
-
+            trace_app_sandbox = m_obj.getString("sandbox");
 
             if (google_playstore.equalsIgnoreCase("1")){
                 AppId = m_obj.getString("id");
@@ -174,6 +175,18 @@ public class AgileCrash extends Activity  {
                 AppId = m_obj.getString("id");
                 packagename=context.getPackageName();
                 Log.e(TAG,"Warning : Googgle Playstore not available on Your App");
+            }
+
+
+            if(trace_app_sandbox.equalsIgnoreCase("1")){
+
+                ValidateInterface ="log.php";
+
+            }
+
+            else {
+
+                ValidateInterface= "log.js";
             }
 
         } catch (JSONException e) {
@@ -668,51 +681,103 @@ public class AgileCrash extends Activity  {
         }
 
 
+        if (ValidateInterface.equalsIgnoreCase("log.php")){
+            AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
+            Call<ResponseBody> responseBodyCall = service.createUser
+                    (appId,
+                            android_id,
+                            eventType,
+                            values,
+                            time,
+                            advertising_id, wifiState, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
+                            deviceAppVersion, sdkversion,_longitude, _latitude, androidPlatform, localDateTime, localTimezone,"","","","",packagename,gpsAdd,gpslocality,
+                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot
+                    );
+            responseBodyCall.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                      Log.d(TAG, "response code = " + response.code());
+                    try {
 
-        AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
-        Call<ResponseBody> responseBodyCall = service.createUser
-                (appId,
-                        android_id,
-                        eventType,
-                        values,
-                        time,
-                        advertising_id, wifiState, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
-                        deviceAppVersion, sdkversion,_longitude, _latitude, androidPlatform, localDateTime, localTimezone,"","","","",packagename,gpsAdd,gpslocality,
-                        gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot
-                );
-        responseBodyCall.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                //  Log.d(TAG, "response code = " + response.code());
-                try {
+                        String responseString = response.body().string();
 
-                    String responseString = response.body().string();
+                        Log.d(TAG, "response body = " + responseString);
 
-                    Log.d(TAG, "response body = " + responseString);
-
-                    JSONObject object = new JSONObject(responseString);
-                    boolean status = object.getBoolean("status");
-                    clearLogEvent();
-
-
+                        JSONObject object = new JSONObject(responseString);
+                       // boolean status = object.getBoolean("status");
+                        clearLogEvent();
 
 
-                } catch (IOException e) {
-                    // Log.d(TAG, "IOException = " + e.getMessage());
-                } catch (JSONException e) {
-                    // Log.d(TAG, "JSONException = " + e.getMessage());
-                } finally {
-                    response.body().close();
-                    //     Log.d(TAG, "retrofit connection closed");
+
+
+                    } catch (IOException e) {
+                        // Log.d(TAG, "IOException = " + e.getMessage());
+                    } catch (JSONException e) {
+                        // Log.d(TAG, "JSONException = " + e.getMessage());
+                    } finally {
+                        response.body().close();
+                        //     Log.d(TAG, "retrofit connection closed");
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d(TAG, "onFailure = " + t.getMessage());
-                // sendLogToDatabase(eventType, appId, values);
-            }
-        });
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.d(TAG, "onFailure = " + t.getMessage());
+                    // sendLogToDatabase(eventType, appId, values);
+                }
+            });
+        }
+
+        else {
+
+            AgileConfiguration.ServiceInterface1 service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface1.class);
+            Call<ResponseBody> responseBodyCall = service.createUser
+                    (appId,
+                            android_id,
+                            eventType,
+                            values,
+                            time,
+                            advertising_id, wifiState, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
+                            deviceAppVersion, sdkversion,_longitude, _latitude, androidPlatform, localDateTime, localTimezone,"","","","",packagename,gpsAdd,gpslocality,
+                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot
+                    );
+            responseBodyCall.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    //  Log.d(TAG, "response code = " + response.code());
+                    try {
+
+                        String responseString = response.body().string();
+
+                        Log.d(TAG, "response body = " + responseString);
+
+                        JSONObject object = new JSONObject(responseString);
+                      //  boolean status = object.getBoolean("status");
+                        clearLogEvent();
+
+
+
+
+                    } catch (IOException e) {
+                        // Log.d(TAG, "IOException = " + e.getMessage());
+                    } catch (JSONException e) {
+                        // Log.d(TAG, "JSONException = " + e.getMessage());
+                    } finally {
+                        response.body().close();
+                        //     Log.d(TAG, "retrofit connection closed");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.d(TAG, "onFailure = " + t.getMessage());
+                    // sendLogToDatabase(eventType, appId, values);
+                }
+            });
+        }
+
+
+
     }
 
     /**

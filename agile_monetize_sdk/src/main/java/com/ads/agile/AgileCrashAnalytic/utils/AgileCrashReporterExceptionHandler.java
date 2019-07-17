@@ -6,7 +6,6 @@ import android.content.ContextWrapper;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
-import com.ads.agile.AgileCrash;
 import com.ads.agile.AgileEventParameter;
 import com.ads.agile.AgileEventType;
 import com.ads.agile.AgileLog;
@@ -36,11 +35,11 @@ public class AgileCrashReporterExceptionHandler implements Thread.UncaughtExcept
     @Override
     public void uncaughtException(Thread thread, Throwable throwable) {
 
-          Log.d(TAG,"Log Message  ="+ throwable.getLocalizedMessage());
-
+        //  Log.d(TAG,"Log Message  ="+ throwable.getLocalizedMessage());
 
         agileCrash.set(AgileEventParameter.AGILE_PARAMS_CRASH,throwable.getLocalizedMessage());
         agileCrash.trackEvent(AgileEventType.AGILE_EVENT_CRASH);
+
         exceptionHandler.uncaughtException(thread, throwable);
 
     }

@@ -517,13 +517,111 @@ public class AgileTransaction {
             i += 1;
             dataProccessor.setInt("TransactionCount",i);
         }
-        if (isTransaction) {
-            transactionInitFlag = false;
-          //  Log.d(TAG, "(commitTransaction) data object = " + jsonObject.toString());
-            trackTransaction(eventType, appId);
+
+
+        if (isConnected(context)) {
+           ////////////////////////
+
+            if(ValidateInterface.equalsIgnoreCase("log.php")){
+                AgileConfiguration.ServiceInterfaceEnable service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterfaceEnable.class);
+                Call<ResponseBody> responseBodyCall = service.createUser1(appId);
+                responseBodyCall.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        Log.d(TAG, "response code enable = " + response.code());
+                        try {
+
+                            String responseString = response.body().string();
+
+                            Log.d(TAG, "response body enable = " + responseString);
+
+                            JSONObject object = new JSONObject(responseString);
+                            boolean status = object.getBoolean("get_app_status");
+
+                            if (status){
+                                if (isTransaction) {
+                                    transactionInitFlag = false;
+                                    //  Log.d(TAG, "(commitTransaction) data object = " + jsonObject.toString());
+                                    trackTransaction(eventType, appId);
+                                } else {
+                                    //    Log.d(TAG, "transaction terminated, due to not found instance of AgileTransaction");
+                                }
+                            }
+
+
+                        } catch (IOException e) {
+                            Log.d(TAG, "IOException = " + e.getMessage());
+                        } catch (JSONException e) {
+                            Log.d(TAG, "JSONException = " + e.getMessage());
+                        } finally {
+                            response.body().close();
+                            //      Log.d(TAG, "retrofit connection closed");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.d(TAG, "onFailure = " + t.getMessage());
+                        // sendLogToDatabase(eventType, appId, values);
+                    }
+                });
+            }
+            else {
+                AgileConfiguration.ServiceInterfaceEnable1 service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterfaceEnable1.class);
+                Call<ResponseBody> responseBodyCall = service.createUser1(appId);
+                responseBodyCall.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        Log.d(TAG, "response code enable = " + response.code());
+                        try {
+
+                            String responseString = response.body().string();
+
+                            Log.d(TAG, "response body enable = " + responseString);
+
+                            JSONObject object = new JSONObject(responseString);
+                            boolean status = object.getBoolean("get_app_status");
+
+                            if (status){
+                                if (isTransaction) {
+                                    transactionInitFlag = false;
+                                    //  Log.d(TAG, "(commitTransaction) data object = " + jsonObject.toString());
+                                    trackTransaction(eventType, appId);
+                                } else {
+                                    //    Log.d(TAG, "transaction terminated, due to not found instance of AgileTransaction");
+                                }
+                            }
+                        } catch (IOException e) {
+                            Log.d(TAG, "IOException = " + e.getMessage());
+                        } catch (JSONException e) {
+                            Log.d(TAG, "JSONException = " + e.getMessage());
+                        } finally {
+                            response.body().close();
+                            //      Log.d(TAG, "retrofit connection closed");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.d(TAG, "onFailure = " + t.getMessage());
+                        // sendLogToDatabase(eventType, appId, values);
+                    }
+                });
+            }
+
+
+            ///////////////////////
         } else {
-        //    Log.d(TAG, "transaction terminated, due to not found instance of AgileTransaction");
+            //save data into sqlite database
+            //   Log.d(TAG, "network not connected");
+            sendLogToDatabase
+                    (
+                            appId,
+                            eventType,
+                            getTransaction()
+                    );
         }
+
     }
 
 

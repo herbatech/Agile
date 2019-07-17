@@ -51,6 +51,27 @@ public class AgileConfiguration {
     }
 
     //interface for retrofit
+
+    public interface ServiceInterfaceEnable {
+        @FormUrlEncoded
+        @POST("log.php")
+        Call<ResponseBody> createUser1
+                (
+                        @Field("get_app_id") String app_id
+
+                );
+    }
+
+    public interface ServiceInterfaceEnable1 {
+        @FormUrlEncoded
+        @POST("log.js")
+        Call<ResponseBody> createUser1
+                (
+                        @Field("get_app_id") String app_id
+
+                );
+    }
+
     public interface ServiceInterface {
         @FormUrlEncoded
         @POST("log.php")
