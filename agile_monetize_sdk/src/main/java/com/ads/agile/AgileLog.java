@@ -108,7 +108,10 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     public static final String last_screen_onMyPREFERENCES = "last_screen_onmyprefs";
     public static final  String last_screen_onvalue = "lastkey";
 
-
+    SharedPreferences sharedpreferencesTAG;
+    SharedPreferences.Editor editor1TAG;
+    public static final String MyPREFERENCESTAG = "myprefsTAG";
+    public static final  String valueTAG = "keyTAG";
 
 
     String dateTimeKey = "time_duration";
@@ -219,7 +222,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             else {
                 AppId = m_obj.getString("id");
                 packagename=context.getPackageName();
-                Log.e(TAG,"Warning : Googgle Playstore not available on Your App");
+                Log.e(context.getPackageName(),"Warning : Googgle Playstore not available on Your App");
             }
 
 
@@ -253,6 +256,9 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
         sharedpreferences = context.getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         editor1 = sharedpreferences.edit();
+
+        sharedpreferencesTAG = context.getSharedPreferences(MyPREFERENCESTAG, Context.MODE_PRIVATE);
+        editor1TAG = sharedpreferencesTAG.edit();
 
         event_screen_onsharedpreferences = context.getSharedPreferences(event_screen_onMyPREFERENCES, Context.MODE_PRIVATE);
         event_screen_oneditor1 = event_screen_onsharedpreferences.edit();
@@ -767,6 +773,12 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
     }
 
+
+    public void tagEvent(String value){
+
+        editor1TAG.putString(valueTAG, value);
+        editor1TAG.commit();
+    }
     /**
      * validate input param
      *
@@ -797,8 +809,11 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             event_screen_oneditor1.apply();
         }
 
+        set(AgileEventParameter.AGILE_PARAMS_EVENT_TAG,sharedpreferencesTAG.getString(valueTAG,""));
 
-
+        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_CRASH)){
+            validateLog(eventType, AppId);
+        }
 
         if (isConnected(context)) {
             //////////////////////////////
@@ -878,17 +893,18 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 });
             }
             else {
+                Log.d(TAG, "response code enable11 AppId = " + AppId);
                 AgileConfiguration.ServiceInterfaceEnable1 service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterfaceEnable1.class);
                 Call<ResponseBody> responseBodyCall = service.createUser1(AppId);
                 responseBodyCall.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Log.d(TAG, "response code enable = " + response.code());
+                        Log.d(TAG, "response code enable11 = " + response.code());
                         try {
 
                             String responseString = response.body().string();
 
-                            Log.d(TAG, "response body enable = " + responseString);
+                            Log.d(TAG, "response body enable11 = " + responseString);
 
                             JSONObject object = new JSONObject(responseString);
                             boolean status = object.getBoolean("get_app_status");
@@ -1180,7 +1196,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         @Override
         public void onFailure(Call<ResponseBody> call, Throwable t) {
             Log.d(TAG, "onFailure = " + t.getMessage());
-            // sendLogToDatabase(eventType, appId, values);
+            sendLogToDatabase(eventType, appId, values);
         }
     });
 }
@@ -1189,7 +1205,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
 else {
 
-
+      Log.d(TAG, " eventType response123 body = " + eventType);
     AgileConfiguration.ServiceInterface1 service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface1.class);
     Call<ResponseBody> responseBodyCall = service.createUser
             (appId,
@@ -1212,7 +1228,12 @@ else {
                 Log.d(TAG, "response body = " + responseString);
 
                 JSONObject object = new JSONObject(responseString);
-                // boolean status = object.getBoolean("status");
+
+                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)){
+                    String install_id = object.getString("install_id");
+                    Log.d(TAG, "install_id response body = " + install_id);
+                }
+
                 clearLogEvent();
                 installdata=true;
                 agileInstall();
@@ -1231,7 +1252,7 @@ else {
         @Override
         public void onFailure(Call<ResponseBody> call, Throwable t) {
             Log.d(TAG, "onFailure = " + t.getMessage());
-            // sendLogToDatabase(eventType, appId, values);
+             sendLogToDatabase(eventType, appId, values);
         }
     });
 }
@@ -1436,11 +1457,6 @@ else {
                     });
 
                 }
-
-
-
-
-
 
                 /////////////////////////////////////
 

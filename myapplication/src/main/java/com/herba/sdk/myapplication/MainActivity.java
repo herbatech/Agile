@@ -49,6 +49,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.tagEvent).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                agileLog.tagEvent("Premium");
+            }
+        });
+
         findViewById(R.id.book1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

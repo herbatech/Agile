@@ -35,7 +35,7 @@ public class AgileCrashReporterExceptionHandler implements Thread.UncaughtExcept
     @Override
     public void uncaughtException(Thread thread, Throwable throwable) {
 
-        //  Log.d(TAG,"Log Message  ="+ throwable.getLocalizedMessage());
+         Log.d(TAG,"Log Message  ="+ throwable.getLocalizedMessage());
 
         agileCrash.set(AgileEventParameter.AGILE_PARAMS_CRASH,throwable.getLocalizedMessage());
         agileCrash.trackEvent(AgileEventType.AGILE_EVENT_CRASH);
