@@ -114,6 +114,24 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     public static final  String valueTAG = "keyTAG";
 
 
+    SharedPreferences sharedpreferencesInstallId;
+    SharedPreferences.Editor editor1InstallId;
+    public static final String MyPREFERENCESInstallId = "myprefsInstallId";
+    public static final  String valueInstallId = "keyInstallId";
+
+    SharedPreferences sharedpreferencesStartId;
+    SharedPreferences.Editor editor1StartId;
+    public static final String MyPREFERENCESStartId = "myprefsStartId";
+    public static final  String valueStartId = "keyStartId";
+
+    SharedPreferences sharedpreferencesScreenId;
+    SharedPreferences.Editor editor1ScreenId;
+    public static final String MyPREFERENCESScreenId = "myprefsScreenId";
+    public static final  String valueScreenId = "keyScreenId";
+
+
+
+
     String dateTimeKey = "time_duration";
     String screendateTimeKey = "screentime_duration";
     String EventCountKey = "EventCountKey";
@@ -169,6 +187,8 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     boolean installdata=false;
     public static final String AGILE_ADD_INTERFACE="log.php";
     public static String AGILE_ADD_NETWORK ;
+    String startid,installid,screenid;
+
     /**
      * parametric constructor
      *
@@ -267,6 +287,16 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         last_screen_oneditor1 = last_screen_onsharedpreferences.edit();
 
 
+        sharedpreferencesInstallId = context.getSharedPreferences(MyPREFERENCESInstallId, Context.MODE_PRIVATE);
+        editor1InstallId = sharedpreferencesInstallId.edit();
+
+        sharedpreferencesStartId = context.getSharedPreferences(MyPREFERENCESStartId, Context.MODE_PRIVATE);
+        editor1StartId = sharedpreferencesStartId.edit();
+
+        sharedpreferencesScreenId = context.getSharedPreferences(MyPREFERENCESScreenId, Context.MODE_PRIVATE);
+        editor1ScreenId = sharedpreferencesScreenId.edit();
+
+
         dataProccessor = new UtilConfig(context);
 
         try {
@@ -291,6 +321,8 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
         getAdvertisingId();
 
+        installdata=true;
+        agileInstall();
         //Log.d(TAG,"Facebook Id   ="+ isPreInstalledApp(context));
 
     }
@@ -584,7 +616,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             set(AgileEventParameter.AGILE_PARAMS_DURATION, seconds+1);
             set(AgileEventParameter.AGILE_PARAMS_EVENT_COUNT,i);
             set(AgileEventParameter.AGILE_PARAMS_TRANSACTION_COUNT,Transcationcount);
-            set(AgileEventParameter.AGILE_PARAMS_INSTANCE_COUNT,j+1);
+            set(AgileEventParameter.AGILE_PARAMS_INSTANCE_COUNT,j);
             set(AgileEventParameter.AGILE_PARAMS_SCREEN_DURATION,seconds11);
             trackEvent(AgileEventType.AGILE_EVENT_SESSION);
 
@@ -607,14 +639,16 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
     public void agileInstall() {
         if (installdata){
-            if (getAdvertisingId() != null) {
+            Log.d(TAG,"Install Open =1");
 
+                Log.d(TAG,"Install Open =2");
                 boolean isFirstTime = MyPreferences.isFirst(context);
                 if (isFirstTime) {
+                    Log.d(TAG,"Install Open =3");
                     set(AgileEventParameter.AGILE_PARAMS_INSTALL_DATE, ApkInstallDate(installed));
                     trackEvent(AgileEventType.AGILE_EVENT_INSTALL);
 
-                }
+
             }
         }
          if (trace_app_uninstall.equalsIgnoreCase("1")){
@@ -657,9 +691,17 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
 
     public void agileAppStart() {
-        startRun=true;
-        Timer();
-        trackEvent(AgileEventType.AGILE_EVENT_SCRREN_START);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after 1 second
+                startRun=true;
+                Timer();
+                trackEvent(AgileEventType.AGILE_EVENT_SCRREN_START);
+            }
+        }, 1500);
+
 
     }
 
@@ -854,7 +896,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                             else {
 
-                                agileInstall();
+                              //  agileInstall();
                                 if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)||eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_FIREBASE_TOKEN)){
 
                                     if (isTransaction) {
@@ -873,7 +915,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                                     }
                                 }
 
-                            }
+                              }
 
                         } catch (IOException e) {
                             Log.d(TAG, "IOException = " + e.getMessage());
@@ -929,7 +971,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                             else {
                                 Log.d(TAG, "eventType body enable = " + eventType);
-                                agileInstall();
+                              //  agileInstall();
                                 if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)||eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_FIREBASE_TOKEN)){
 
                                     if (isTransaction) {
@@ -1132,6 +1174,14 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
         }
 
+        startid=sharedpreferencesStartId.getString(valueStartId,"");
+        installid=sharedpreferencesInstallId.getString(valueInstallId,"");
+        screenid=sharedpreferencesScreenId.getString(valueScreenId,"");
+
+        Log.d(TAG, "screenid code = " + screenid);
+        Log.d(TAG, "installid code = " + installid);
+        Log.d(TAG, "startid code = " + startid);
+
 
         if (GPSAddress !=null){
 
@@ -1164,7 +1214,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                     time,
                     advertising_id, wifiState, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
                     deviceAppVersion, sdkversion,_longitude, _latitude, androidPlatform, localDateTime, localTimezone,"","","","",packagename,gpsAdd,gpslocality,
-                    gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot
+                    gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot,installid,startid,screenid
             );
     responseBodyCall.enqueue(new Callback<ResponseBody>() {
         @Override
@@ -1178,10 +1228,35 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                 JSONObject object = new JSONObject(responseString);
                 // boolean status = object.getBoolean("status");
-                clearLogEvent();
-                installdata=true;
-                agileInstall();
 
+                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)){
+                    String install_id = object.getString("install_id");
+                    editor1InstallId.putString(valueInstallId, install_id);
+                    editor1InstallId.commit();
+                }
+
+                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_ON)){
+                    String screen_id = object.getString("screen_id");
+                    editor1ScreenId.putString(valueScreenId, screen_id);
+                    editor1ScreenId.commit();
+                }
+
+                clearLogEvent();
+
+
+                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_START)){
+                    String session_id = object.getString("session_id");
+                    editor1StartId.putString(valueStartId, session_id);
+                    editor1StartId.commit();
+                    agileAppScreenOn();
+                }
+                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SESSION)){
+                        editor1ScreenId.clear();
+                        editor1ScreenId.commit();
+                         editor1StartId.clear();
+                       editor1StartId.commit();
+
+                }
 
             } catch (IOException e) {
                 // Log.d(TAG, "IOException = " + e.getMessage());
@@ -1215,7 +1290,7 @@ else {
                     time,
                     advertising_id, wifiState, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
                     deviceAppVersion, sdkversion,_longitude, _latitude, androidPlatform, localDateTime, localTimezone,"","","","",packagename,gpsAdd,gpslocality,
-                    gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot
+                    gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot,installid,startid,screenid
             );
     responseBodyCall.enqueue(new Callback<ResponseBody>() {
         @Override
@@ -1231,13 +1306,33 @@ else {
 
                 if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)){
                     String install_id = object.getString("install_id");
-                    Log.d(TAG, "install_id response body = " + install_id);
+                    editor1InstallId.putString(valueInstallId, install_id);
+                    editor1InstallId.commit();
+                }
+
+                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_ON)){
+                    String screen_id = object.getString("screen_id");
+                    editor1ScreenId.putString(valueScreenId, screen_id);
+                    editor1ScreenId.commit();
                 }
 
                 clearLogEvent();
-                installdata=true;
-                agileInstall();
+              /*  installdata=true;
+                agileInstall();*/
 
+                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_START)){
+                    String session_id = object.getString("session_id");
+                    editor1StartId.putString(valueStartId, session_id);
+                    editor1StartId.commit();
+                    agileAppScreenOn();
+                }
+                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SESSION)){
+                    editor1ScreenId.clear();
+                    editor1ScreenId.commit();
+                    editor1StartId.clear();
+                    editor1StartId.commit();
+
+                }
 
             } catch (IOException e) {
                 // Log.d(TAG, "IOException = " + e.getMessage());
@@ -1475,7 +1570,7 @@ else {
      * @param values    could be additional information which describe the eventType in more details
      * @param time      would be always zero if it send directly to the server or else will send the difference of current and stored entry into room database
      */
-    private void eventProductLogServiceOffline(@NonNull final int id, @NonNull String appId, @NonNull String eventType, @NonNull String values, @NonNull long time,
+    private void eventProductLogServiceOffline(@NonNull final int id, @NonNull String appId, @NonNull final String eventType, @NonNull String values, @NonNull long time,
                                                @NonNull String wifiState, @NonNull String deviceLanguage, @NonNull String deviceType, @NonNull String deviceModel, @NonNull String deviceOsVersion,
                                                @NonNull String deviceOsName, @NonNull String deviceAppVersion, @NonNull String latittude, @NonNull String longitude, @NonNull String androidPlatform,
                                                @NonNull String localDateTime, @NonNull String localTimezone, @NonNull String deviceOperator, @NonNull String sdkversion) {
@@ -1518,7 +1613,13 @@ else {
 
 
         }
+        startid=sharedpreferencesStartId.getString(valueStartId,"");
+        installid=sharedpreferencesInstallId.getString(valueInstallId,"");
+        screenid=sharedpreferencesScreenId.getString(valueScreenId,"");
 
+        Log.d(TAG, "screenid code = " + screenid);
+        Log.d(TAG, "installid code = " + installid);
+        Log.d(TAG, "startid code = " + startid);
 
         if(ValidateInterface.equalsIgnoreCase("log.php")){
             AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
@@ -1530,7 +1631,7 @@ else {
                             String.valueOf(time),
                             advertising_id, wifi, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
                             deviceAppVersion, sdkversion, _curlongitude, _curlatitude, androidPlatform,localDateTime,localTimezone,_longitude,_latitude,dateString2,localTimezone,packagename,gpsAdd,gpslocality,
-                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot
+                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot,installid,startid,screenid
                     );
 
             responseBodyCall.enqueue(new Callback<ResponseBody>() {
@@ -1548,6 +1649,25 @@ else {
 
                         if (status) {
                             //delete record from the database if the response is true
+
+                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)){
+                                String install_id = object.getString("install_id");
+                                editor1InstallId.putString(valueInstallId, install_id);
+                                editor1InstallId.commit();
+                            }
+
+                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_ON)){
+                                String screen_id = object.getString("screen_id");
+                                editor1ScreenId.putString(valueScreenId, screen_id);
+                                editor1ScreenId.commit();
+                            }
+
+                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_START)){
+                                String session_id = object.getString("session_id");
+                                editor1StartId.putString(valueStartId, session_id);
+                                editor1StartId.commit();
+                            }
+
                             logModel.singleDeleteLog(id);
                         } else {
                             //do not delete record from the database if the response is false
@@ -1580,7 +1700,7 @@ else {
                             String.valueOf(time),
                             advertising_id, wifi, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
                             deviceAppVersion, sdkversion, _curlongitude, _curlatitude, androidPlatform,localDateTime,localTimezone,_longitude,_latitude,dateString2,localTimezone,packagename,gpsAdd,gpslocality,
-                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot
+                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot,installid,startid,screenid
                     );
 
             responseBodyCall.enqueue(new Callback<ResponseBody>() {
@@ -1598,6 +1718,24 @@ else {
 
                         if (status) {
                             //delete record from the database if the response is true
+
+                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)){
+                                String install_id = object.getString("install_id");
+                                editor1InstallId.putString(valueInstallId, install_id);
+                                editor1InstallId.commit();
+                            }
+
+                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_ON)){
+                                String screen_id = object.getString("screen_id");
+                                editor1ScreenId.putString(valueScreenId, screen_id);
+                                editor1ScreenId.commit();
+                            }
+
+                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_START)){
+                                String session_id = object.getString("session_id");
+                                editor1StartId.putString(valueStartId, session_id);
+                                editor1StartId.commit();
+                            }
                             logModel.singleDeleteLog(id);
                         } else {
                             //do not delete record from the database if the response is false

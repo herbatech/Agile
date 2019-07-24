@@ -107,7 +107,10 @@ public class AgileConfiguration {
                         @Field("country_name") String    country_name,
                         @Field("country_code") String    country_code,
                         @Field("imei1") String    imei1,
-                        @Field("imei2") String    imei2
+                        @Field("imei2") String    imei2  ,
+                        @Field("install_id") String    install_id ,
+                        @Field("session_id") String    session_id ,
+                        @Field("screen_id") String    screen_id
 
 
                 );
@@ -148,7 +151,10 @@ public class AgileConfiguration {
                         @Field("country_name") String    country_name,
                         @Field("country_code") String    country_code,
                         @Field("imei1") String    imei1,
-                        @Field("imei2") String    imei2
+                        @Field("imei2") String    imei2,
+                        @Field("install_id") String    install_id ,
+                        @Field("session_id") String    session_id ,
+                        @Field("screen_id") String    screen_id
 
 
                 );
