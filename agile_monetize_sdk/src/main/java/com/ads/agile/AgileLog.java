@@ -674,8 +674,10 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 public void onSuccess(InstanceIdResult instanceIdResult) {
                     String token = instanceIdResult.getToken();
                     // send it to server
+                    Log.d(TAG,"token Open =3    "+token);
                     boolean isFirstTime = MyPreferencesToken.isFirstToken(context);
                     if (isFirstTime) {
+                        Log.d(TAG,"token Open =4    "+token);
                         set(AgileEventParameter.AGILE_PARAMS_INSTALL_TOKEN, token);
                         trackEvent(AgileEventType.AGILE_EVENT_FIREBASE_TOKEN);
                     }
@@ -787,7 +789,9 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         public static boolean isFirst(Context context) {
             final SharedPreferences reader = context.getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
             final boolean first = reader.getBoolean("is_first", true);
+            Log.d("AgileLog", "MyPreferences =1 "+first );
             if (first) {
+                Log.d("AgileLog", "MyPreferences =2 " );
                 final SharedPreferences.Editor editor = reader.edit();
                 editor.putBoolean("is_first", false);
                 editor.commit();
@@ -805,7 +809,9 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         public static boolean isFirstToken(Context context) {
             final SharedPreferences reader = context.getSharedPreferences(MY_PREFERENCES_TOKEN, Context.MODE_PRIVATE);
             final boolean first = reader.getBoolean("is_first_toktn", true);
+            Log.d("AgileLog", "MyPreferencesToken =1 "+first );
             if (first) {
+                Log.d("AgileLog", "MyPreferencesToken =2 " );
                 final SharedPreferences.Editor editor = reader.edit();
                 editor.putBoolean("is_first_toktn", false);
                 editor.commit();
@@ -1622,8 +1628,8 @@ else {
         Log.d(TAG, "startid code = " + startid);
 
         if(ValidateInterface.equalsIgnoreCase("log.php")){
-            AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
-            Call<ResponseBody> responseBodyCall = service.createUser
+            AgileConfiguration.ServiceInterface service1 = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
+            Call<ResponseBody> responseBodyCall = service1.createUser
                     (appId,
                             Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID),
                             eventType,
@@ -1645,7 +1651,7 @@ else {
 
                         JSONObject object = new JSONObject(responseString);
                         boolean status = object.getBoolean("status");
-                        //     Log.d(TAG, "status = " + status);
+
 
                         if (status) {
                             //delete record from the database if the response is true
@@ -1670,6 +1676,7 @@ else {
 
                             logModel.singleDeleteLog(id);
                         } else {
+                            Log.d(TAG, "status = " + status);
                             //do not delete record from the database if the response is false
                         }
 

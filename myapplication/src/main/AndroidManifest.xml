@@ -4,11 +4,11 @@
     package="com.herba.sdk.myapplication">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.READ_LOGS"
+    <uses-permission
+        android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-<!--android:name=".AgileCrashApplication" -->
 
     <application
         android:allowBackup="true"
@@ -17,24 +17,42 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ForthActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".ThirdActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".FirstActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".MainActivity"
+
+        <service
+            android:name=".AgileMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".ForthActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ThirdActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".FirstActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+
+                <action android:name="agile_click_action" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
+
+
         </activity>
 
         <meta-data
             android:name="com.agile.sdk.ApplicationId"
             android:value="@string/Agile_App_Id" />
+
         <activity android:name=".SecondActivity" />
     </application>
 

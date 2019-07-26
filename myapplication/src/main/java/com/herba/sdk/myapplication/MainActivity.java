@@ -2,10 +2,12 @@ package com.herba.sdk.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -14,6 +16,7 @@ import com.ads.agile.AgileEventParameter;
 import com.ads.agile.AgileEventType;
 import com.ads.agile.AgileLog;
 import com.ads.agile.AgileTransaction;
+import com.bumptech.glide.Glide;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,6 +41,33 @@ public class MainActivity extends AppCompatActivity {
 
         agileTransaction = new AgileTransaction(getApplicationContext(), this, AgileEventType.AGILE_EVENT_TRANSACTION);
         agileLog = new AgileLog(getApplicationContext(), this, agileTransaction);
+
+
+        if (getIntent().getExtras() != null) {
+
+            String segment_id = getIntent().getExtras().getString("segment_id");
+            String external_url = getIntent().getExtras().getString("external_url");
+            String external_url_flag = getIntent().getExtras().getString("external_url_flag");
+            String click_action = getIntent().getExtras().getString("click_action");
+
+
+            Log.e(TAG, "external_url = " + external_url);
+            Log.e(TAG, "segment_id = " + segment_id);
+            Log.e(TAG, "external_url_flag = " + external_url_flag);
+
+            if (external_url_flag!=null &&  click_action.equalsIgnoreCase("agile_click_action")){
+                agileLog.set(AgileEventParameter.AGILE_PARAMS_SEGMENT,segment_id);
+                agileLog.trackEvent(AgileEventType.AGILE_NOTIFICATION_LOG);
+                if (external_url_flag!=null && external_url_flag.equalsIgnoreCase("1")){
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(external_url));
+                    startActivity(browserIntent);
+                }
+            }
+
+
+
+        }
+
 
 
         findViewById(R.id.indexOutOfBound).setOnClickListener(new View.OnClickListener() {
