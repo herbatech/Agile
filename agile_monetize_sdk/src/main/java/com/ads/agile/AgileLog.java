@@ -323,7 +323,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
         installdata=true;
         agileInstall();
-        //Log.d(TAG,"Facebook Id   ="+ isPreInstalledApp(context));
 
     }
 
@@ -941,18 +940,18 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 });
             }
             else {
-                Log.d(TAG, "response code enable11 AppId = " + AppId);
+              //  Log.d(TAG, "response code enable11 AppId = " + AppId);
                 AgileConfiguration.ServiceInterfaceEnable1 service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterfaceEnable1.class);
                 Call<ResponseBody> responseBodyCall = service.createUser1(AppId);
                 responseBodyCall.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Log.d(TAG, "response code enable11 = " + response.code());
+                       // Log.d(TAG, "response code enable11 = " + response.code());
                         try {
 
                             String responseString = response.body().string();
 
-                            Log.d(TAG, "response body enable11 = " + responseString);
+                      //      Log.d(TAG, "response body enable11 = " + responseString);
 
                             JSONObject object = new JSONObject(responseString);
                             boolean status = object.getBoolean("get_app_status");
@@ -976,7 +975,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                             }
 
                             else {
-                                Log.d(TAG, "eventType body enable = " + eventType);
+                              //  Log.d(TAG, "eventType body enable = " + eventType);
                               //  agileInstall();
                                 if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)||eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_FIREBASE_TOKEN)){
 
@@ -999,9 +998,9 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                             }
 
                         } catch (IOException e) {
-                            Log.d(TAG, "IOException = " + e.getMessage());
+                          //  Log.d(TAG, "IOException = " + e.getMessage());
                         } catch (JSONException e) {
-                            Log.d(TAG, "JSONException = " + e.getMessage());
+                          //  Log.d(TAG, "JSONException = " + e.getMessage());
                         } finally {
                             response.body().close();
                             //      Log.d(TAG, "retrofit connection closed");
@@ -1010,7 +1009,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.d(TAG, "onFailure = " + t.getMessage());
+                       // Log.d(TAG, "onFailure = " + t.getMessage());
                         // sendLogToDatabase(eventType, appId, values);
                     }
                 });
@@ -1083,7 +1082,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             AndroidPlatform = "Android";
             Latittude = _latitude;
             Longitude = _longitude;
-            SDkVersion = "1.1.10";
+            SDkVersion = "2.0.0";
             WifiState = checkNetworkStatus(context);
             argumentValidation(eventType);  //validation in trackEvent
 
@@ -1184,9 +1183,9 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         installid=sharedpreferencesInstallId.getString(valueInstallId,"");
         screenid=sharedpreferencesScreenId.getString(valueScreenId,"");
 
-        Log.d(TAG, "screenid code = " + screenid);
+     /*   Log.d(TAG, "screenid code = " + screenid);
         Log.d(TAG, "installid code = " + installid);
-        Log.d(TAG, "startid code = " + startid);
+        Log.d(TAG, "startid code = " + startid);*/
 
 
         if (GPSAddress !=null){
@@ -1207,7 +1206,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         }
 
 
-        Log.d(TAG,"AddNetwork   ="+ValidateInterface);
+      //  Log.d(TAG,"AddNetwork   ="+ValidateInterface);
 
   if(ValidateInterface.equalsIgnoreCase("log.php")){
 
@@ -1225,12 +1224,12 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     responseBodyCall.enqueue(new Callback<ResponseBody>() {
         @Override
         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-              Log.d(TAG, "response code = " + response.code());
+             // Log.d(TAG, "response code = " + response.code());
             try {
 
                 String responseString = response.body().string();
 
-                Log.d(TAG, "response body = " + responseString);
+              //  Log.d(TAG, "response body = " + responseString);
 
                 JSONObject object = new JSONObject(responseString);
                 // boolean status = object.getBoolean("status");
@@ -1276,7 +1275,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
         @Override
         public void onFailure(Call<ResponseBody> call, Throwable t) {
-            Log.d(TAG, "onFailure = " + t.getMessage());
+         //   Log.d(TAG, "onFailure = " + t.getMessage());
             sendLogToDatabase(eventType, appId, values);
         }
     });
@@ -1286,7 +1285,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
 else {
 
-      Log.d(TAG, " eventType response123 body = " + eventType);
+    //  Log.d(TAG, " eventType response123 body = " + eventType);
     AgileConfiguration.ServiceInterface1 service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface1.class);
     Call<ResponseBody> responseBodyCall = service.createUser
             (appId,
@@ -1301,12 +1300,12 @@ else {
     responseBodyCall.enqueue(new Callback<ResponseBody>() {
         @Override
         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-              Log.d(TAG, "response code = " + response.code());
+             // Log.d(TAG, "response code = " + response.code());
             try {
 
                 String responseString = response.body().string();
 
-                Log.d(TAG, "response body = " + responseString);
+             //   Log.d(TAG, "response body = " + responseString);
 
                 JSONObject object = new JSONObject(responseString);
 
@@ -1343,7 +1342,7 @@ else {
             } catch (IOException e) {
                 // Log.d(TAG, "IOException = " + e.getMessage());
             } catch (JSONException e) {
-                Log.d(TAG, "JSONException = " + e.getMessage());
+              //  Log.d(TAG, "JSONException = " + e.getMessage());
             } finally {
                 response.body().close();
                 //     Log.d(TAG, "retrofit connection closed");
@@ -1352,7 +1351,7 @@ else {
 
         @Override
         public void onFailure(Call<ResponseBody> call, Throwable t) {
-            Log.d(TAG, "onFailure = " + t.getMessage());
+          //  Log.d(TAG, "onFailure = " + t.getMessage());
              sendLogToDatabase(eventType, appId, values);
         }
     });
@@ -1385,12 +1384,12 @@ else {
 
 
 
-        Log.d(TAG,"appIdencodedString   ="+appIdencodedString);
+     /*   Log.d(TAG,"appIdencodedString   ="+appIdencodedString);
         Log.d(TAG,"eventTypeencodedString   ="+eventTypeencodedString);
         Log.d(TAG,"valuesencodedString   ="+valuesencodedString);
         Log.d(TAG,"localDateTimeencodedString   ="+localDateTimeencodedString);
         Log.d(TAG,"androidIdencodedString   ="+androidIdencodedString);
-
+*/
 
         logEntity.setApp_id(appIdencodedString);
         logEntity.setEvent_type(eventTypeencodedString);
@@ -1449,12 +1448,12 @@ else {
                 valuedatatext = AgileAESHelper.decryption(value);
                 timedatatext = AgileAESHelper.decryption(date_time);
 
-               // Log.d(TAG,"SecretKKey   ="+AgileAESHelper.SecretKey);
+            /*   // Log.d(TAG,"SecretKKey   ="+AgileAESHelper.SecretKey);
                 Log.d(TAG,"appIddatatext String  ="+appIddatatext);
                 Log.d(TAG,"valuedatatext String  ="+valuedatatext);
                 //Log.d(TAG,"date_timedatatext String  ="+date_timedatatext);
                 Log.d(TAG,"timedatatext String  ="+timedatatext);
-                Log.d(TAG,"eventTypedatadatatext String  ="+eventTypedatadatatext);
+                Log.d(TAG,"eventTypedatadatatext String  ="+eventTypedatadatatext);*/
 
 
                 //////////////////////////////////////
@@ -1468,12 +1467,12 @@ else {
                     responseBodyCall.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            Log.d(TAG, "response code enable = " + response.code());
+                          //  Log.d(TAG, "response code enable = " + response.code());
                             try {
 
                                 String responseString = response.body().string();
 
-                                Log.d(TAG, "response body enable = " + responseString);
+                            //    Log.d(TAG, "response body enable = " + responseString);
 
                                 JSONObject object = new JSONObject(responseString);
                                 boolean status = object.getBoolean("get_app_status");
@@ -1491,9 +1490,9 @@ else {
                                 }
 
                             } catch (IOException e) {
-                                Log.d(TAG, "IOException = " + e.getMessage());
+                              //  Log.d(TAG, "IOException = " + e.getMessage());
                             } catch (JSONException e) {
-                                Log.d(TAG, "JSONException = " + e.getMessage());
+                              //  Log.d(TAG, "JSONException = " + e.getMessage());
                             } finally {
                                 response.body().close();
                                 //      Log.d(TAG, "retrofit connection closed");
@@ -1502,7 +1501,7 @@ else {
 
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            Log.d(TAG, "onFailure = " + t.getMessage());
+                          //  Log.d(TAG, "onFailure = " + t.getMessage());
                             // sendLogToDatabase(eventType, appId, values);
                         }
                     });
@@ -1518,12 +1517,12 @@ else {
                     responseBodyCall.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            Log.d(TAG, "response code enable = " + response.code());
+                         //   Log.d(TAG, "response code enable = " + response.code());
                             try {
 
                                 String responseString = response.body().string();
 
-                                Log.d(TAG, "response body enable = " + responseString);
+                             //   Log.d(TAG, "response body enable = " + responseString);
 
                                 JSONObject object = new JSONObject(responseString);
                                 boolean status = object.getBoolean("get_app_status");
@@ -1541,9 +1540,9 @@ else {
                                 }
 
                             } catch (IOException e) {
-                                Log.d(TAG, "IOException = " + e.getMessage());
+                              //  Log.d(TAG, "IOException = " + e.getMessage());
                             } catch (JSONException e) {
-                                Log.d(TAG, "JSONException = " + e.getMessage());
+                              //  Log.d(TAG, "JSONException = " + e.getMessage());
                             } finally {
                                 response.body().close();
                                 //      Log.d(TAG, "retrofit connection closed");
@@ -1552,7 +1551,7 @@ else {
 
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            Log.d(TAG, "onFailure = " + t.getMessage());
+                           // Log.d(TAG, "onFailure = " + t.getMessage());
                             // sendLogToDatabase(eventType, appId, values);
                         }
                     });
@@ -1623,9 +1622,9 @@ else {
         installid=sharedpreferencesInstallId.getString(valueInstallId,"");
         screenid=sharedpreferencesScreenId.getString(valueScreenId,"");
 
-        Log.d(TAG, "screenid code = " + screenid);
+      /*  Log.d(TAG, "screenid code = " + screenid);
         Log.d(TAG, "installid code = " + installid);
-        Log.d(TAG, "startid code = " + startid);
+        Log.d(TAG, "startid code = " + startid);*/
 
         if(ValidateInterface.equalsIgnoreCase("log.php")){
             AgileConfiguration.ServiceInterface service1 = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
@@ -1647,7 +1646,7 @@ else {
                     try {
 
                         String responseString = response.body().string();
-                          Log.d(TAG, "response body11     =" + id + " = " + responseString);
+                        //  Log.d(TAG, "response body11     =" + id + " = " + responseString);
 
                         JSONObject object = new JSONObject(responseString);
                         boolean status = object.getBoolean("status");
@@ -1676,7 +1675,7 @@ else {
 
                             logModel.singleDeleteLog(id);
                         } else {
-                            Log.d(TAG, "status = " + status);
+                          //  Log.d(TAG, "status = " + status);
                             //do not delete record from the database if the response is false
                         }
 
@@ -1717,7 +1716,7 @@ else {
                     try {
 
                         String responseString = response.body().string();
-                           Log.d(TAG, "response body22   =" + id + " = " + responseString);
+                          // Log.d(TAG, "response body22   =" + id + " = " + responseString);
 
                         JSONObject object = new JSONObject(responseString);
                         boolean status = object.getBoolean("status");

@@ -15,5 +15,12 @@ public class AgileEventParameter {
     public static final String AGILE_PARAMS_SCREEN_DURATION = "param_screen_duration";
     public static final String AGILE_PARAMS_ACTIVITY_PAGE = "param_activity_page_name";
     public static final String AGILE_PARAMS_CRASH = "param_crash_details";
-    public static final String AGILE_PARAMS_SEGMENT = "param_segment_id";
+    public static final String AGILE_PARAMS_NOTIFICATION_CONTENT = "param_notification_content";
+    public static final String AGILE__NOTIFICATION_TITLE = "title";
+    public static final String AGILE__NOTIFICATION_BODY = "body";
+    public static final String AGILE__NOTIFICATION_IMAGE = "img_url";
+    public static final String AGILE__NOTIFICATION_CONTENT = "notification_content";
+    public static final String AGILE__NOTIFICATION_ACTION = "click_action";
+    public static final String AGILE__NOTIFICATION_FLAG = "external_url_flag";
+    public static final String AGILE__NOTIFICATION_URL = "external_url";
 }

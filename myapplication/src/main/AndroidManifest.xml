@@ -12,14 +12,14 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/icon1"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
         <service
-            android:name=".AgileMessagingService">
+            android:name="com.ads.agile.AgileMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
@@ -50,7 +50,7 @@
         </activity>
 
         <meta-data
-            android:name="com.agile.sdk.ApplicationId"
+            android:name="com.ads.agile.ApplicationId"
             android:value="@string/Agile_App_Id" />
 
         <activity android:name=".SecondActivity" />

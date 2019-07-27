@@ -16,7 +16,6 @@ import com.ads.agile.AgileEventParameter;
 import com.ads.agile.AgileEventType;
 import com.ads.agile.AgileLog;
 import com.ads.agile.AgileTransaction;
-import com.bumptech.glide.Glide;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,18 +44,18 @@ public class MainActivity extends AppCompatActivity {
 
         if (getIntent().getExtras() != null) {
 
-            String segment_id = getIntent().getExtras().getString("segment_id");
-            String external_url = getIntent().getExtras().getString("external_url");
-            String external_url_flag = getIntent().getExtras().getString("external_url_flag");
-            String click_action = getIntent().getExtras().getString("click_action");
+            String notification_content = getIntent().getExtras().getString(AgileEventParameter.AGILE__NOTIFICATION_CONTENT);
+            String external_url = getIntent().getExtras().getString(AgileEventParameter.AGILE__NOTIFICATION_URL);
+            String external_url_flag = getIntent().getExtras().getString(AgileEventParameter.AGILE__NOTIFICATION_FLAG);
+            String click_action = getIntent().getExtras().getString(AgileEventParameter.AGILE__NOTIFICATION_ACTION);
 
 
             Log.e(TAG, "external_url = " + external_url);
-            Log.e(TAG, "segment_id = " + segment_id);
+            Log.e(TAG, "notification_content = " + notification_content);
             Log.e(TAG, "external_url_flag = " + external_url_flag);
 
             if (external_url_flag!=null &&  click_action.equalsIgnoreCase("agile_click_action")){
-                agileLog.set(AgileEventParameter.AGILE_PARAMS_SEGMENT,segment_id);
+                agileLog.set(AgileEventParameter.AGILE_PARAMS_NOTIFICATION_CONTENT,notification_content);
                 agileLog.trackEvent(AgileEventType.AGILE_NOTIFICATION_LOG);
                 if (external_url_flag!=null && external_url_flag.equalsIgnoreCase("1")){
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(external_url));

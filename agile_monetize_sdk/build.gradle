@@ -49,5 +49,7 @@ dependencies {
     //play service
    // implementation 'com.google.android.gms:play-services-base:10.2.4'
     implementation 'com.google.firebase:firebase-core:16.0.5'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
+
 
 }
