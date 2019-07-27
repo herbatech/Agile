@@ -637,18 +637,23 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
 
     public void agileInstall() {
-        if (installdata){
+      /*  if (installdata){*/
             Log.d(TAG,"Install Open =1");
 
                 Log.d(TAG,"Install Open =2");
                 boolean isFirstTime = MyPreferences.isFirst(context);
                 if (isFirstTime) {
-                    Log.d(TAG,"Install Open =3");
-                    set(AgileEventParameter.AGILE_PARAMS_INSTALL_DATE, ApkInstallDate(installed));
-                    trackEvent(AgileEventType.AGILE_EVENT_INSTALL);
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Do something after 1 second
+                            Log.d(TAG,"Install Open =3");
+                            set(AgileEventParameter.AGILE_PARAMS_INSTALL_DATE, ApkInstallDate(installed));
+                            trackEvent(AgileEventType.AGILE_EVENT_INSTALL);
 
-
-            }
+                        }
+                    }, 500);
         }
          if (trace_app_uninstall.equalsIgnoreCase("1")){
 
@@ -673,10 +678,10 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 public void onSuccess(InstanceIdResult instanceIdResult) {
                     String token = instanceIdResult.getToken();
                     // send it to server
-                    Log.d(TAG,"token Open =3    "+token);
+                  //  Log.d(TAG,"token Open =3    "+token);
                     boolean isFirstTime = MyPreferencesToken.isFirstToken(context);
                     if (isFirstTime) {
-                        Log.d(TAG,"token Open =4    "+token);
+                      //  Log.d(TAG,"token Open =4    "+token);
                         set(AgileEventParameter.AGILE_PARAMS_INSTALL_TOKEN, token);
                         trackEvent(AgileEventType.AGILE_EVENT_FIREBASE_TOKEN);
                     }
@@ -1083,7 +1088,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             AndroidPlatform = "Android";
             Latittude = _latitude;
             Longitude = _longitude;
-            SDkVersion = "2.0.0";
+            SDkVersion = "2.0.1";
             WifiState = checkNetworkStatus(context);
             argumentValidation(eventType);  //validation in trackEvent
 
