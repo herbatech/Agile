@@ -43,25 +43,30 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (getIntent().getExtras() != null) {
+            try {
 
-            String notification_content = getIntent().getExtras().getString(AgileEventParameter.AGILE__NOTIFICATION_CONTENT);
-            String external_url = getIntent().getExtras().getString(AgileEventParameter.AGILE__NOTIFICATION_URL);
-            String external_url_flag = getIntent().getExtras().getString(AgileEventParameter.AGILE__NOTIFICATION_FLAG);
-            String click_action = getIntent().getExtras().getString(AgileEventParameter.AGILE__NOTIFICATION_ACTION);
+                String external_url = getIntent().getExtras().getString(AgileEventParameter.AGILE__NOTIFICATION_URL);
+                String external_url_flag = getIntent().getExtras().getString(AgileEventParameter.AGILE__NOTIFICATION_FLAG);
+                String click_action = getIntent().getExtras().getString(AgileEventParameter.AGILE__NOTIFICATION_ACTION);
 
 
-            Log.e(TAG, "external_url = " + external_url);
-            Log.e(TAG, "notification_content = " + notification_content);
-            Log.e(TAG, "external_url_flag = " + external_url_flag);
-
-            if (external_url_flag!=null &&  click_action.equalsIgnoreCase("agile_click_action")){
-                agileLog.set(AgileEventParameter.AGILE_PARAMS_NOTIFICATION_CONTENT,notification_content);
-                agileLog.trackEvent(AgileEventType.AGILE_NOTIFICATION_LOG);
-                if (external_url_flag!=null && external_url_flag.equalsIgnoreCase("1")){
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(external_url));
-                    startActivity(browserIntent);
+                if (external_url_flag!=null &&  click_action.equalsIgnoreCase("agile_click_action")){
+                    JSONObject jsonObj = new JSONObject(getIntent().getExtras().getString(AgileEventParameter.AGILE__NOTIFICATION_CONTENT));
+                    agileLog.set(AgileEventParameter.AGILE_PARAMS_NOTIFICATION_CONTENT,jsonObj);
+                    agileLog.trackEvent(AgileEventType.AGILE_NOTIFICATION_LOG);
+                    if (external_url_flag!=null && external_url_flag.equalsIgnoreCase("1")){
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(external_url));
+                        startActivity(browserIntent);
+                    }
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+
+
+
+
+
 
 
 

@@ -738,7 +738,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                 }
             }
-        }, 1000);
+        }, 200);
 
 
 
@@ -861,6 +861,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_CRASH)){
             validateLog(eventType, AppId);
         }
+
 
         if (isConnected(context)) {
             //////////////////////////////
