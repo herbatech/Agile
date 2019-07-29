@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -63,13 +62,6 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-
-
-
-
-
-
-
         }
 
 
@@ -98,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
                 agileLog.set("bouns_id",bonusId.getText().toString());
                 agileLog.set("bouns_name",bonusname.getText().toString());
-                agileLog.trackEvent(AgileEventType.AGILE_EVENT_CLICK);
+                agileLog.trackEvent(AgileEventType.AGILE_EVENT_USER_PROPERTIES);
 
             }
         });

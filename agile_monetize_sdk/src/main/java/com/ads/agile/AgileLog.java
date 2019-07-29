@@ -24,7 +24,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 
 import com.ads.agile.room.LogEntity;
@@ -54,7 +53,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -793,9 +791,9 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         public static boolean isFirst(Context context) {
             final SharedPreferences reader = context.getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
             final boolean first = reader.getBoolean("is_first", true);
-            Log.d("AgileLog", "MyPreferences =1 "+first );
+         //   Log.d("AgileLog", "MyPreferences =1 "+first );
             if (first) {
-                Log.d("AgileLog", "MyPreferences =2 " );
+           //     Log.d("AgileLog", "MyPreferences =2 " );
                 final SharedPreferences.Editor editor = reader.edit();
                 editor.putBoolean("is_first", false);
                 editor.commit();
@@ -813,9 +811,9 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         public static boolean isFirstToken(Context context) {
             final SharedPreferences reader = context.getSharedPreferences(MY_PREFERENCES_TOKEN, Context.MODE_PRIVATE);
             final boolean first = reader.getBoolean("is_first_toktn", true);
-            Log.d("AgileLog", "MyPreferencesToken =1 "+first );
+           // Log.d("AgileLog", "MyPreferencesToken =1 "+first );
             if (first) {
-                Log.d("AgileLog", "MyPreferencesToken =2 " );
+              //  Log.d("AgileLog", "MyPreferencesToken =2 " );
                 final SharedPreferences.Editor editor = reader.edit();
                 editor.putBoolean("is_first_toktn", false);
                 editor.commit();
@@ -843,7 +841,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
          */
         argumentValidation(eventType);  //validation in sendLog
 
-        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_CLICK)){
+        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_USER_PROPERTIES)){
             i += 1;
             editor1.putInt(value, i);
             editor1.apply();
@@ -1088,7 +1086,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             AndroidPlatform = "Android";
             Latittude = _latitude;
             Longitude = _longitude;
-            SDkVersion = "2.0.1";
+            SDkVersion = "2.0.2";
             WifiState = checkNetworkStatus(context);
             argumentValidation(eventType);  //validation in trackEvent
 

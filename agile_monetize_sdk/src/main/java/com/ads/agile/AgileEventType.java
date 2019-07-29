@@ -3,7 +3,7 @@ package com.ads.agile;
 public class AgileEventType {
 
 
-    public static final String AGILE_EVENT_CLICK = "event_click";
+    public static final String AGILE_EVENT_USER_PROPERTIES = "event_user_properties";
     public static final String AGILE_EVENT_LOG_PAGE = "event_log_page_activity";
     public static final String AGILE_EVENT_TRANSACTION = "event_transaction";
     public static final String AGILE_EVENT_SESSION = "event_session";
