@@ -64,7 +64,7 @@ public class AgileConfiguration {
 
     public interface ServiceInterfaceEnable1 {
         @FormUrlEncoded
-        @POST("log.js")
+        @POST("log.php")
         Call<ResponseBody> createUser1
                 (
                         @Field("get_app_id") String app_id
@@ -118,7 +118,7 @@ public class AgileConfiguration {
 
     public interface ServiceInterface1 {
         @FormUrlEncoded
-        @POST("log.js")
+        @POST("log.php")
         Call<ResponseBody> createUser
                 (
                         @Field("app_id") String app_id,

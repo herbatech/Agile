@@ -252,9 +252,10 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             }
 
             else {
+                //https://log.agileadnetwork.com/log.php
 
-                AGILE_ADD_NETWORK="https://log.agileadnetwork.com:8080/";
-                ValidateInterface= "log.js";
+                AGILE_ADD_NETWORK="https://log.agileadnetwork.com/";
+                ValidateInterface= "log.php";
 
             }
 
@@ -1086,7 +1087,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             AndroidPlatform = "Android";
             Latittude = _latitude;
             Longitude = _longitude;
-            SDkVersion = "2.0.2";
+            SDkVersion = "2.0.3";
             WifiState = checkNetworkStatus(context);
             argumentValidation(eventType);  //validation in trackEvent
 

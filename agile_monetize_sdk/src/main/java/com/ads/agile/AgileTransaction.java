@@ -167,7 +167,7 @@ public class AgileTransaction {
 
             else {
 
-                ValidateInterface= "log.js";
+                ValidateInterface= "log.php";
             }
 
         } catch (JSONException e) {
@@ -706,7 +706,7 @@ public class AgileTransaction {
         AndroidPlatform="Android";
         Latittude=_latitude;
         Longitude=_longitude;
-        SDkVersion = "2.0.2";
+        SDkVersion = "2.0.3";
         WifiState=checkNetworkStatus(context);
 
         argumentValidation(eventType);  //validation in trackEvent

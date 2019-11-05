@@ -186,7 +186,7 @@ public class AgileCrash extends Activity  {
 
             else {
 
-                ValidateInterface= "log.js";
+                ValidateInterface= "log.php";
             }
 
         } catch (JSONException e) {
@@ -565,7 +565,7 @@ public class AgileCrash extends Activity  {
             AndroidPlatform = "Android";
             Latittude = _latitude;
             Longitude = _longitude;
-            SDkVersion = "1.1.7";
+            SDkVersion = "2.0.3";
             WifiState = checkNetworkStatus(context);
             argumentValidation(eventType);  //validation in trackEvent
 
