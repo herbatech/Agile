@@ -147,27 +147,13 @@ public class AgileTransaction {
 
 
             if (google_playstore.equalsIgnoreCase("1")){
-
                 appId = m_jArry.getString("id");
                 packagename="";
-               // Log.d(TAG,"DAta GET    ="+AppId+"\n"+IdPacakageName);
-
             }
             else {
                 appId = m_jArry.getString("id");
                 packagename=context.getPackageName();
                 Log.e(TAG,"Warning : Googgle Playstore not available in playstore ");
-            }
-
-            if(trace_app_sandbox.equalsIgnoreCase("1")){
-
-                ValidateInterface ="log.php";
-
-            }
-
-            else {
-
-                ValidateInterface= "log.php";
             }
 
         } catch (JSONException e) {
@@ -522,7 +508,7 @@ public class AgileTransaction {
         if (isConnected(context)) {
            ////////////////////////
 
-            if(ValidateInterface.equalsIgnoreCase("log.php")){
+
                 AgileConfiguration.ServiceInterfaceEnable service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterfaceEnable.class);
                 Call<ResponseBody> responseBodyCall = service.createUser1(appId);
                 responseBodyCall.enqueue(new Callback<ResponseBody>() {
@@ -565,52 +551,7 @@ public class AgileTransaction {
                         // sendLogToDatabase(eventType, appId, values);
                     }
                 });
-            }
-            else {
-                AgileConfiguration.ServiceInterfaceEnable1 service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterfaceEnable1.class);
-                Call<ResponseBody> responseBodyCall = service.createUser1(appId);
-                responseBodyCall.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Log.d(TAG, "response code enable = " + response.code());
-                        try {
 
-                            String responseString = response.body().string();
-
-                            Log.d(TAG, "response body enable = " + responseString);
-
-                            JSONObject object = new JSONObject(responseString);
-                            boolean status = object.getBoolean("get_app_status");
-
-                            if (status){
-                                if (isTransaction) {
-                                    transactionInitFlag = false;
-                                    //  Log.d(TAG, "(commitTransaction) data object = " + jsonObject.toString());
-                                    trackTransaction(eventType, appId);
-                                } else {
-                                    //    Log.d(TAG, "transaction terminated, due to not found instance of AgileTransaction");
-                                }
-                            }
-                        } catch (IOException e) {
-                            Log.d(TAG, "IOException = " + e.getMessage());
-                        } catch (JSONException e) {
-                            Log.d(TAG, "JSONException = " + e.getMessage());
-                        } finally {
-                            response.body().close();
-                            //      Log.d(TAG, "retrofit connection closed");
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.d(TAG, "onFailure = " + t.getMessage());
-                        // sendLogToDatabase(eventType, appId, values);
-                    }
-                });
-            }
-
-
-            ///////////////////////
         } else {
             //save data into sqlite database
             //   Log.d(TAG, "network not connected");
@@ -706,7 +647,7 @@ public class AgileTransaction {
         AndroidPlatform="Android";
         Latittude=_latitude;
         Longitude=_longitude;
-        SDkVersion = "2.0.3";
+        SDkVersion = "2.0.4";
         WifiState=checkNetworkStatus(context);
 
         argumentValidation(eventType);  //validation in trackEvent
@@ -719,7 +660,6 @@ public class AgileTransaction {
         ) {
             sendLog(appId, android_id, eventType, getTransaction(), time, advertising_id);
         } else {
-           // Log.d(TAG, "params is empty");
             throw new IllegalArgumentException("param is empty for trackTransaction method");
         }
 
@@ -764,7 +704,6 @@ public class AgileTransaction {
                     );
         } else {
             //save data into sqlite database
-         //   Log.d(TAG, "network not connected");
             sendLogToDatabase
                     (
                             appId,
@@ -811,10 +750,7 @@ public class AgileTransaction {
 
         }
 
-        if (ValidateInterface.equalsIgnoreCase("log.php")){
-            Log.d(TAG, "ValidateInterface response code = " + ValidateInterface);
-
-            AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
+             AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
             Call<ResponseBody> responseBodyCall = service.createUser
                     (appId,
                             android_id,
@@ -823,7 +759,7 @@ public class AgileTransaction {
                             time,
                             advertising_id, wifiState, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
                             deviceAppVersion, sdkversion,_longitude, _latitude, androidPlatform, localDateTime, localTimezone,"","","","",packagename,gpsAdd,gpslocality,
-                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot,"","",""
+                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot,"","","","0"
                     );
             responseBodyCall.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -831,17 +767,12 @@ public class AgileTransaction {
                     //  Log.d(TAG, "response code = " + response.code());
                     try {
 
-                        String responseString = response.body().string();
+                        if (response.isSuccessful()){
+                            String responseString = response.body().string();
+                            JSONObject object = new JSONObject(responseString);
 
-                        //Log.d(TAG, "response body = " + responseString);
-
-                        JSONObject object = new JSONObject(responseString);
-                        boolean status = object.getBoolean("status");
-                        //   Log.d(TAG, "status = " + status);
-
-                        //clearLogEvent the log
-                        clearTransaction();
-
+                            clearTransaction();
+                        }
 
                     } catch (IOException e) {
                         //  Log.d(TAG, "IOException = " + e.getMessage());
@@ -859,57 +790,6 @@ public class AgileTransaction {
                     sendLogToDatabase(eventType, appId, values);
                 }
             });
-        }
-        else{
-
-            AgileConfiguration.ServiceInterface1 service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface1.class);
-            Call<ResponseBody> responseBodyCall = service.createUser
-                    (appId,
-                            android_id,
-                            eventType,
-                            values,
-                            time,
-                            advertising_id, wifiState, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
-                            deviceAppVersion, sdkversion,_longitude, _latitude, androidPlatform, localDateTime, localTimezone,"","","","",packagename,gpsAdd,gpslocality,
-                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot,"","",""
-                    );
-            responseBodyCall.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    //  Log.d(TAG, "response code = " + response.code());
-                    try {
-
-                        String responseString = response.body().string();
-
-                        //Log.d(TAG, "response body = " + responseString);
-
-                        JSONObject object = new JSONObject(responseString);
-                        boolean status = object.getBoolean("status");
-                        //   Log.d(TAG, "status = " + status);
-
-                        //clearLogEvent the log
-                        clearTransaction();
-
-
-                    } catch (IOException e) {
-                        //  Log.d(TAG, "IOException = " + e.getMessage());
-                    } catch (JSONException e) {
-                        //  Log.d(TAG, "JSONException = " + e.getMessage());
-                    } finally {
-                        response.body().close();
-                        //   Log.d(TAG, "retrofit connection closed");
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //   Log.d(TAG, "onFailure = " + t.getMessage());
-                    sendLogToDatabase(eventType, appId, values);
-                }
-            });
-        }
-
-
     }
 
     /**

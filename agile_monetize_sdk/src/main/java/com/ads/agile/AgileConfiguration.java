@@ -110,7 +110,8 @@ public class AgileConfiguration {
                         @Field("imei2") String    imei2  ,
                         @Field("install_id") String    install_id ,
                         @Field("session_id") String    session_id ,
-                        @Field("screen_id") String    screen_id
+                        @Field("screen_id") String    screen_id,
+                        @Field("custom_session_id") String    custom_session_id
 
 
                 );

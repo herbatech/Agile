@@ -92,47 +92,42 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor1;
     public static final String MyPREFERENCES = "myprefs";
-    public static final  String value = "key";
-    int i=0;
+    public static final String value = "key";
+    int i = 0;
 
     SharedPreferences event_screen_onsharedpreferences;
     SharedPreferences.Editor event_screen_oneditor1;
     public static final String event_screen_onMyPREFERENCES = "event_screen_onmyprefs";
-    public static final  String event_screen_onvalue = "key";
-    int j=0;
+    public static final String event_screen_onvalue = "key";
+    int j = 0;
 
     SharedPreferences last_screen_onsharedpreferences;
     SharedPreferences.Editor last_screen_oneditor1;
     public static final String last_screen_onMyPREFERENCES = "last_screen_onmyprefs";
-    public static final  String last_screen_onvalue = "lastkey";
+    public static final String last_screen_onvalue = "lastkey";
 
     SharedPreferences sharedpreferencesTAG;
     SharedPreferences.Editor editor1TAG;
     public static final String MyPREFERENCESTAG = "myprefsTAG";
-    public static final  String valueTAG = "keyTAG";
+    public static final String valueTAG = "keyTAG";
 
 
     SharedPreferences sharedpreferencesInstallId;
     SharedPreferences.Editor editor1InstallId;
     public static final String MyPREFERENCESInstallId = "myprefsInstallId";
-    public static final  String valueInstallId = "keyInstallId";
+    public static final String valueInstallId = "keyInstallId";
 
     SharedPreferences sharedpreferencesStartId;
     SharedPreferences.Editor editor1StartId;
     public static final String MyPREFERENCESStartId = "myprefsStartId";
-    public static final  String valueStartId = "keyStartId";
+    public static final String valueStartId = "keyStartId";
 
     SharedPreferences sharedpreferencesScreenId;
     SharedPreferences.Editor editor1ScreenId;
     public static final String MyPREFERENCESScreenId = "myprefsScreenId";
-    public static final  String valueScreenId = "keyScreenId";
-
-
-
-
+    public static final String valueScreenId = "keyScreenId";
     String dateTimeKey = "time_duration";
-    String screendateTimeKey = "screentime_duration";
-    String EventCountKey = "EventCountKey";
+
     private Boolean firstTime = false;
     AgileTransaction agileTransaction;
     private String AppId;
@@ -161,31 +156,21 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     private String GPSCountryName;
     private String GPSCountryCode;
 
-    private Location mCurrentLocation;
     private String _latitude = "false", _longitude = "false";
     private String _curlatitude = "false", _curlongitude = "false";
-    String ValidateInterface;
     long installed;
     AppLocationService appLocationService;
     UtilConfig dataProccessor;
     String packagename;
-
-
     int Transcationcount;
 
-    long starttime;
-    long  endtime ;
-    long t3;
-    String trace_app_uninstall,trace_app_sandbox;
-    private int seconds11=0;
+    String trace_app_uninstall, trace_app_sandbox;
+    private int seconds11 = 0;
     private boolean startRun;
-    String gpsAdd,gpslocality,gpspostalcode,gpscountryname,gpscountrycode;
-    private static final int DEFAULT_BLOCK_TIME = 1000;
-    private boolean mIsBlockClick;
-    boolean installdata=false;
-    public static final String AGILE_ADD_INTERFACE="log.php";
-    public static String AGILE_ADD_NETWORK ;
-    String startid,installid,screenid;
+    String gpsAdd, gpslocality, gpspostalcode, gpscountryname, gpscountrycode;
+    boolean installdata = false;
+    public static String AGILE_ADD_NETWORK;
+    String startid, installid, screenid;
 
     /**
      * parametric constructor
@@ -200,15 +185,11 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
         this.context = context;
         this.activity = activity;
-      /*  Bundle metadata = getMetaData(context);
-        AppId = metadata.getString("com.agile.sdk.ApplicationId");*/
 
         //check for transaction instance
         if (agileTransaction instanceof AgileTransaction) {
-           // Log.d(TAG, "instance agileTransaction exist");
             isTransaction = true;
         } else {
-            //Log.d(TAG, "instance not agileTransaction exist");
             isTransaction = false;
         }
         appLocationService = new AppLocationService(context);
@@ -221,42 +202,34 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
 
         try {
-            if (loadJSONFromAsset()==null){
-                Log.e(context.getPackageName(),"agile-sdk-config.json is Required");
+            if (loadJSONFromAsset() == null) {
+                Log.e(context.getPackageName(), "agile-sdk-config.json is Required");
             }
             JSONObject obj = new JSONObject(loadJSONFromAsset());
             JSONObject m_obj = obj.getJSONObject("app");
             String IdPacakageName = m_obj.getString("name");
             String google_playstore = m_obj.getString("available_on_google_playstore");
-             trace_app_uninstall = m_obj.getString("trace_app_uninstall");
-             trace_app_sandbox = m_obj.getString("sandbox");
+            trace_app_uninstall = m_obj.getString("trace_app_uninstall");
+            trace_app_sandbox = m_obj.getString("sandbox");
 
 
-            if (google_playstore.equalsIgnoreCase("1")){
+            if (google_playstore.equalsIgnoreCase("1")) {
                 AppId = m_obj.getString("id");
-                packagename="";
+                packagename = "";
 
-            }
-            else {
+            } else {
                 AppId = m_obj.getString("id");
-                packagename=context.getPackageName();
-                Log.e(context.getPackageName(),"Warning : Googgle Playstore not available on Your App");
+                packagename = context.getPackageName();
+                Log.e(context.getPackageName(), "Warning : Googgle Playstore not available on Your App");
             }
 
 
-            if(trace_app_sandbox.equalsIgnoreCase("1")){
+            if (trace_app_sandbox.equalsIgnoreCase("1")) {
 
-                AGILE_ADD_NETWORK="https://sandbox.agileadnetwork.com/";
-                ValidateInterface = "log.php";
-
-            }
-
-            else {
+                AGILE_ADD_NETWORK = "https://sandbox.agileadnetwork.com/";
+            } else {
                 //https://log.agileadnetwork.com/log.php
-
-                AGILE_ADD_NETWORK="https://log.agileadnetwork.com/";
-                ValidateInterface= "log.php";
-
+                AGILE_ADD_NETWORK = "https://log.agileadnetwork.com/";
             }
 
         } catch (JSONException e) {
@@ -313,50 +286,43 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         logModel.getLiveListAllLog().observe(activity, new Observer<List<LogEntity>>() {
             @Override
             public void onChanged(List<LogEntity> notes) {
-               // Log.d(TAG, "size count = " + notes.size());
+                // Log.d(TAG, "size count = " + notes.size());
                 size = notes.size();
             }
         });
 
         getAdvertisingId();
 
-        installdata=true;
+        installdata = true;
         agileInstall();
 
     }
 
     @SuppressLint({"MissingPermission", "NewApi"})
-    public   void IMEINUMBER(){
+    public void IMEINUMBER() {
 
         try {
 
             //IMEI
             TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
-            ImeiFirstslot=telephonyManager.getDeviceId(0);
-            ImeiSecondslot=telephonyManager.getDeviceId(1);
+            ImeiFirstslot = telephonyManager.getDeviceId(0);
+            ImeiSecondslot = telephonyManager.getDeviceId(1);
 
-            if (ImeiFirstslot.equals(ImeiSecondslot)){
-                    ImeiSecondslot="";
-                }
+            if (ImeiFirstslot.equals(ImeiSecondslot)) {
+                ImeiSecondslot = "";
+            }
 
-            //Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot+"\n"+ImeiSecondslot);
-
-
-
-        }
-        catch (Exception e){
-            ImeiFirstslot="";
-            ImeiSecondslot="";
-          //  Log.d(TAG,"IMEI NUMBER   ="+  ImeiFirstslot);
-          //  Log.d(TAG,"IMEI NUMBER   =11"+ ImeiSecondslot);
+        } catch (Exception e) {
+            ImeiFirstslot = "";
+            ImeiSecondslot = "";
 
         }
 
 
     }
 
-    public  void GPSADDRESS(){
+    public void GPSADDRESS() {
 
         try {
             //location
@@ -365,18 +331,16 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 _latitude = String.valueOf(nwLocation.getLatitude());
                 _longitude = String.valueOf(nwLocation.getLongitude());
 
-                getAddress(nwLocation.getLatitude(),nwLocation.getLongitude());
-               // Log.d(TAG, "Address  =" + GPSLocality);
-            }
-            else {
-                GPSLocality="";
-                GPSPostalCode= "";
-                GPSCountryName="";
-                GPSCountryCode="";
+                getAddress(nwLocation.getLatitude(), nwLocation.getLongitude());
+                // Log.d(TAG, "Address  =" + GPSLocality);
+            } else {
+                GPSLocality = "";
+                GPSPostalCode = "";
+                GPSCountryName = "";
+                GPSCountryCode = "";
 
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
 
 
         }
@@ -387,18 +351,16 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
             Address obj = addresses.get(0);
-           // String add = obj.getAddressLine(0);
 
-            GPSAddress=obj.getAddressLine(0);
-            GPSLocality=obj.getLocality();
-            GPSPostalCode= obj.getPostalCode();
-            GPSCountryName=obj.getCountryName();
-            GPSCountryCode=obj.getCountryCode();
+            GPSAddress = obj.getAddressLine(0);
+            GPSLocality = obj.getLocality();
+            GPSPostalCode = obj.getPostalCode();
+            GPSCountryName = obj.getCountryName();
+            GPSCountryCode = obj.getCountryCode();
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-           // Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -462,14 +424,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         return name;
     }
 
-    public static Bundle getMetaData(Context context) {
-        try {
-            return context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA).metaData;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     /**
      * get Google advertising id on background thread
@@ -482,11 +436,9 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
         if (!TextUtils.isEmpty(getPreferences(context, AGILE_ID)))//if it is not empty
         {
-          //  Log.d(TAG, "google adv id found, now accesing to it");
             result[0] = getPreferences(context, AGILE_ID);
         } else//if it is empty
         {
-          //  Log.d(TAG, "google adv id not found, now accesing to it");
             if (checkForPlayService(context)) {
 
                 new Thread(new Runnable() {
@@ -495,19 +447,16 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                             AdvertisingIdClient.AdInfo adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context);
                             String advertisingId = adInfo.getId();
                             result[0] = advertisingId;
-                            Log.d(TAG, "(getAdvertisingId) Google advertisingId = " + advertisingId);
                             boolean optOutEnabled = adInfo.isLimitAdTrackingEnabled();
                             //save google ad id into shared preference
                             setPreferences(context, AGILE_ID, advertisingId);
                             firstTime = true;
-                            Log.d(TAG, "(getAdvertisingId) Google optOutEnabled = " + optOutEnabled);
                         } catch (Exception e) {
-                           // Log.d(TAG, "(getAdvertisingId) catch error" + e.getMessage());
                         }
                     }
                 }).start();
             } else {
-               // Log.d(TAG, "play service have some issue");
+                // Log.d(TAG, "play service have some issue");
             }
         }
         return result[0];
@@ -601,21 +550,21 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     }
 
     public void sessionComplete() {
-      //  Log.d(TAG,"Timer Date  ="+seconds11);
+        //  Log.d(TAG,"Timer Date  ="+seconds11);
         try {
 
             Date date2 = new Date();
             long mills = date2.getTime() - date1.getTime();
             seconds = TimeUnit.MILLISECONDS.toSeconds(mills);
-            i = sharedpreferences.getInt(value,0);
-            j = event_screen_onsharedpreferences.getInt(event_screen_onvalue,0);
-            Transcationcount=dataProccessor.getInt("TransactionCount",0);
+            i = sharedpreferences.getInt(value, 0);
+            j = event_screen_onsharedpreferences.getInt(event_screen_onvalue, 0);
+            Transcationcount = dataProccessor.getInt("TransactionCount", 0);
 
-            set(AgileEventParameter.AGILE_PARAMS_DURATION, seconds+1);
-            set(AgileEventParameter.AGILE_PARAMS_EVENT_COUNT,i);
-            set(AgileEventParameter.AGILE_PARAMS_TRANSACTION_COUNT,Transcationcount);
-            set(AgileEventParameter.AGILE_PARAMS_INSTANCE_COUNT,j);
-            set(AgileEventParameter.AGILE_PARAMS_SCREEN_DURATION,seconds11);
+            set(AgileEventParameter.AGILE_PARAMS_DURATION, seconds + 1);
+            set(AgileEventParameter.AGILE_PARAMS_EVENT_COUNT, i);
+            set(AgileEventParameter.AGILE_PARAMS_TRANSACTION_COUNT, Transcationcount);
+            set(AgileEventParameter.AGILE_PARAMS_INSTANCE_COUNT, j);
+            set(AgileEventParameter.AGILE_PARAMS_SCREEN_DURATION, seconds11);
             trackEvent(AgileEventType.AGILE_EVENT_SESSION);
 
 
@@ -623,12 +572,10 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             editor1.commit();
             event_screen_oneditor1.clear();
             event_screen_oneditor1.commit();
-            startRun=false;
-            seconds11=0;
+            startRun = false;
+            seconds11 = 0;
             UtilConfig.clearprefernce();
-           // Log.d(TAG, "ApkInstaaled   =" + ApkInstallDate(installed));
-        }
-        catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -636,51 +583,44 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
 
     public void agileInstall() {
-      /*  if (installdata){*/
-            Log.d(TAG,"Install Open =1");
+        boolean isFirstTime = MyPreferences.isFirst(context);
+        if (isFirstTime) {
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //Do something after 1 second
+                    Log.d(TAG, "Install Open =3");
+                    set(AgileEventParameter.AGILE_PARAMS_INSTALL_DATE, ApkInstallDate(installed));
+                    trackEvent(AgileEventType.AGILE_EVENT_INSTALL);
 
-                Log.d(TAG,"Install Open =2");
-                boolean isFirstTime = MyPreferences.isFirst(context);
-                if (isFirstTime) {
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            //Do something after 1 second
-                            Log.d(TAG,"Install Open =3");
-                            set(AgileEventParameter.AGILE_PARAMS_INSTALL_DATE, ApkInstallDate(installed));
-                            trackEvent(AgileEventType.AGILE_EVENT_INSTALL);
-
-                        }
-                    }, 500);
+                }
+            }, 500);
         }
-         if (trace_app_uninstall.equalsIgnoreCase("1")){
+        if (trace_app_uninstall.equalsIgnoreCase("1")) {
 
-             final Handler handler = new Handler();
-             handler.postDelayed(new Runnable() {
-                 @Override
-                 public void run() {
-                     //Do something after 1 second
-                     agileUninstall();
-                 }
-             }, 1000);
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //Do something after 1 second
+                    agileUninstall();
+                }
+            }, 1000);
 
         }
 
 
     }
 
-    public void agileUninstall(){
+    public void agileUninstall() {
         try {
             FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
                 @Override
                 public void onSuccess(InstanceIdResult instanceIdResult) {
                     String token = instanceIdResult.getToken();
-                    // send it to server
-                  //  Log.d(TAG,"token Open =3    "+token);
                     boolean isFirstTime = MyPreferencesToken.isFirstToken(context);
                     if (isFirstTime) {
-                      //  Log.d(TAG,"token Open =4    "+token);
                         set(AgileEventParameter.AGILE_PARAMS_INSTALL_TOKEN, token);
                         trackEvent(AgileEventType.AGILE_EVENT_FIREBASE_TOKEN);
                     }
@@ -688,8 +628,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             });
 
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
 
         }
     }
@@ -701,7 +640,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             @Override
             public void run() {
                 //Do something after 1 second
-                startRun=true;
+                startRun = true;
                 Timer();
                 trackEvent(AgileEventType.AGILE_EVENT_SCRREN_START);
             }
@@ -711,15 +650,13 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     }
 
     public void agileAppScreenOn() {
-        startRun=true;
+        startRun = true;
         trackEvent(AgileEventType.AGILE_EVENT_SCRREN_ON);
 
-      }
+    }
 
     public void agileAppScreenOff() {
-        startRun=false;
-
-
+        startRun = false;
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -731,37 +668,32 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                 try {
                     i = sharedpreferences.getInt(value, 0);
-                    Transcationcount=dataProccessor.getInt("TransactionCount",0);
-                    //  Log.d(TAG,"doneCount  ="+evntdonecount);
-                    set(AgileEventParameter.AGILE_PARAMS_DURATION,seconds);
-                    set(AgileEventParameter.AGILE_PARAMS_EVENT_COUNT,i);
-                    set(AgileEventParameter.AGILE_PARAMS_TRANSACTION_COUNT,Transcationcount);
+                    Transcationcount = dataProccessor.getInt("TransactionCount", 0);
+                    set(AgileEventParameter.AGILE_PARAMS_DURATION, seconds);
+                    set(AgileEventParameter.AGILE_PARAMS_EVENT_COUNT, i);
+                    set(AgileEventParameter.AGILE_PARAMS_TRANSACTION_COUNT, Transcationcount);
                     trackEvent(AgileEventType.AGILE_EVENT_SCRREN_OFF);
-                }
-                catch (Exception e){
+                } catch (Exception e) {
 
                 }
             }
         }, 200);
 
 
-
-
     }
 
 
-
-    private void Timer(){
+    private void Timer() {
 
         final Handler handler = new Handler();
 
         handler.post(new Runnable() {
             @Override
             public void run() {
-            if(startRun){
+                if (startRun) {
                     seconds11++;
 
-            }
+                }
 
                 handler.postDelayed(this, 1000);
             }
@@ -771,8 +703,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
     @Override
     public void onConnected() {
-       // Log.d(TAG, "MainActivity connected to network via AgileLog");
-
         try {
             syncLog();
         } catch (Exception e) {
@@ -792,9 +722,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         public static boolean isFirst(Context context) {
             final SharedPreferences reader = context.getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
             final boolean first = reader.getBoolean("is_first", true);
-         //   Log.d("AgileLog", "MyPreferences =1 "+first );
             if (first) {
-           //     Log.d("AgileLog", "MyPreferences =2 " );
                 final SharedPreferences.Editor editor = reader.edit();
                 editor.putBoolean("is_first", false);
                 editor.commit();
@@ -812,9 +740,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         public static boolean isFirstToken(Context context) {
             final SharedPreferences reader = context.getSharedPreferences(MY_PREFERENCES_TOKEN, Context.MODE_PRIVATE);
             final boolean first = reader.getBoolean("is_first_toktn", true);
-           // Log.d("AgileLog", "MyPreferencesToken =1 "+first );
             if (first) {
-              //  Log.d("AgileLog", "MyPreferencesToken =2 " );
                 final SharedPreferences.Editor editor = reader.edit();
                 editor.putBoolean("is_first_toktn", false);
                 editor.commit();
@@ -825,75 +751,87 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     }
 
 
-    public void tagEvent(String value){
+    public void tagEvent(String value) {
 
         editor1TAG.putString(valueTAG, value);
         editor1TAG.commit();
     }
+
     /**
      * validate input param
      *
      * @param eventType define the type of event
      */
-    public  void trackEvent(@NonNull final String eventType) {
+    public void trackEvent(@NonNull final String eventType) {
 
         /**
          * if the transaction is enable
          */
         argumentValidation(eventType);  //validation in sendLog
 
-        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_USER_PROPERTIES)){
+        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_USER_PROPERTIES)) {
             i += 1;
             editor1.putInt(value, i);
             editor1.apply();
         }
-        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_LOG_PAGE)){
+        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_LOG_PAGE)) {
             i += 1;
             editor1.putInt(value, i);
             editor1.apply();
-            set(AgileEventParameter.AGILE_PARAMS_ACTIVITY_PAGE,activity.getClass().getSimpleName());
+            set(AgileEventParameter.AGILE_PARAMS_ACTIVITY_PAGE, activity.getClass().getSimpleName());
 
         }
-        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_ON)){
+        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_ON)) {
             j += 1;
             event_screen_oneditor1.putInt(event_screen_onvalue, j);
             event_screen_oneditor1.apply();
         }
 
-        set(AgileEventParameter.AGILE_PARAMS_EVENT_TAG,sharedpreferencesTAG.getString(valueTAG,""));
+        set(AgileEventParameter.AGILE_PARAMS_EVENT_TAG, sharedpreferencesTAG.getString(valueTAG, ""));
 
-        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_CRASH)){
+        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_CRASH)) {
             validateLog(eventType, AppId);
         }
 
 
         if (isConnected(context)) {
-            //////////////////////////////
 
-            if(ValidateInterface.equalsIgnoreCase("log.php")){
-                AgileConfiguration.ServiceInterfaceEnable service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterfaceEnable.class);
-                Call<ResponseBody> responseBodyCall = service.createUser1(AppId);
-                responseBodyCall.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Log.d(TAG, "response code enable = " + response.code());
-                        try {
+            AgileConfiguration.ServiceInterfaceEnable service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterfaceEnable.class);
+            Call<ResponseBody> responseBodyCall = service.createUser1(AppId);
+            responseBodyCall.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    //Log.d(TAG, "response code enable = " + response.code());
+                    try {
 
-                            String responseString = response.body().string();
+                        String responseString = response.body().string();
 
-                            Log.d(TAG, "response body enable = " + responseString);
+                       // Log.d(TAG, "response body enable = " + responseString);
 
-                            JSONObject object = new JSONObject(responseString);
-                            boolean status = object.getBoolean("get_app_status");
+                        JSONObject object = new JSONObject(responseString);
+                        boolean status = object.getBoolean("get_app_status");
 
-                            if (status){
+                        if (status) {
+
+                            if (isTransaction) {
+                                if (isLog) {
+
+                                    validateLog(eventType, AppId);
+                                }
+                            }
+                            /**
+                             * if the transaction is disable
+                             */
+                            else {
+                                validateLog(eventType, AppId);
+                            }
+                        } else {
+
+                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL) || eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_FIREBASE_TOKEN)) {
 
                                 if (isTransaction) {
                                     if (isLog) {
-
                                         validateLog(eventType, AppId);
-                                    } else {
-
                                     }
                                 }
                                 /**
@@ -904,127 +842,25 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                                 }
                             }
 
-                            else {
-
-                              //  agileInstall();
-                                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)||eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_FIREBASE_TOKEN)){
-
-                                    if (isTransaction) {
-                                        if (isLog) {
-
-                                            validateLog(eventType, AppId);
-                                        } else {
-
-                                        }
-                                    }
-                                    /**
-                                     * if the transaction is disable
-                                     */
-                                    else {
-                                        validateLog(eventType, AppId);
-                                    }
-                                }
-
-                              }
-
-                        } catch (IOException e) {
-                            Log.d(TAG, "IOException = " + e.getMessage());
-                        } catch (JSONException e) {
-                            Log.d(TAG, "JSONException = " + e.getMessage());
-                        } finally {
-                            response.body().close();
-                            //      Log.d(TAG, "retrofit connection closed");
                         }
+
+                    } catch (IOException e) {
+                       // Log.d(TAG, "IOException = " + e.getMessage());
+                    } catch (JSONException e) {
+                       // Log.d(TAG, "JSONException = " + e.getMessage());
+                    } finally {
+                        response.body().close();
                     }
+                }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.d(TAG, "onFailure = " + t.getMessage());
-                        // sendLogToDatabase(eventType, appId, values);
-                    }
-                });
-            }
-            else {
-              //  Log.d(TAG, "response code enable11 AppId = " + AppId);
-                AgileConfiguration.ServiceInterfaceEnable1 service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterfaceEnable1.class);
-                Call<ResponseBody> responseBodyCall = service.createUser1(AppId);
-                responseBodyCall.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                       // Log.d(TAG, "response code enable11 = " + response.code());
-                        try {
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.d(TAG, "onFailure = " + t.getMessage());
+                }
+            });
 
-                            String responseString = response.body().string();
-
-                      //      Log.d(TAG, "response body enable11 = " + responseString);
-
-                            JSONObject object = new JSONObject(responseString);
-                            boolean status = object.getBoolean("get_app_status");
-
-                            if (status){
-
-                                if (isTransaction) {
-                                    if (isLog) {
-
-                                        validateLog(eventType, AppId);
-                                    } else {
-
-                                    }
-                                }
-                                /**
-                                 * if the transaction is disable
-                                 */
-                                else {
-                                    validateLog(eventType, AppId);
-                                }
-                            }
-
-                            else {
-                              //  Log.d(TAG, "eventType body enable = " + eventType);
-                              //  agileInstall();
-                                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)||eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_FIREBASE_TOKEN)){
-
-                                    if (isTransaction) {
-                                        if (isLog) {
-
-                                            validateLog(eventType, AppId);
-                                        } else {
-
-                                        }
-                                    }
-                                    /**
-                                     * if the transaction is disable
-                                     */
-                                    else {
-                                        validateLog(eventType, AppId);
-                                    }
-                                }
-
-                            }
-
-                        } catch (IOException e) {
-                          //  Log.d(TAG, "IOException = " + e.getMessage());
-                        } catch (JSONException e) {
-                          //  Log.d(TAG, "JSONException = " + e.getMessage());
-                        } finally {
-                            response.body().close();
-                            //      Log.d(TAG, "retrofit connection closed");
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                       // Log.d(TAG, "onFailure = " + t.getMessage());
-                        // sendLogToDatabase(eventType, appId, values);
-                    }
-                });
-            }
-
-
-    //////////////////////////////
         } else {
             //save data into sqlite database
-
             sendLogToDatabase
                     (
                             AppId,
@@ -1032,7 +868,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                             getLogEvent()
                     );
         }
-
 
 
     }
@@ -1087,7 +922,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             AndroidPlatform = "Android";
             Latittude = _latitude;
             Longitude = _longitude;
-            SDkVersion = "2.0.3";
+            SDkVersion = "2.0.4";
             WifiState = checkNetworkStatus(context);
             argumentValidation(eventType);  //validation in trackEvent
 
@@ -1108,7 +943,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             e.printStackTrace();
         }
 
-       }
+    }
 
     /**
      * check for internet connection then perform required operation
@@ -1151,9 +986,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     }
 
 
-
-
-
     /**
      * upload data to server
      *
@@ -1170,7 +1002,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                                  @NonNull String localDateTime, @NonNull String localTimezone, @NonNull String deviceOperator, @NonNull String sdkversion) {
 
         argumentValidation(eventType);  //validation in sendLogToServer
-        try{
+        try {
             Location nwLocation = appLocationService.getLocation(LocationManager.NETWORK_PROVIDER);
 
             if (nwLocation != null) {
@@ -1179,190 +1011,103 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
 
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
 
         }
 
-        startid=sharedpreferencesStartId.getString(valueStartId,"");
-        installid=sharedpreferencesInstallId.getString(valueInstallId,"");
-        screenid=sharedpreferencesScreenId.getString(valueScreenId,"");
+        startid = sharedpreferencesStartId.getString(valueStartId, "");
+        installid = sharedpreferencesInstallId.getString(valueInstallId, "");
+        screenid = sharedpreferencesScreenId.getString(valueScreenId, "");
 
-     /*   Log.d(TAG, "screenid code = " + screenid);
-        Log.d(TAG, "installid code = " + installid);
-        Log.d(TAG, "startid code = " + startid);*/
+        if (GPSAddress != null) {
 
+            gpsAdd = GPSAddress;
+            gpslocality = GPSLocality;
+            gpspostalcode = GPSPostalCode;
+            gpscountryname = GPSCountryName;
+            gpscountrycode = GPSCountryCode;
 
-        if (GPSAddress !=null){
-
-            gpsAdd=GPSAddress;
-            gpslocality=GPSLocality;
-            gpspostalcode=GPSPostalCode;
-            gpscountryname=GPSCountryName;
-            gpscountrycode=GPSCountryCode;
-
-        }
-        else {
-            gpsAdd="";
-            gpslocality="";
-            gpspostalcode="";
-            gpscountryname="";
-            gpscountrycode="";
+        } else {
+            gpsAdd = "";
+            gpslocality = "";
+            gpspostalcode = "";
+            gpscountryname = "";
+            gpscountrycode = "";
         }
 
 
-      //  Log.d(TAG,"AddNetwork   ="+ValidateInterface);
+        AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
+        Call<ResponseBody> responseBodyCall = service.createUser
+                (appId,
+                        android_id,
+                        eventType,
+                        values,
+                        time,
+                        advertising_id, wifiState, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
+                        deviceAppVersion, sdkversion, _longitude, _latitude, androidPlatform, localDateTime, localTimezone, "", "", "", "", packagename, gpsAdd, gpslocality,
+                        gpspostalcode, gpscountryname, gpscountrycode, ImeiFirstslot, ImeiSecondslot, installid, startid, screenid, "0"
+                );
+        responseBodyCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                // Log.d(TAG, "response code = " + response.code());
+                try {
 
-  if(ValidateInterface.equalsIgnoreCase("log.php")){
+                    if (response.isSuccessful()) {
+                        String responseString = response.body().string();
+                        //Log.d(TAG, "response body 1111= " + responseString);
+                        JSONObject object = new JSONObject(responseString);
+                        boolean status = object.getBoolean("status");
+                        if (status) {
 
-    AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
-    Call<ResponseBody> responseBodyCall = service.createUser
-            (appId,
-                    android_id,
-                    eventType,
-                    values,
-                    time,
-                    advertising_id, wifiState, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
-                    deviceAppVersion, sdkversion,_longitude, _latitude, androidPlatform, localDateTime, localTimezone,"","","","",packagename,gpsAdd,gpslocality,
-                    gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot,installid,startid,screenid
-            );
-    responseBodyCall.enqueue(new Callback<ResponseBody>() {
-        @Override
-        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-             // Log.d(TAG, "response code = " + response.code());
-            try {
+                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)) {
+                                String install_id = object.getString("install_id");
+                                editor1InstallId.putString(valueInstallId, install_id);
+                                editor1InstallId.commit();
+                            }
 
-                String responseString = response.body().string();
+                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_ON)) {
+                                String screen_id = object.getString("screen_id");
+                                editor1ScreenId.putString(valueScreenId, screen_id);
+                                editor1ScreenId.commit();
+                            }
 
-              //  Log.d(TAG, "response body = " + responseString);
+                            clearLogEvent();
 
-                JSONObject object = new JSONObject(responseString);
-                // boolean status = object.getBoolean("status");
 
-                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)){
-                    String install_id = object.getString("install_id");
-                    editor1InstallId.putString(valueInstallId, install_id);
-                    editor1InstallId.commit();
+                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_START)) {
+                                String session_id = object.getString("session_id");
+                                editor1StartId.putString(valueStartId, session_id);
+                                editor1StartId.commit();
+                                agileAppScreenOn();
+                            }
+                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SESSION)) {
+                                editor1ScreenId.clear();
+                                editor1ScreenId.commit();
+                                editor1StartId.clear();
+                                editor1StartId.commit();
+
+                            }
+                        }
+                    } else {
+                       // Log.d(TAG, "JSONException123 = " + response.code());
+                    }
+                } catch (IOException e) {
+                    // Log.d(TAG, "IOException = " + e.getMessage());
+                } catch (JSONException e) {
+                    Log.d(TAG, "JSONException = " + e.getMessage());
+                } finally {
+                    // response.body().close();
+                    //     Log.d(TAG, "retrofit connection closed");
                 }
-
-                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_ON)){
-                    String screen_id = object.getString("screen_id");
-                    editor1ScreenId.putString(valueScreenId, screen_id);
-                    editor1ScreenId.commit();
-                }
-
-                clearLogEvent();
-
-
-                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_START)){
-                    String session_id = object.getString("session_id");
-                    editor1StartId.putString(valueStartId, session_id);
-                    editor1StartId.commit();
-                    agileAppScreenOn();
-                }
-                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SESSION)){
-                        editor1ScreenId.clear();
-                        editor1ScreenId.commit();
-                         editor1StartId.clear();
-                       editor1StartId.commit();
-
-                }
-
-            } catch (IOException e) {
-                // Log.d(TAG, "IOException = " + e.getMessage());
-            } catch (JSONException e) {
-                Log.d(TAG, "JSONException = " + e.getMessage());
-            } finally {
-                response.body().close();
-                //     Log.d(TAG, "retrofit connection closed");
             }
-        }
 
-        @Override
-        public void onFailure(Call<ResponseBody> call, Throwable t) {
-         //   Log.d(TAG, "onFailure = " + t.getMessage());
-            sendLogToDatabase(eventType, appId, values);
-        }
-    });
-}
-
-
-
-else {
-
-    //  Log.d(TAG, " eventType response123 body = " + eventType);
-    AgileConfiguration.ServiceInterface1 service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface1.class);
-    Call<ResponseBody> responseBodyCall = service.createUser
-            (appId,
-                    android_id,
-                    eventType,
-                    values,
-                    time,
-                    advertising_id, wifiState, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
-                    deviceAppVersion, sdkversion,_longitude, _latitude, androidPlatform, localDateTime, localTimezone,"","","","",packagename,gpsAdd,gpslocality,
-                    gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot,installid,startid,screenid
-            );
-    responseBodyCall.enqueue(new Callback<ResponseBody>() {
-        @Override
-        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-             // Log.d(TAG, "response code = " + response.code());
-            try {
-
-                String responseString = response.body().string();
-
-             //   Log.d(TAG, "response body = " + responseString);
-
-                JSONObject object = new JSONObject(responseString);
-
-                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)){
-                    String install_id = object.getString("install_id");
-                    editor1InstallId.putString(valueInstallId, install_id);
-                    editor1InstallId.commit();
-                }
-
-                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_ON)){
-                    String screen_id = object.getString("screen_id");
-                    editor1ScreenId.putString(valueScreenId, screen_id);
-                    editor1ScreenId.commit();
-                }
-
-                clearLogEvent();
-              /*  installdata=true;
-                agileInstall();*/
-
-                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_START)){
-                    String session_id = object.getString("session_id");
-                    editor1StartId.putString(valueStartId, session_id);
-                    editor1StartId.commit();
-                    agileAppScreenOn();
-                }
-                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SESSION)){
-                    editor1ScreenId.clear();
-                    editor1ScreenId.commit();
-                    editor1StartId.clear();
-                    editor1StartId.commit();
-
-                }
-
-            } catch (IOException e) {
-                // Log.d(TAG, "IOException = " + e.getMessage());
-            } catch (JSONException e) {
-              //  Log.d(TAG, "JSONException = " + e.getMessage());
-            } finally {
-                response.body().close();
-                //     Log.d(TAG, "retrofit connection closed");
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                //   Log.d(TAG, "onFailure = " + t.getMessage());
+                sendLogToDatabase(eventType, appId, values);
             }
-        }
-
-        @Override
-        public void onFailure(Call<ResponseBody> call, Throwable t) {
-          //  Log.d(TAG, "onFailure = " + t.getMessage());
-             sendLogToDatabase(eventType, appId, values);
-        }
-    });
-}
-
-
+        });
 
     }
 
@@ -1380,21 +1125,16 @@ else {
         // Log.d(TAG, "insert log into database");
         LogEntity logEntity = new LogEntity();
 
-        String androidId=Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String appIdencodedString = AgileAESHelper.encryption(appId);
-        String eventTypeencodedString =AgileAESHelper.encryption(eventType);
-        String valuesencodedString = AgileAESHelper.encryption(values);;
-        String localDateTimeencodedString =AgileAESHelper.encryption(localDateTime);;
-        String androidIdencodedString = AgileAESHelper.encryption(androidId);;
+        String eventTypeencodedString = AgileAESHelper.encryption(eventType);
+        String valuesencodedString = AgileAESHelper.encryption(values);
+        ;
+        String localDateTimeencodedString = AgileAESHelper.encryption(localDateTime);
+        ;
+        String androidIdencodedString = AgileAESHelper.encryption(androidId);
+        ;
 
-
-
-     /*   Log.d(TAG,"appIdencodedString   ="+appIdencodedString);
-        Log.d(TAG,"eventTypeencodedString   ="+eventTypeencodedString);
-        Log.d(TAG,"valuesencodedString   ="+valuesencodedString);
-        Log.d(TAG,"localDateTimeencodedString   ="+localDateTimeencodedString);
-        Log.d(TAG,"androidIdencodedString   ="+androidIdencodedString);
-*/
 
         logEntity.setApp_id(appIdencodedString);
         logEntity.setEvent_type(eventTypeencodedString);
@@ -1418,8 +1158,6 @@ else {
      * perform operation on background thread
      */
     public void syncLog() throws Exception {
-
-        //  Log.d(TAG, "(syncLog) called ,size = " + size);
         synchroniseLogEvent = new SynchroniseLogEvent(size);
         synchroniseLogEvent.execute();
     }
@@ -1437,134 +1175,66 @@ else {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            String appIddatatext = null,valuedatatext=null,date_timedatatext=null,timedatatext=null,eventTypedatadatatext=null;
+            String appIddatatext = null, valuedatatext = null, date_timedatatext = null, timedatatext = null, eventTypedatadatatext = null;
             for (int i = 0; i < size; i++) {
 
-                  final   int id = logModel.getLiveListAllLog().getValue().get(i).getId();
-                  String eventType = logModel.getLiveListAllLog().getValue().get(i).getEvent_type();
-                 String appId = logModel.getLiveListAllLog().getValue().get(i).getApp_id();
-                 String value = logModel.getLiveListAllLog().getValue().get(i).getValue();
-                  String date_time = logModel.getLiveListAllLog().getValue().get(i).getDate_time();
-                 final long time = Long.parseLong(logModel.getLiveListAllLog().getValue().get(i).getTime());
+                final int id = logModel.getLiveListAllLog().getValue().get(i).getId();
+                String eventType = logModel.getLiveListAllLog().getValue().get(i).getEvent_type();
+                String appId = logModel.getLiveListAllLog().getValue().get(i).getApp_id();
+                String value = logModel.getLiveListAllLog().getValue().get(i).getValue();
+                String date_time = logModel.getLiveListAllLog().getValue().get(i).getDate_time();
+                final long time = Long.parseLong(logModel.getLiveListAllLog().getValue().get(i).getTime());
 
 
-                 appIddatatext = AgileAESHelper.decryption(appId);
+                appIddatatext = AgileAESHelper.decryption(appId);
                 eventTypedatadatatext = AgileAESHelper.decryption(eventType);
                 valuedatatext = AgileAESHelper.decryption(value);
                 timedatatext = AgileAESHelper.decryption(date_time);
 
-            /*   // Log.d(TAG,"SecretKKey   ="+AgileAESHelper.SecretKey);
-                Log.d(TAG,"appIddatatext String  ="+appIddatatext);
-                Log.d(TAG,"valuedatatext String  ="+valuedatatext);
-                //Log.d(TAG,"date_timedatatext String  ="+date_timedatatext);
-                Log.d(TAG,"timedatatext String  ="+timedatatext);
-                Log.d(TAG,"eventTypedatadatatext String  ="+eventTypedatadatatext);*/
+                AgileConfiguration.ServiceInterfaceEnable service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterfaceEnable.class);
+                Call<ResponseBody> responseBodyCall = service.createUser1(AppId);
+                final String finalAppIddatatext = appIddatatext;
+                final String finalEventTypedatadatatext = eventTypedatadatatext;
+                final String finalValuedatatext = valuedatatext;
+                final String finalTimedatatext = timedatatext;
+                responseBodyCall.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        //  Log.d(TAG, "response code enable = " + response.code());
+                        try {
 
-
-                //////////////////////////////////////
-                if(ValidateInterface.equalsIgnoreCase("log.php")){
-                    AgileConfiguration.ServiceInterfaceEnable service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterfaceEnable.class);
-                    Call<ResponseBody> responseBodyCall = service.createUser1(AppId);
-                    final String finalAppIddatatext = appIddatatext;
-                    final String finalEventTypedatadatatext = eventTypedatadatatext;
-                    final String finalValuedatatext = valuedatatext;
-                    final String finalTimedatatext = timedatatext;
-                    responseBodyCall.enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                          //  Log.d(TAG, "response code enable = " + response.code());
-                            try {
-
+                            if (response.isSuccessful()) {
                                 String responseString = response.body().string();
-
-                            //    Log.d(TAG, "response body enable = " + responseString);
-
                                 JSONObject object = new JSONObject(responseString);
                                 boolean status = object.getBoolean("get_app_status");
 
-                                if (status){
+                                if (status) {
                                     //call webservice to add data to database
                                     eventProductLogServiceOffline(id, finalAppIddatatext, finalEventTypedatadatatext, finalValuedatatext, time,
                                             WifiState, DeviceLanguage, DeviceType, DeviceModel, DeviceOsVersion, DeviceOsName,
                                             DeviceAppVersion, _latitude, _longitude, AndroidPlatform, finalTimedatatext, localTimezone,
                                             DeviceBrand, SDkVersion);
 
-                                }
-                                else {
+                                } else {
                                     logModel.singleDeleteLog(id);
                                 }
-
-                            } catch (IOException e) {
-                              //  Log.d(TAG, "IOException = " + e.getMessage());
-                            } catch (JSONException e) {
-                              //  Log.d(TAG, "JSONException = " + e.getMessage());
-                            } finally {
-                                response.body().close();
-                                //      Log.d(TAG, "retrofit connection closed");
                             }
+                        } catch (IOException e) {
+                            //  Log.d(TAG, "IOException = " + e.getMessage());
+                        } catch (JSONException e) {
+                            //  Log.d(TAG, "JSONException = " + e.getMessage());
+                        } finally {
+                            response.body().close();
+                            //      Log.d(TAG, "retrofit connection closed");
                         }
+                    }
 
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                          //  Log.d(TAG, "onFailure = " + t.getMessage());
-                            // sendLogToDatabase(eventType, appId, values);
-                        }
-                    });
-                }
-
-                else {
-                    AgileConfiguration.ServiceInterfaceEnable1 service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterfaceEnable1.class);
-                    Call<ResponseBody> responseBodyCall = service.createUser1(AppId);
-                    final String finalAppIddatatext = appIddatatext;
-                    final String finalEventTypedatadatatext = eventTypedatadatatext;
-                    final String finalValuedatatext = valuedatatext;
-                    final String finalTimedatatext = timedatatext;
-                    responseBodyCall.enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                         //   Log.d(TAG, "response code enable = " + response.code());
-                            try {
-
-                                String responseString = response.body().string();
-
-                             //   Log.d(TAG, "response body enable = " + responseString);
-
-                                JSONObject object = new JSONObject(responseString);
-                                boolean status = object.getBoolean("get_app_status");
-
-                                if (status){
-                                    //call webservice to add data to database
-                                    eventProductLogServiceOffline(id, finalAppIddatatext, finalEventTypedatadatatext, finalValuedatatext, time,
-                                            WifiState, DeviceLanguage, DeviceType, DeviceModel, DeviceOsVersion, DeviceOsName,
-                                            DeviceAppVersion, _latitude, _longitude, AndroidPlatform, finalTimedatatext, localTimezone,
-                                            DeviceBrand, SDkVersion);
-
-                                }
-                                else {
-                                    logModel.singleDeleteLog(id);
-                                }
-
-                            } catch (IOException e) {
-                              //  Log.d(TAG, "IOException = " + e.getMessage());
-                            } catch (JSONException e) {
-                              //  Log.d(TAG, "JSONException = " + e.getMessage());
-                            } finally {
-                                response.body().close();
-                                //      Log.d(TAG, "retrofit connection closed");
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                           // Log.d(TAG, "onFailure = " + t.getMessage());
-                            // sendLogToDatabase(eventType, appId, values);
-                        }
-                    });
-
-                }
-
-                /////////////////////////////////////
-
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        //  Log.d(TAG, "onFailure = " + t.getMessage());
+                        // sendLogToDatabase(eventType, appId, values);
+                    }
+                });
 
             }
             return null;
@@ -1590,188 +1260,107 @@ else {
         String wifi = checkNetworkStatus(context);
 
 
-           argumentValidation(eventType);  //validation in eventProductLogServiceOffline
+        argumentValidation(eventType);  //validation in eventProductLogServiceOffline
 
-            Location nwLocation = appLocationService.getLocation(LocationManager.NETWORK_PROVIDER);
+        Location nwLocation = appLocationService.getLocation(LocationManager.NETWORK_PROVIDER);
 
-            if (nwLocation != null) {
-                _curlatitude = String.valueOf(nwLocation.getLatitude());
-                _curlongitude = String.valueOf(nwLocation.getLongitude());
+        if (nwLocation != null) {
+            _curlatitude = String.valueOf(nwLocation.getLatitude());
+            _curlongitude = String.valueOf(nwLocation.getLongitude());
 
+        }
+
+        DateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateString2 = dateFormat2.format(new Date()).toString();
+
+        if (GPSAddress != null) {
+
+            gpsAdd = GPSAddress;
+            gpslocality = GPSLocality;
+            gpspostalcode = GPSPostalCode;
+            gpscountryname = GPSCountryName;
+            gpscountrycode = GPSCountryCode;
+
+
+        } else {
+            gpsAdd = "";
+            gpslocality = "";
+            gpspostalcode = "";
+            gpscountryname = "";
+            gpscountrycode = "";
+
+
+        }
+        startid = sharedpreferencesStartId.getString(valueStartId, "");
+        installid = sharedpreferencesInstallId.getString(valueInstallId, "");
+        screenid = sharedpreferencesScreenId.getString(valueScreenId, "");
+
+        AgileConfiguration.ServiceInterface service1 = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
+        Call<ResponseBody> responseBodyCall = service1.createUser
+                (appId,
+                        Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID),
+                        eventType,
+                        values,
+                        String.valueOf(time),
+                        advertising_id, wifi, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
+                        deviceAppVersion, sdkversion, _curlongitude, _curlatitude, androidPlatform, localDateTime, localTimezone, _longitude, _latitude, dateString2, localTimezone, packagename, gpsAdd, gpslocality,
+                        gpspostalcode, gpscountryname, gpscountrycode, ImeiFirstslot, ImeiSecondslot, installid, startid, screenid, ""
+                );
+
+        responseBodyCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                try {
+
+                    if(response.isSuccessful()){
+                        String responseString = response.body().string();
+                        JSONObject object = new JSONObject(responseString);
+                        boolean status = object.getBoolean("status");
+
+                        if (status) {
+                            //delete record from the database if the response is true
+
+                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)) {
+                                String install_id = object.getString("install_id");
+                                editor1InstallId.putString(valueInstallId, install_id);
+                                editor1InstallId.commit();
+                            }
+
+                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_ON)) {
+                                String screen_id = object.getString("screen_id");
+                                editor1ScreenId.putString(valueScreenId, screen_id);
+                                editor1ScreenId.commit();
+                            }
+
+                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_START)) {
+                                String session_id = object.getString("session_id");
+                                editor1StartId.putString(valueStartId, session_id);
+                                editor1StartId.commit();
+                            }
+
+                            logModel.singleDeleteLog(id);
+                        } else {
+                            //do not delete record from the database if the response is false
+                        }
+                    }
+
+                } catch (IOException e) {
+                    //     Log.d(TAG, "IOException = " + e.getMessage());
+                    synchroniseLogEvent.cancel(true);
+                } catch (JSONException e) {
+                    //    Log.d(TAG, "JSONException = " + e.getMessage());
+                    synchroniseLogEvent.cancel(true);
+                }
             }
 
-            DateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String dateString2 = dateFormat2.format(new Date()).toString();
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                synchroniseLogEvent.cancel(true);
+            }
+        });
 
-            if (GPSAddress !=null){
-
-            gpsAdd=GPSAddress;
-            gpslocality=GPSLocality;
-            gpspostalcode=GPSPostalCode;
-            gpscountryname=GPSCountryName;
-            gpscountrycode=GPSCountryCode;
-
-
-        }
-
-        else {
-            gpsAdd="";
-            gpslocality="";
-            gpspostalcode="";
-            gpscountryname="";
-            gpscountrycode="";
-
-
-        }
-        startid=sharedpreferencesStartId.getString(valueStartId,"");
-        installid=sharedpreferencesInstallId.getString(valueInstallId,"");
-        screenid=sharedpreferencesScreenId.getString(valueScreenId,"");
-
-      /*  Log.d(TAG, "screenid code = " + screenid);
-        Log.d(TAG, "installid code = " + installid);
-        Log.d(TAG, "startid code = " + startid);*/
-
-        if(ValidateInterface.equalsIgnoreCase("log.php")){
-            AgileConfiguration.ServiceInterface service1 = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
-            Call<ResponseBody> responseBodyCall = service1.createUser
-                    (appId,
-                            Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID),
-                            eventType,
-                            values,
-                            String.valueOf(time),
-                            advertising_id, wifi, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
-                            deviceAppVersion, sdkversion, _curlongitude, _curlatitude, androidPlatform,localDateTime,localTimezone,_longitude,_latitude,dateString2,localTimezone,packagename,gpsAdd,gpslocality,
-                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot,installid,startid,screenid
-                    );
-
-            responseBodyCall.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                    try {
-
-                        String responseString = response.body().string();
-                        //  Log.d(TAG, "response body11     =" + id + " = " + responseString);
-
-                        JSONObject object = new JSONObject(responseString);
-                        boolean status = object.getBoolean("status");
-
-
-                        if (status) {
-                            //delete record from the database if the response is true
-
-                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)){
-                                String install_id = object.getString("install_id");
-                                editor1InstallId.putString(valueInstallId, install_id);
-                                editor1InstallId.commit();
-                            }
-
-                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_ON)){
-                                String screen_id = object.getString("screen_id");
-                                editor1ScreenId.putString(valueScreenId, screen_id);
-                                editor1ScreenId.commit();
-                            }
-
-                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_START)){
-                                String session_id = object.getString("session_id");
-                                editor1StartId.putString(valueStartId, session_id);
-                                editor1StartId.commit();
-                            }
-
-                            logModel.singleDeleteLog(id);
-                        } else {
-                          //  Log.d(TAG, "status = " + status);
-                            //do not delete record from the database if the response is false
-                        }
-
-                    } catch (IOException e) {
-                        //     Log.d(TAG, "IOException = " + e.getMessage());
-                        synchroniseLogEvent.cancel(true);
-                    } catch (JSONException e) {
-                        //    Log.d(TAG, "JSONException = " + e.getMessage());
-                        synchroniseLogEvent.cancel(true);
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //  Log.d(TAG, "onFailure = " + t.getMessage());
-                    synchroniseLogEvent.cancel(true);
-                }
-            });
-        }
-
-        else {
-            AgileConfiguration.ServiceInterface1 service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface1.class);
-            Call<ResponseBody> responseBodyCall = service.createUser
-                    (appId,
-                            Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID),
-                            eventType,
-                            values,
-                            String.valueOf(time),
-                            advertising_id, wifi, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
-                            deviceAppVersion, sdkversion, _curlongitude, _curlatitude, androidPlatform,localDateTime,localTimezone,_longitude,_latitude,dateString2,localTimezone,packagename,gpsAdd,gpslocality,
-                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot,installid,startid,screenid
-                    );
-
-            responseBodyCall.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                    try {
-
-                        String responseString = response.body().string();
-                          // Log.d(TAG, "response body22   =" + id + " = " + responseString);
-
-                        JSONObject object = new JSONObject(responseString);
-                        boolean status = object.getBoolean("status");
-                        //     Log.d(TAG, "status = " + status);
-
-                        if (status) {
-                            //delete record from the database if the response is true
-
-                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)){
-                                String install_id = object.getString("install_id");
-                                editor1InstallId.putString(valueInstallId, install_id);
-                                editor1InstallId.commit();
-                            }
-
-                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_ON)){
-                                String screen_id = object.getString("screen_id");
-                                editor1ScreenId.putString(valueScreenId, screen_id);
-                                editor1ScreenId.commit();
-                            }
-
-                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_START)){
-                                String session_id = object.getString("session_id");
-                                editor1StartId.putString(valueStartId, session_id);
-                                editor1StartId.commit();
-                            }
-                            logModel.singleDeleteLog(id);
-                        } else {
-                            //do not delete record from the database if the response is false
-                        }
-
-                    } catch (IOException e) {
-                        //     Log.d(TAG, "IOException = " + e.getMessage());
-                        synchroniseLogEvent.cancel(true);
-                    } catch (JSONException e) {
-                        //    Log.d(TAG, "JSONException = " + e.getMessage());
-                        synchroniseLogEvent.cancel(true);
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    //  Log.d(TAG, "onFailure = " + t.getMessage());
-                    synchroniseLogEvent.cancel(true);
-                }
-            });
-
-        }
-
-
-        }
+    }
 
     /**
      * set value to shared preference i.e. Google advertising id
@@ -1799,7 +1388,6 @@ else {
             SharedPreferences DevicePref = context.getSharedPreferences(AGILE_PREF, 0);
             data = DevicePref.getString(key, "");
         } catch (Exception e) {
-            //  Log.d(TAG, "(getPreferences) catch exception = " + e.getMessage());
         }
         return data;
     }
@@ -1820,7 +1408,6 @@ else {
 
             if (Character.isLetterOrDigit(c) || c == '_' || c == '-') {
                 //print valid character
-                //Log.d(TAG, c + " is valid");
             } else {
                 //print invalid character and
                 //break the loop and throw exception
@@ -1838,7 +1425,7 @@ else {
         try {
             jsonObject.put(key, value);
         } catch (JSONException e) {
-            //Log.d(TAG, "(set) String int catch error = " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -1850,7 +1437,7 @@ else {
         try {
             jsonObject.put(key, value);
         } catch (JSONException e) {
-           // Log.d(TAG, "(set) String float catch error = " + e.getMessage());
+          e.printStackTrace();
         }
     }
 
@@ -1862,7 +1449,7 @@ else {
         try {
             jsonObject.put(key, value);
         } catch (JSONException e) {
-            //Log.d(TAG, "(set) String long catch error = " + e.getMessage());
+           e.printStackTrace();
         }
     }
 
@@ -1874,7 +1461,7 @@ else {
         try {
             jsonObject.put(key, value);
         } catch (Exception e) {
-           // Log.d(TAG, "(set) String String catch error = " + e.getMessage());
+          e.printStackTrace();
         }
     }
 
@@ -1882,7 +1469,7 @@ else {
         try {
             jsonObject.put(key, value);
         } catch (Exception e) {
-           // Log.d(TAG, "(set) String String catch error = " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -1894,7 +1481,7 @@ else {
         try {
             jsonObject.put(key, value);
         } catch (Exception e) {
-           // Log.d(TAG, "(set) String boolean catch error = " + e.getMessage());
+           e.printStackTrace();
         }
     }
 
@@ -1906,7 +1493,7 @@ else {
         try {
             jsonObject.put(key, value);
         } catch (Exception e) {
-            //Log.d(TAG, "(set) String short catch error = " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -1938,7 +1525,7 @@ else {
         try {
             jsonObject.put(key, value);
         } catch (Exception e) {
-           // Log.d(TAG, "(set) String short catch error = " + e.getMessage());
+            // Log.d(TAG, "(set) String short catch error = " + e.getMessage());
         }
     }
 

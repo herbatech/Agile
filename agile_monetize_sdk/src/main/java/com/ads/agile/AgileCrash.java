@@ -70,27 +70,14 @@ import static com.ads.agile.AgileConfiguration.isTransaction;
 public class AgileCrash extends Activity  {
 
     private final String TAG = this.getClass().getSimpleName();
-
     private Context context;
-
     private LogModel logModel;
     private int size;
     private static JSONObject jsonObject = new JSONObject();
-
     private Date date1;
-    long seconds;
     SharedPreferences prefs;
-
-
-
-
-
-
     String dateTimeKey = "time_duration";
-    String screendateTimeKey = "screentime_duration";
-    String EventCountKey = "EventCountKey";
     private Boolean firstTime = false;
-    AgileTransaction agileTransaction;
     private String AppId;
     private String WifiState = "";
     private String DeviceType;
@@ -109,35 +96,20 @@ public class AgileCrash extends Activity  {
     private String AndroidPlatform;
     private String ImeiFirstslot;
     private String ImeiSecondslot;
-
-
     private String GPSAddress;
     private String GPSLocality;
     private String GPSPostalCode;
     private String GPSCountryName;
     private String GPSCountryCode;
-
-    private Location mCurrentLocation;
     private String _latitude = "false", _longitude = "false";
     private String _curlatitude = "false", _curlongitude = "false";
     long installed;
     AppLocationService appLocationService;
     UtilConfig dataProccessor;
     String packagename;
-
-    int Transcationcount;
-
-    long starttime;
-    long  endtime ;
-    long t3;
     String trace_app_uninstall;
-    private int seconds11=0;
-    private boolean startRun;
     String gpsAdd,gpslocality,gpspostalcode,gpscountryname,gpscountrycode;
-    private static final int DEFAULT_BLOCK_TIME = 1000;
-    private boolean mIsBlockClick;
-    boolean installdata=false;
-    String ValidateInterface,trace_app_sandbox;
+    String trace_app_sandbox;
 
     /**
      * parametric constructor
@@ -148,10 +120,6 @@ public class AgileCrash extends Activity  {
     public AgileCrash(@NonNull Context context) {
 
         this.context = context;
-
-      /*  Bundle metadata = getMetaData(context);
-        AppId = metadata.getString("com.agile.sdk.ApplicationId");*/
-
 
         appLocationService = new AppLocationService(context);
 
@@ -175,18 +143,6 @@ public class AgileCrash extends Activity  {
                 AppId = m_obj.getString("id");
                 packagename=context.getPackageName();
                 Log.e(TAG,"Warning : Googgle Playstore not available on Your App");
-            }
-
-
-            if(trace_app_sandbox.equalsIgnoreCase("1")){
-
-                ValidateInterface ="log.php";
-
-            }
-
-            else {
-
-                ValidateInterface= "log.php";
             }
 
         } catch (JSONException e) {
@@ -215,25 +171,7 @@ public class AgileCrash extends Activity  {
             e.printStackTrace();
         }
 
-
-       /* if(context instanceof Activity){
-
-            logModel = ViewModelProviders.of(context).get(LogModel.class);
-            logModel.getLiveListAllLog().observe(this, new Observer<List<LogEntity>>() {
-                @Override
-                public void onChanged(List<LogEntity> notes) {
-                    // Log.d(TAG, "size count = " + notes.size());
-                    size = notes.size();
-                }
-            });
-
-        }*/
-
-
-
         getAdvertisingId();
-
-        //Log.d(TAG,"Facebook Id   ="+ isPreInstalledApp(context));
 
     }
 
@@ -251,18 +189,11 @@ public class AgileCrash extends Activity  {
             if (ImeiFirstslot.equals(ImeiSecondslot)){
                 ImeiSecondslot="";
             }
-
-
-
-
         }
         catch (Exception e){
             ImeiFirstslot="";
             ImeiSecondslot="";
-
-
         }
-
 
     }
 
@@ -276,7 +207,6 @@ public class AgileCrash extends Activity  {
                 _longitude = String.valueOf(nwLocation.getLongitude());
 
                 getAddress(nwLocation.getLatitude(),nwLocation.getLongitude());
-                // Log.d(TAG, "Address  =" + GPSLocality);
             }
             else {
                 GPSLocality="";
@@ -287,8 +217,7 @@ public class AgileCrash extends Activity  {
             }
         }
         catch (Exception e){
-
-
+            e.printStackTrace();
         }
     }
 
@@ -297,8 +226,6 @@ public class AgileCrash extends Activity  {
         try {
             List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
             Address obj = addresses.get(0);
-            // String add = obj.getAddressLine(0);
-
             GPSAddress=obj.getAddressLine(0);
             GPSLocality=obj.getLocality();
             GPSPostalCode= obj.getPostalCode();
@@ -308,7 +235,6 @@ public class AgileCrash extends Activity  {
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            // Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -346,10 +272,8 @@ public class AgileCrash extends Activity  {
         if (name.equals("O")) name = "Oreo";
         if (name.equals("N")) name = "Nougat";
         if (name.equals("M")) name = "Marshmallow";
-
         if (name.startsWith("O_")) name = "Oreo";
         if (name.startsWith("N_")) name = "Nougat";
-
         return name;
     }
 
@@ -565,7 +489,7 @@ public class AgileCrash extends Activity  {
             AndroidPlatform = "Android";
             Latittude = _latitude;
             Longitude = _longitude;
-            SDkVersion = "2.0.3";
+            SDkVersion = "2.0.4";
             WifiState = checkNetworkStatus(context);
             argumentValidation(eventType);  //validation in trackEvent
 
@@ -580,7 +504,6 @@ public class AgileCrash extends Activity  {
                 //  Log.d(TAG, "params is empty");
 
             }
-
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -647,41 +570,33 @@ public class AgileCrash extends Activity  {
                                  @NonNull String deviceOsName, @NonNull String deviceAppVersion, @NonNull String latittude, @NonNull String longitude, @NonNull String androidPlatform,
                                  @NonNull String localDateTime, @NonNull String localTimezone, @NonNull String deviceOperator, @NonNull String sdkversion) {
 
-        argumentValidation(eventType);  //validation in sendLogToServer
+
         try{
+            argumentValidation(eventType);  //validation in sendLogToServer
             Location nwLocation = appLocationService.getLocation(LocationManager.NETWORK_PROVIDER);
 
             if (nwLocation != null) {
                 _curlatitude = String.valueOf(nwLocation.getLatitude());
                 _curlongitude = String.valueOf(nwLocation.getLongitude());
 
+            }
+            if (GPSAddress !=null){
+
+                gpsAdd=GPSAddress;
+                gpslocality=GPSLocality;
+                gpspostalcode=GPSPostalCode;
+                gpscountryname=GPSCountryName;
+                gpscountrycode=GPSCountryCode;
 
             }
-        }
-        catch (Exception e){
+            else {
+                gpsAdd="";
+                gpslocality="";
+                gpspostalcode="";
+                gpscountryname="";
+                gpscountrycode="";
+            }
 
-        }
-
-
-        if (GPSAddress !=null){
-
-            gpsAdd=GPSAddress;
-            gpslocality=GPSLocality;
-            gpspostalcode=GPSPostalCode;
-            gpscountryname=GPSCountryName;
-            gpscountrycode=GPSCountryCode;
-
-        }
-        else {
-            gpsAdd="";
-            gpslocality="";
-            gpspostalcode="";
-            gpscountryname="";
-            gpscountrycode="";
-        }
-
-
-        if (ValidateInterface.equalsIgnoreCase("log.php")){
             AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
             Call<ResponseBody> responseBodyCall = service.createUser
                     (appId,
@@ -691,72 +606,22 @@ public class AgileCrash extends Activity  {
                             time,
                             advertising_id, wifiState, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
                             deviceAppVersion, sdkversion,_longitude, _latitude, androidPlatform, localDateTime, localTimezone,"","","","",packagename,gpsAdd,gpslocality,
-                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot,"","",""
-                    );
-            responseBodyCall.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                      Log.d(TAG, "response code = " + response.code());
-                    try {
-
-                        String responseString = response.body().string();
-
-                        Log.d(TAG, "response body = " + responseString);
-
-                        JSONObject object = new JSONObject(responseString);
-                       // boolean status = object.getBoolean("status");
-                        clearLogEvent();
-
-
-
-
-                    } catch (IOException e) {
-                        // Log.d(TAG, "IOException = " + e.getMessage());
-                    } catch (JSONException e) {
-                        // Log.d(TAG, "JSONException = " + e.getMessage());
-                    } finally {
-                        response.body().close();
-                        //     Log.d(TAG, "retrofit connection closed");
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Log.d(TAG, "onFailure = " + t.getMessage());
-                    // sendLogToDatabase(eventType, appId, values);
-                }
-            });
-        }
-
-        else {
-
-            AgileConfiguration.ServiceInterface1 service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface1.class);
-            Call<ResponseBody> responseBodyCall = service.createUser
-                    (appId,
-                            android_id,
-                            eventType,
-                            values,
-                            time,
-                            advertising_id, wifiState, deviceOperator, deviceLanguage, deviceModel, deviceOsName, deviceOsVersion,
-                            deviceAppVersion, sdkversion,_longitude, _latitude, androidPlatform, localDateTime, localTimezone,"","","","",packagename,gpsAdd,gpslocality,
-                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot,"","",""
+                            gpspostalcode,gpscountryname,gpscountrycode,ImeiFirstslot,ImeiSecondslot,"","","","0"
                     );
             responseBodyCall.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     //  Log.d(TAG, "response code = " + response.code());
                     try {
+                        if (response.isSuccessful()){
+                            String responseString = response.body().string();
 
-                        String responseString = response.body().string();
+                            //  Log.d(TAG, "response body = " + responseString);
 
-                        Log.d(TAG, "response body = " + responseString);
-
-                        JSONObject object = new JSONObject(responseString);
-                      //  boolean status = object.getBoolean("status");
-                        clearLogEvent();
-
-
-
+                            JSONObject object = new JSONObject(responseString);
+                            // boolean status = object.getBoolean("status");
+                            clearLogEvent();
+                        }
 
                     } catch (IOException e) {
                         // Log.d(TAG, "IOException = " + e.getMessage());
@@ -775,9 +640,10 @@ public class AgileCrash extends Activity  {
                 }
             });
         }
+        catch (Exception e){
+            e.printStackTrace();
 
-
-
+        }
     }
 
     /**
