@@ -804,33 +804,19 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                     //Log.d(TAG, "response code enable = " + response.code());
                     try {
 
-                        String responseString = response.body().string();
+                        if (response.isSuccessful()) {
+                            String responseString = response.body().string();
 
-                       // Log.d(TAG, "response body enable = " + responseString);
+                            // Log.d(TAG, "response body enable = " + responseString);
 
-                        JSONObject object = new JSONObject(responseString);
-                        boolean status = object.getBoolean("get_app_status");
+                            JSONObject object = new JSONObject(responseString);
+                            boolean status = object.getBoolean("get_app_status");
 
-                        if (status) {
-
-                            if (isTransaction) {
-                                if (isLog) {
-
-                                    validateLog(eventType, AppId);
-                                }
-                            }
-                            /**
-                             * if the transaction is disable
-                             */
-                            else {
-                                validateLog(eventType, AppId);
-                            }
-                        } else {
-
-                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL) || eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_FIREBASE_TOKEN)) {
+                            if (status) {
 
                                 if (isTransaction) {
                                     if (isLog) {
+
                                         validateLog(eventType, AppId);
                                     }
                                 }
@@ -840,16 +826,33 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                                 else {
                                     validateLog(eventType, AppId);
                                 }
-                            }
+                            } else {
 
+                                if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL) || eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_FIREBASE_TOKEN)) {
+
+                                    if (isTransaction) {
+                                        if (isLog) {
+                                            validateLog(eventType, AppId);
+                                        }
+                                    }
+                                    /**
+                                     * if the transaction is disable
+                                     */
+                                    else {
+                                        validateLog(eventType, AppId);
+                                    }
+                                }
+
+                            }
                         }
+
 
                     } catch (IOException e) {
                        // Log.d(TAG, "IOException = " + e.getMessage());
                     } catch (JSONException e) {
                        // Log.d(TAG, "JSONException = " + e.getMessage());
                     } finally {
-                        response.body().close();
+//                        response.body().close();
                     }
                 }
 
@@ -922,7 +925,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             AndroidPlatform = "Android";
             Latittude = _latitude;
             Longitude = _longitude;
-            SDkVersion = "2.0.4";
+            SDkVersion = "2.0.5";
             WifiState = checkNetworkStatus(context);
             argumentValidation(eventType);  //validation in trackEvent
 
@@ -1097,7 +1100,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 } catch (JSONException e) {
                     Log.d(TAG, "JSONException = " + e.getMessage());
                 } finally {
-                    // response.body().close();
+                     response.body().close();
                     //     Log.d(TAG, "retrofit connection closed");
                 }
             }

@@ -647,7 +647,7 @@ public class AgileTransaction {
         AndroidPlatform="Android";
         Latittude=_latitude;
         Longitude=_longitude;
-        SDkVersion = "2.0.4";
+        SDkVersion = "2.0.5";
         WifiState=checkNetworkStatus(context);
 
         argumentValidation(eventType);  //validation in trackEvent
