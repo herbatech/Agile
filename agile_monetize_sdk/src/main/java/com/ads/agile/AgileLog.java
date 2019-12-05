@@ -807,7 +807,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                         if (response.isSuccessful()) {
                             String responseString = response.body().string();
 
-                            // Log.d(TAG, "response body enable = " + responseString);
+                             Log.d(TAG, "response body enable = " + responseString);
 
                             JSONObject object = new JSONObject(responseString);
                             boolean status = object.getBoolean("get_app_status");
@@ -848,7 +848,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
 
                     } catch (IOException e) {
-                       // Log.d(TAG, "IOException = " + e.getMessage());
+                        Log.d(TAG, "IOException = " + e.getMessage());
                     } catch (JSONException e) {
                        // Log.d(TAG, "JSONException = " + e.getMessage());
                     } finally {
@@ -1058,7 +1058,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                     if (response.isSuccessful()) {
                         String responseString = response.body().string();
-                        //Log.d(TAG, "response body 1111= " + responseString);
+                        Log.d(TAG, "response body 1111= " + responseString);
                         JSONObject object = new JSONObject(responseString);
                         boolean status = object.getBoolean("status");
                         if (status) {
@@ -1100,7 +1100,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 } catch (JSONException e) {
                     Log.d(TAG, "JSONException = " + e.getMessage());
                 } finally {
-                     response.body().close();
+//                     response.body().close();
                     //     Log.d(TAG, "retrofit connection closed");
                 }
             }
@@ -1227,7 +1227,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                         } catch (JSONException e) {
                             //  Log.d(TAG, "JSONException = " + e.getMessage());
                         } finally {
-                            response.body().close();
+                          //  response.body().close();
                             //      Log.d(TAG, "retrofit connection closed");
                         }
                     }

@@ -540,7 +540,7 @@ public class AgileTransaction {
                         } catch (JSONException e) {
                             Log.d(TAG, "JSONException = " + e.getMessage());
                         } finally {
-                            response.body().close();
+                           // response.body().close();
                             //      Log.d(TAG, "retrofit connection closed");
                         }
                     }
@@ -779,7 +779,7 @@ public class AgileTransaction {
                     } catch (JSONException e) {
                         //  Log.d(TAG, "JSONException = " + e.getMessage());
                     } finally {
-                        response.body().close();
+                        //response.body().close();
                         //   Log.d(TAG, "retrofit connection closed");
                     }
                 }
