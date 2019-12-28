@@ -835,6 +835,9 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 JSONObject object = new JSONObject(sharedpreferencesTAG.getString(valueTAG, ""));
                 set(AgileEventParameter.AGILE_PARAMS_EVENT_TAG, object);
             }
+            else {
+                set(AgileEventParameter.AGILE_PARAMS_EVENT_TAG, sharedpreferencesTAG.getString(valueTAG, ""));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
