@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -37,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
         AgileCrashReporter.initialize(this);
 
 
-        agileTransaction = new AgileTransaction(getApplicationContext(), this, AgileEventType.AGILE_EVENT_TRANSACTION);
-        agileLog = new AgileLog(getApplicationContext(), this, agileTransaction);
+        agileTransaction = new AgileTransaction(this.getApplicationContext(), this, AgileEventType.AGILE_EVENT_TRANSACTION);
+        agileLog = new AgileLog(this.getApplicationContext(), this, agileTransaction);
 
 
         if (getIntent().getExtras() != null) {
@@ -78,7 +79,17 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.tagEvent).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                agileLog.tagEvent("Premium");
+                try {
+                    JSONObject page_details=new JSONObject();
+                    page_details.put("Fullname", "pritesh");
+                    page_details.put("Gender", "Male");
+                    page_details.put("Address", "Mumbai");
+                    agileLog.tagEvent(page_details);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
             }
         });
 
