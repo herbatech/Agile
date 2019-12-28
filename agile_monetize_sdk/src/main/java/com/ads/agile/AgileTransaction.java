@@ -623,11 +623,7 @@ public class AgileTransaction {
         String advertising_id = getAdvertisingId(context);
         String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String time = "0";
-        Log.d(TAG, "params is empty  ="+advertising_id);
-
         try {
-
-
             PackageInfo pInfo =   context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             String version = pInfo.versionName;
             String verCode = String.valueOf(pInfo.versionCode);
@@ -647,7 +643,7 @@ public class AgileTransaction {
         AndroidPlatform="Android";
         Latittude=_latitude;
         Longitude=_longitude;
-        SDkVersion = "2.0.7";
+        SDkVersion = "2.0.8";
         WifiState=checkNetworkStatus(context);
 
         argumentValidation(eventType);  //validation in trackEvent

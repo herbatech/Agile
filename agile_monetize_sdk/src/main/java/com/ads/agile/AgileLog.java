@@ -831,9 +831,10 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         }
         //Event Tag set
         try {
-            JSONObject object = new JSONObject(sharedpreferencesTAG.getString(valueTAG, ""));
-           // Log.d(TAG,"Log Event  ="+object);
-            set(AgileEventParameter.AGILE_PARAMS_EVENT_TAG, object);
+            if (!sharedpreferencesTAG.getString(valueTAG, "").isEmpty()){
+                JSONObject object = new JSONObject(sharedpreferencesTAG.getString(valueTAG, ""));
+                set(AgileEventParameter.AGILE_PARAMS_EVENT_TAG, object);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -988,7 +989,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             AndroidPlatform = "Android";
             Latittude = _latitude;
             Longitude = _longitude;
-            SDkVersion = "2.0.7";
+            SDkVersion = "2.0.8";
             WifiState = checkNetworkStatus(context);
             argumentValidation(eventType);  //validation in trackEvent
 
