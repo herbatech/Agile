@@ -78,6 +78,7 @@ import static com.ads.agile.AgileEventParameter.AGILE_PARAMS_CUSTOM_DURATION;
 import static com.ads.agile.AgileEventParameter.AGILE_PARAMS_IDEAL_DURATION;
 import static com.ads.agile.AgileEventType.AGILE_EVENT_CUSTOM_SESSION;
 import static com.ads.agile.AgileEventType.AGILE_EVENT_CUSTOM_SESSION_START;
+import static com.ads.agile.AgileEventType.AGILE_EVENT_SCRREN_ON;
 
 
 public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallBack {
@@ -672,7 +673,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     public void agileAppScreenOn() {
         startRun = true;
         customstartRun = false;
-        trackEvent(AgileEventType.AGILE_EVENT_SCRREN_ON);
+        trackEvent(AGILE_EVENT_SCRREN_ON);
 
     }
 
@@ -824,7 +825,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             set(AgileEventParameter.AGILE_PARAMS_ACTIVITY_PAGE, activity.getClass().getSimpleName());
 
         }
-        if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_ON)) {
+        if (eventType.equalsIgnoreCase(AGILE_EVENT_SCRREN_ON)) {
             j += 1;
             event_screen_oneditor1.putInt(event_screen_onvalue, j);
             event_screen_oneditor1.apply();
@@ -870,6 +871,25 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                                     if (isLog) {
 
                                         validateLog(eventType, AppId);
+
+                                        if (eventType.equalsIgnoreCase(AGILE_EVENT_SCRREN_ON)){
+                                            if (customseconds11>=cutomSession){
+                                                if (cutomSession!=0){
+                                                    set(AGILE_PARAMS_IDEAL_DURATION,customseconds11);
+                                                    set(AGILE_PARAMS_CUSTOM_DURATION,cutomSession);
+                                                    trackEvent(AGILE_EVENT_CUSTOM_SESSION);
+                                                    customseconds11=0;
+                                                    final Handler handler = new Handler();
+                                                    handler.postDelayed(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            //Do something after 1 second
+                                                            trackEvent(AGILE_EVENT_CUSTOM_SESSION_START);
+                                                        }
+                                                    }, 2000);
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                                 /**
@@ -877,22 +897,12 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                                  */
                                 else {
                                     validateLog(eventType, AppId);
-                                }
-                                if (customseconds11>=cutomSession){
-                                    set(AGILE_PARAMS_IDEAL_DURATION,customseconds11);
-                                    set(AGILE_PARAMS_CUSTOM_DURATION,cutomSession);
-                                    trackEvent(AGILE_EVENT_CUSTOM_SESSION);
-                                    customseconds11=0;
-                                    final Handler handler = new Handler();
-                                    handler.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            //Do something after 1 second
-                                            trackEvent(AGILE_EVENT_CUSTOM_SESSION_START);
-                                        }
-                                    }, 2000);
+
 
                                 }
+
+
+
                             } else {
 
                                 if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL) || eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_FIREBASE_TOKEN)) {
@@ -992,7 +1002,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             AndroidPlatform = "Android";
             Latittude = _latitude;
             Longitude = _longitude;
-            SDkVersion = "2.0.8";
+            SDkVersion = "2.0.9";
             WifiState = checkNetworkStatus(context);
             argumentValidation(eventType);  //validation in trackEvent
 
@@ -1125,7 +1135,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                     if (response.isSuccessful()) {
                         String responseString = response.body().string();
-                        Log.d(TAG, "response body  =" + responseString);
+                        Log.d(TAG, "response body  =" + responseString+"\t"+eventType);
                         JSONObject object = new JSONObject(responseString);
                         boolean status = object.getBoolean("status");
                         if (status) {
@@ -1136,7 +1146,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                                 editor1InstallId.commit();
                             }
 
-                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_ON)) {
+                            if (eventType.equalsIgnoreCase(AGILE_EVENT_SCRREN_ON)) {
                                 String screen_id = object.getString("screen_id");
                                 editor1ScreenId.putString(valueScreenId, screen_id);
                                 editor1ScreenId.commit();
@@ -1162,7 +1172,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
 
                             }
-                            if (eventType.equalsIgnoreCase(AGILE_EVENT_CUSTOM_SESSION)) {
+                            if (eventType.equalsIgnoreCase(AGILE_EVENT_CUSTOM_SESSION_START)) {
                                 String custom_session_id = object.getString("custom_session_id");
                                 editor1SessionId.putString(valueSessionId, custom_session_id);
                                 editor1SessionId.commit();
@@ -1409,7 +1419,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                                 editor1InstallId.commit();
                             }
 
-                            if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_ON)) {
+                            if (eventType.equalsIgnoreCase(AGILE_EVENT_SCRREN_ON)) {
                                 String screen_id = object.getString("screen_id");
                                 editor1ScreenId.putString(valueScreenId, screen_id);
                                 editor1ScreenId.commit();

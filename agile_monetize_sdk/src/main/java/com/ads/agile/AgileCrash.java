@@ -489,7 +489,7 @@ public class AgileCrash extends Activity  {
             AndroidPlatform = "Android";
             Latittude = _latitude;
             Longitude = _longitude;
-            SDkVersion = "2.0.8";
+            SDkVersion = "2.0.9";
             WifiState = checkNetworkStatus(context);
             argumentValidation(eventType);  //validation in trackEvent
 
