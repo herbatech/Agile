@@ -15,11 +15,13 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.RemoteException;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -34,6 +36,9 @@ import com.ads.agile.system.AdvertisingIdClient;
 import com.ads.agile.utils.AgileStateMonitor;
 import com.ads.agile.utils.AppLocationService;
 import com.ads.agile.utils.UtilConfig;
+import com.android.installreferrer.api.InstallReferrerClient;
+import com.android.installreferrer.api.InstallReferrerStateListener;
+import com.android.installreferrer.api.ReferrerDetails;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 /*import com.google.android.gms.location.FusedLocationProviderClient;
@@ -118,6 +123,11 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     public static final String MyPREFERENCESTAG = "myprefsTAG";
     public static final String valueTAG = "keyTAG";
 
+    SharedPreferences sharedpreferencesRefrrer;
+    SharedPreferences.Editor editor1Refrrer;
+    public static final String MyPREFERENCESRefrrer = "myprefsRefrrer";
+    public static final String valueRefrrer = "keyRefrrer";
+
 
     SharedPreferences sharedpreferencesInstallId;
     SharedPreferences.Editor editor1InstallId;
@@ -156,7 +166,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     private String SDkVersion;
     private String Latittude;
     private String Longitude;
-    private String localDateTime;
+    static String localDateTime;
     private String localTimezone;
     private String AndroidPlatform;
     private String ImeiFirstslot;
@@ -185,8 +195,8 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     String gpsAdd, gpslocality, gpspostalcode, gpscountryname, gpscountrycode;
     boolean installdata = false;
     public static String AGILE_ADD_NETWORK;
-    String startid, installid, screenid,sessionid;
-
+    String startid, installid, screenid, sessionid;
+    long referrerClickTime;
     /**
      * parametric constructor
      *
@@ -267,6 +277,9 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         sharedpreferencesTAG = context.getSharedPreferences(MyPREFERENCESTAG, Context.MODE_PRIVATE);
         editor1TAG = sharedpreferencesTAG.edit();
 
+        sharedpreferencesRefrrer = context.getSharedPreferences(MyPREFERENCESRefrrer, Context.MODE_PRIVATE);
+        editor1Refrrer = sharedpreferencesRefrrer.edit();
+
         event_screen_onsharedpreferences = context.getSharedPreferences(event_screen_onMyPREFERENCES, Context.MODE_PRIVATE);
         event_screen_oneditor1 = event_screen_onsharedpreferences.edit();
 
@@ -313,6 +326,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
         installdata = true;
         agileInstall();
+
 
     }
 
@@ -605,13 +619,14 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     public void agileInstall() {
         boolean isFirstTime = MyPreferences.isFirst(context);
         if (isFirstTime) {
+            InstallReferrer();
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     //Do something after 1 second
-                    Log.d(TAG, "Install Open =3");
                     set(AgileEventParameter.AGILE_PARAMS_INSTALL_DATE, ApkInstallDate(installed));
+                    set(AgileEventParameter.AGILE__ADD_CLICK, referrerClickTime);
                     trackEvent(AgileEventType.AGILE_EVENT_INSTALL);
 
                 }
@@ -632,6 +647,56 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
 
     }
+
+    public void InstallReferrer() {
+
+        final InstallReferrerClient referrerClient = InstallReferrerClient.newBuilder(context).build();
+        referrerClient.startConnection(new InstallReferrerStateListener() {
+            @Override
+            public void onInstallReferrerSetupFinished(int responseCode) {
+                switch (responseCode) {
+                    case InstallReferrerClient.InstallReferrerResponse.OK:
+                        ReferrerDetails response = null;
+                        try {
+                            response = referrerClient.getInstallReferrer();
+                            String referrerUrl = response.getInstallReferrer();
+                             referrerClickTime = response.getReferrerClickTimestampSeconds();
+                            long appInstallTime = response.getInstallBeginTimestampSeconds();
+                            boolean instantExperienceLaunched = response.getGooglePlayInstantParam();
+                            Uri uri = Uri.parse(referrerUrl);
+                            String ReferrerClick_Id = uri.getQueryParameter("ag_clickid");
+                            ReffereEvent(ReferrerClick_Id);
+
+                            Log.d(TAG, "RefferUrl  =" + referrerUrl);
+                            Log.d(TAG, "referrerClickTime  =" + referrerClickTime);
+                            Log.d(TAG, "appInstallTime  =" + appInstallTime);
+                            Log.d(TAG, "instantExperienceLaunched  =" + instantExperienceLaunched);
+                            Log.d(TAG, "ag_clickid  =" + ReferrerClick_Id);
+
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+
+                        // Connection established.
+                        break;
+                    case InstallReferrerClient.InstallReferrerResponse.FEATURE_NOT_SUPPORTED:
+                        // API not available on the current Play Store app.
+
+                        break;
+                    case InstallReferrerClient.InstallReferrerResponse.SERVICE_UNAVAILABLE:
+                        // Connection couldn't be established.
+                        break;
+                }
+            }
+
+            @Override
+            public void onInstallReferrerServiceDisconnected() {
+                // Try to restart the connection on the next request to
+                // Google Play by calling the startConnection() method.
+            }
+        });
+    }
+
 
     public void agileUninstall() {
         try {
@@ -744,8 +809,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     }
 
 
-
-
     @Override
     public void onConnected() {
         try {
@@ -801,6 +864,11 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         editor1TAG.commit();
     }
 
+    public void ReffereEvent(String value) {
+        editor1Refrrer.putString(valueRefrrer, value);
+        editor1Refrrer.commit();
+    }
+
     /**
      * validate input param
      *
@@ -832,12 +900,21 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         }
         //Event Tag set
         try {
-            if (!sharedpreferencesTAG.getString(valueTAG, "").isEmpty()){
+            if (!sharedpreferencesTAG.getString(valueTAG, "").isEmpty()) {
                 JSONObject object = new JSONObject(sharedpreferencesTAG.getString(valueTAG, ""));
+                if (!sharedpreferencesRefrrer.getString(valueRefrrer, "").isEmpty()) {
+                    object.put("ag_clickid", sharedpreferencesRefrrer.getString(valueRefrrer, ""));
+                }
                 set(AgileEventParameter.AGILE_PARAMS_EVENT_TAG, object);
-            }
-            else {
-                set(AgileEventParameter.AGILE_PARAMS_EVENT_TAG, sharedpreferencesTAG.getString(valueTAG, ""));
+            } else {
+                if (!sharedpreferencesRefrrer.getString(valueRefrrer, "").isEmpty()) {
+                    JSONObject page_details = new JSONObject();
+                    page_details.put("ag_clickid", sharedpreferencesRefrrer.getString(valueRefrrer, ""));
+                    set(AgileEventParameter.AGILE_PARAMS_EVENT_TAG, page_details);
+                } else {
+                    set(AgileEventParameter.AGILE_PARAMS_EVENT_TAG, sharedpreferencesTAG.getString(valueTAG, ""));
+                }
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -861,29 +938,29 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                         if (response.isSuccessful()) {
                             String responseString = response.body().string();
 
-                           //  Log.d(TAG, "response body enable = " + responseString);
+                            //  Log.d(TAG, "response body enable = " + responseString);
 
                             JSONObject object = new JSONObject(responseString);
                             boolean status = object.getBoolean("get_app_status");
                             if (status) {
-                                int cutomSession=object.getInt("custom_session_duration");
+                                int cutomSession = object.getInt("custom_session_duration");
                                 if (isTransaction) {
                                     if (isLog) {
 
                                         validateLog(eventType, AppId);
 
-                                        if (eventType.equalsIgnoreCase(AGILE_EVENT_SCRREN_ON)){
-                                            if (customseconds11>=cutomSession){
-                                                if (cutomSession!=0){
-                                                    set(AGILE_PARAMS_IDEAL_DURATION,customseconds11);
-                                                    set(AGILE_PARAMS_CUSTOM_DURATION,cutomSession);
+                                        if (eventType.equalsIgnoreCase(AGILE_EVENT_SCRREN_ON)) {
+                                            if (customseconds11 >= cutomSession) {
+                                                if (cutomSession != 0) {
+                                                    set(AGILE_PARAMS_IDEAL_DURATION, customseconds11);
+                                                    set(AGILE_PARAMS_CUSTOM_DURATION, cutomSession);
                                                     trackEvent(AGILE_EVENT_CUSTOM_SESSION);
-                                                    customseconds11=0;
+                                                    customseconds11 = 0;
                                                     final Handler handler = new Handler();
                                                     handler.postDelayed(new Runnable() {
                                                         @Override
                                                         public void run() {
-                                                            //Do something after 1 second
+                                                            //Do something after 2 second
                                                             trackEvent(AGILE_EVENT_CUSTOM_SESSION_START);
                                                         }
                                                     }, 2000);
@@ -898,10 +975,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                                 else {
                                     validateLog(eventType, AppId);
 
-
                                 }
-
-
 
                             } else {
 
@@ -927,7 +1001,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                     } catch (IOException e) {
                         Log.d(TAG, "IOException = " + e.getMessage());
                     } catch (JSONException e) {
-                       // Log.d(TAG, "JSONException = " + e.getMessage());
+                        // Log.d(TAG, "JSONException = " + e.getMessage());
                     } finally {
 //                        response.body().close();
                     }
@@ -1002,7 +1076,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             AndroidPlatform = "Android";
             Latittude = _latitude;
             Longitude = _longitude;
-            SDkVersion = "2.0.9";
+            SDkVersion = "2.1.1";
             WifiState = checkNetworkStatus(context);
             argumentValidation(eventType);  //validation in trackEvent
 
@@ -1115,6 +1189,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             gpscountrycode = "";
         }
 
+        Log.d(TAG, "Values Data" + values);
 
         AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
         Call<ResponseBody> responseBodyCall = service.createUser
@@ -1135,7 +1210,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                     if (response.isSuccessful()) {
                         String responseString = response.body().string();
-                        Log.d(TAG, "response body  =" + responseString+"\t"+eventType);
+                        Log.d(TAG, "Agile response   =" + responseString + "\t" + eventType);
                         JSONObject object = new JSONObject(responseString);
                         boolean status = object.getBoolean("status");
                         if (status) {
@@ -1180,7 +1255,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                             }
                         }
                     } else {
-                       // Log.d(TAG, "JSONException123 = " + response.code());
+                        // Log.d(TAG, "JSONException123 = " + response.code());
                     }
                 } catch (IOException e) {
                     // Log.d(TAG, "IOException = " + e.getMessage());
@@ -1214,13 +1289,16 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
         // Log.d(TAG, "insert log into database");
         LogEntity logEntity = new LogEntity();
+        DateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateString2 = dateFormat2.format(new Date()).toString();
+        //Log.d(TAG,"DateTime  ="+dateString2);
 
         String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String appIdencodedString = AgileAESHelper.encryption(appId);
         String eventTypeencodedString = AgileAESHelper.encryption(eventType);
         String valuesencodedString = AgileAESHelper.encryption(values);
         ;
-        String localDateTimeencodedString = AgileAESHelper.encryption(localDateTime);
+        String localDateTimeencodedString = AgileAESHelper.encryption(dateString2);
         ;
         String androidIdencodedString = AgileAESHelper.encryption(androidId);
         ;
@@ -1287,6 +1365,14 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 final String finalEventTypedatadatatext = eventTypedatadatatext;
                 final String finalValuedatatext = valuedatatext;
                 final String finalTimedatatext = timedatatext;
+
+                Log.d(TAG, "id Data =" + id);
+                Log.d(TAG, "AppId Data =" + finalAppIddatatext);
+                Log.d(TAG, "EventType Data =" + finalEventTypedatadatatext);
+                Log.d(TAG, "Value Data =" + finalValuedatatext);
+                Log.d(TAG, "android id Data =" + getAdvertisingId());
+                Log.d(TAG, "dateTime Data =" + finalTimedatatext);
+
                 responseBodyCall.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -1314,7 +1400,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                         } catch (JSONException e) {
                             //  Log.d(TAG, "JSONException = " + e.getMessage());
                         } finally {
-                          //  response.body().close();
+                            //  response.body().close();
                             //      Log.d(TAG, "retrofit connection closed");
                         }
                     }
@@ -1405,7 +1491,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                 try {
 
-                    if(response.isSuccessful()){
+                    if (response.isSuccessful()) {
                         String responseString = response.body().string();
                         JSONObject object = new JSONObject(responseString);
                         boolean status = object.getBoolean("status");
@@ -1529,7 +1615,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             jsonObject.put(key, value);
         } catch (JSONException e) {
-          e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -1541,7 +1627,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             jsonObject.put(key, value);
         } catch (JSONException e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -1553,7 +1639,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             jsonObject.put(key, value);
         } catch (Exception e) {
-          e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -1574,7 +1660,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         try {
             jsonObject.put(key, value);
         } catch (Exception e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
     }
 

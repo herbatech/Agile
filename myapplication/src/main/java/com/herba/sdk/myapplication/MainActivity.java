@@ -81,15 +81,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 try {
                     JSONObject page_details=new JSONObject();
-                    page_details.put("Fullname", "pritesh");
+                    page_details.put("Fullname", "username");
                     page_details.put("Gender", "Male");
                     page_details.put("Address", "Mumbai");
                     agileLog.tagEvent(page_details);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-
             }
         });
 
@@ -119,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i=new Intent(MainActivity.this,FirstActivity.class);
                 startActivity(i);
-
                 try {
                     JSONObject page_details=new JSONObject();
                     page_details.put("ProductId", "10");

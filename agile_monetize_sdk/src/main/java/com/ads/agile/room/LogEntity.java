@@ -9,7 +9,7 @@ import android.support.annotation.NonNull;
 public class LogEntity {
 
 
-    /*id______event_type________app_id________eventid________values__________android_id
+    /*id______event_type________app_id________eventid________values__________android_id_______Date_time
     * 1
     * 2
     * 3

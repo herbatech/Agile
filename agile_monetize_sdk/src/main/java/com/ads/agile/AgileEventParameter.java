@@ -25,4 +25,5 @@ public class AgileEventParameter {
     public static final String AGILE__NOTIFICATION_ACTION = "click_action";
     public static final String AGILE__NOTIFICATION_FLAG = "external_url_flag";
     public static final String AGILE__NOTIFICATION_URL = "external_url";
+    public static final String AGILE__ADD_CLICK = "ad_click _ts";
 }
