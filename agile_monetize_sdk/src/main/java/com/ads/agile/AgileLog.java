@@ -667,11 +667,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                             String ReferrerClick_Id = uri.getQueryParameter("ag_clickid");
                             ReffereEvent(ReferrerClick_Id);
 
-                            Log.d(TAG, "RefferUrl  =" + referrerUrl);
-                            Log.d(TAG, "referrerClickTime  =" + referrerClickTime);
-                            Log.d(TAG, "appInstallTime  =" + appInstallTime);
-                            Log.d(TAG, "instantExperienceLaunched  =" + instantExperienceLaunched);
-                            Log.d(TAG, "ag_clickid  =" + ReferrerClick_Id);
 
                         } catch (RemoteException e) {
                             e.printStackTrace();
@@ -1366,12 +1361,12 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 final String finalValuedatatext = valuedatatext;
                 final String finalTimedatatext = timedatatext;
 
-                Log.d(TAG, "id Data =" + id);
+                /*Log.d(TAG, "id Data =" + id);
                 Log.d(TAG, "AppId Data =" + finalAppIddatatext);
                 Log.d(TAG, "EventType Data =" + finalEventTypedatadatatext);
                 Log.d(TAG, "Value Data =" + finalValuedatatext);
                 Log.d(TAG, "android id Data =" + getAdvertisingId());
-                Log.d(TAG, "dateTime Data =" + finalTimedatatext);
+                Log.d(TAG, "dateTime Data =" + finalTimedatatext);*/
 
                 responseBodyCall.enqueue(new Callback<ResponseBody>() {
                     @Override
