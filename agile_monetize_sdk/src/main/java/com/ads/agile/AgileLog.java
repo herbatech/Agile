@@ -79,8 +79,17 @@ import static com.ads.agile.AgileConfiguration.AGILE_ID;
 import static com.ads.agile.AgileConfiguration.AGILE_PREF;
 import static com.ads.agile.AgileConfiguration.isLog;
 import static com.ads.agile.AgileConfiguration.isTransaction;
+import static com.ads.agile.AgileEventParameter.AGILE_CLICK_ID;
+import static com.ads.agile.AgileEventParameter.AGILE_CUSTOM_SESSION_DURATION;
+import static com.ads.agile.AgileEventParameter.AGILE_CUSTOM_SESSION_ID;
+import static com.ads.agile.AgileEventParameter.AGILE_GET_APP_STATUS;
+import static com.ads.agile.AgileEventParameter.AGILE_GET_STATUS;
+import static com.ads.agile.AgileEventParameter.AGILE_INSTALL_ID;
 import static com.ads.agile.AgileEventParameter.AGILE_PARAMS_CUSTOM_DURATION;
 import static com.ads.agile.AgileEventParameter.AGILE_PARAMS_IDEAL_DURATION;
+import static com.ads.agile.AgileEventParameter.AGILE_PARTNER_NAME;
+import static com.ads.agile.AgileEventParameter.AGILE_SCREEN_ID;
+import static com.ads.agile.AgileEventParameter.AGILE_SESSION_ID;
 import static com.ads.agile.AgileEventType.AGILE_EVENT_CUSTOM_SESSION;
 import static com.ads.agile.AgileEventType.AGILE_EVENT_CUSTOM_SESSION_START;
 import static com.ads.agile.AgileEventType.AGILE_EVENT_SCRREN_ON;
@@ -127,6 +136,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     SharedPreferences.Editor editor1Refrrer;
     public static final String MyPREFERENCESRefrrer = "myprefsRefrrer";
     public static final String valueRefrrer = "keyRefrrer";
+    public static final String valueRefrrer1 = "keyRefrrer1";
 
 
     SharedPreferences sharedpreferencesInstallId;
@@ -326,8 +336,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
         installdata = true;
         agileInstall();
-
-
+       // InstallReferrer();
     }
 
     @SuppressLint({"MissingPermission", "NewApi"})
@@ -664,9 +673,9 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                             long appInstallTime = response.getInstallBeginTimestampSeconds();
                             boolean instantExperienceLaunched = response.getGooglePlayInstantParam();
                             Uri uri = Uri.parse(referrerUrl);
-                            String ReferrerClick_Id = uri.getQueryParameter("ag_clickid");
-                            ReffereEvent(ReferrerClick_Id);
-
+                            String ReferrerClick_Id = uri.getQueryParameter(AGILE_CLICK_ID);
+                            String Partner_Name = uri.getQueryParameter(AGILE_PARTNER_NAME);
+                            ReffereEvent(ReferrerClick_Id,Partner_Name);
 
                         } catch (RemoteException e) {
                             e.printStackTrace();
@@ -726,7 +735,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                 trackEvent(AgileEventType.AGILE_EVENT_SCRREN_START);
             }
         }, 1500);
-
 
     }
 
@@ -859,10 +867,12 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
         editor1TAG.commit();
     }
 
-    public void ReffereEvent(String value) {
+    public void ReffereEvent(String value,String partner_name) {
         editor1Refrrer.putString(valueRefrrer, value);
+        editor1Refrrer.putString(valueRefrrer1, partner_name);
         editor1Refrrer.commit();
     }
+
 
     /**
      * validate input param
@@ -898,13 +908,15 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             if (!sharedpreferencesTAG.getString(valueTAG, "").isEmpty()) {
                 JSONObject object = new JSONObject(sharedpreferencesTAG.getString(valueTAG, ""));
                 if (!sharedpreferencesRefrrer.getString(valueRefrrer, "").isEmpty()) {
-                    object.put("ag_clickid", sharedpreferencesRefrrer.getString(valueRefrrer, ""));
+                    object.put(AGILE_CLICK_ID, sharedpreferencesRefrrer.getString(valueRefrrer, ""));
+                    object.put(AGILE_PARTNER_NAME, sharedpreferencesRefrrer.getString(valueRefrrer1, ""));
                 }
                 set(AgileEventParameter.AGILE_PARAMS_EVENT_TAG, object);
             } else {
                 if (!sharedpreferencesRefrrer.getString(valueRefrrer, "").isEmpty()) {
                     JSONObject page_details = new JSONObject();
-                    page_details.put("ag_clickid", sharedpreferencesRefrrer.getString(valueRefrrer, ""));
+                    page_details.put(AGILE_CLICK_ID, sharedpreferencesRefrrer.getString(valueRefrrer, ""));
+                    page_details.put(AGILE_PARTNER_NAME, sharedpreferencesRefrrer.getString(valueRefrrer1, ""));
                     set(AgileEventParameter.AGILE_PARAMS_EVENT_TAG, page_details);
                 } else {
                     set(AgileEventParameter.AGILE_PARAMS_EVENT_TAG, sharedpreferencesTAG.getString(valueTAG, ""));
@@ -936,9 +948,9 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                             //  Log.d(TAG, "response body enable = " + responseString);
 
                             JSONObject object = new JSONObject(responseString);
-                            boolean status = object.getBoolean("get_app_status");
+                            boolean status = object.getBoolean(AGILE_GET_APP_STATUS);
                             if (status) {
-                                int cutomSession = object.getInt("custom_session_duration");
+                                int cutomSession = object.getInt(AGILE_CUSTOM_SESSION_DURATION);
                                 if (isTransaction) {
                                     if (isLog) {
 
@@ -1071,7 +1083,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             AndroidPlatform = "Android";
             Latittude = _latitude;
             Longitude = _longitude;
-            SDkVersion = "2.1.1";
+            SDkVersion = "2.1.2";
             WifiState = checkNetworkStatus(context);
             argumentValidation(eventType);  //validation in trackEvent
 
@@ -1184,7 +1196,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             gpscountrycode = "";
         }
 
-        Log.d(TAG, "Values Data" + values);
+        //Log.d(TAG, "Values Data" + values);
 
         AgileConfiguration.ServiceInterface service = AgileConfiguration.getRetrofit().create(AgileConfiguration.ServiceInterface.class);
         Call<ResponseBody> responseBodyCall = service.createUser
@@ -1207,17 +1219,17 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                         String responseString = response.body().string();
                         Log.d(TAG, "Agile response   =" + responseString + "\t" + eventType);
                         JSONObject object = new JSONObject(responseString);
-                        boolean status = object.getBoolean("status");
+                        boolean status = object.getBoolean(AGILE_GET_STATUS);
                         if (status) {
 
                             if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)) {
-                                String install_id = object.getString("install_id");
+                                String install_id = object.getString(AGILE_INSTALL_ID);
                                 editor1InstallId.putString(valueInstallId, install_id);
                                 editor1InstallId.commit();
                             }
 
                             if (eventType.equalsIgnoreCase(AGILE_EVENT_SCRREN_ON)) {
-                                String screen_id = object.getString("screen_id");
+                                String screen_id = object.getString(AGILE_SCREEN_ID);
                                 editor1ScreenId.putString(valueScreenId, screen_id);
                                 editor1ScreenId.commit();
                             }
@@ -1226,7 +1238,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
 
                             if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_START)) {
-                                String session_id = object.getString("session_id");
+                                String session_id = object.getString(AGILE_SESSION_ID);
 
                                 editor1StartId.putString(valueStartId, session_id);
                                 editor1StartId.commit();
@@ -1243,7 +1255,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
 
                             }
                             if (eventType.equalsIgnoreCase(AGILE_EVENT_CUSTOM_SESSION_START)) {
-                                String custom_session_id = object.getString("custom_session_id");
+                                String custom_session_id = object.getString(AGILE_CUSTOM_SESSION_ID);
                                 editor1SessionId.putString(valueSessionId, custom_session_id);
                                 editor1SessionId.commit();
 
@@ -1377,7 +1389,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                             if (response.isSuccessful()) {
                                 String responseString = response.body().string();
                                 JSONObject object = new JSONObject(responseString);
-                                boolean status = object.getBoolean("get_app_status");
+                                boolean status = object.getBoolean(AGILE_GET_APP_STATUS);
 
                                 if (status) {
                                     //call webservice to add data to database
@@ -1489,25 +1501,24 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
                     if (response.isSuccessful()) {
                         String responseString = response.body().string();
                         JSONObject object = new JSONObject(responseString);
-                        boolean status = object.getBoolean("status");
+                        boolean status = object.getBoolean(AGILE_GET_STATUS);
 
                         if (status) {
                             //delete record from the database if the response is true
-
                             if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_INSTALL)) {
-                                String install_id = object.getString("install_id");
+                                String install_id = object.getString(AGILE_INSTALL_ID);
                                 editor1InstallId.putString(valueInstallId, install_id);
                                 editor1InstallId.commit();
                             }
 
                             if (eventType.equalsIgnoreCase(AGILE_EVENT_SCRREN_ON)) {
-                                String screen_id = object.getString("screen_id");
+                                String screen_id = object.getString(AGILE_SCREEN_ID);
                                 editor1ScreenId.putString(valueScreenId, screen_id);
                                 editor1ScreenId.commit();
                             }
 
                             if (eventType.equalsIgnoreCase(AgileEventType.AGILE_EVENT_SCRREN_START)) {
-                                String session_id = object.getString("session_id");
+                                String session_id = object.getString(AGILE_SESSION_ID);
                                 editor1StartId.putString(valueStartId, session_id);
                                 editor1StartId.commit();
                             }

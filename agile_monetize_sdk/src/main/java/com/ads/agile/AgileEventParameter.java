@@ -25,5 +25,14 @@ public class AgileEventParameter {
     public static final String AGILE__NOTIFICATION_ACTION = "click_action";
     public static final String AGILE__NOTIFICATION_FLAG = "external_url_flag";
     public static final String AGILE__NOTIFICATION_URL = "external_url";
-    public static final String AGILE__ADD_CLICK = "ad_click _ts";
+    public static final String AGILE_INSTALL_ID = "install_id";
+    public static final String AGILE_SCREEN_ID = "screen_id";
+    public static final String AGILE_SESSION_ID = "session_id";
+    public static final String AGILE_CUSTOM_SESSION_ID = "custom_session_id";
+    public static final String AGILE_CUSTOM_SESSION_DURATION = "custom_session_duration";
+    public static final String AGILE_GET_APP_STATUS = "get_app_status";
+    public static final String AGILE_GET_STATUS = "status";
+    public static final String AGILE__ADD_CLICK = "ad_click_ts";
+    public static final String AGILE_CLICK_ID = "ag_clickid";
+    public static final String AGILE_PARTNER_NAME = "ag_partner";
 }
