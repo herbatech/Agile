@@ -11,6 +11,7 @@ public class AgileEventType {
     public static final String AGILE_EVENT_SCRREN_ON = "event_screen_on";
     public static final String AGILE_EVENT_SCRREN_START = "event_app_start";
     public static final String AGILE_EVENT_INSTALL = "event_install";
+    public static final String AGILE_EVENT_NON_ORGANIC = "event_non_organic_details";
     public static final String AGILE_EVENT_CUSTOM_SESSION = "event_custom_session";
     public static final String AGILE_EVENT_CUSTOM_SESSION_START = "event_custom_session_start";
     public static final String AGILE_EVENT_FIREBASE_TOKEN = "event_firebase_token";

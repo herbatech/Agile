@@ -4,7 +4,7 @@
         "type": "1"
     },
     "app": {
-        "id":"32",
+        "id":"8c0e042f31859282",
         "name":"com.herba.sdk.myapplication",
         "available_on_google_playstore":"1",
         "trace_app_uninstall":"1",

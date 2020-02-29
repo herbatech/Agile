@@ -33,6 +33,13 @@ public class AgileEventParameter {
     public static final String AGILE_GET_APP_STATUS = "get_app_status";
     public static final String AGILE_GET_STATUS = "status";
     public static final String AGILE__ADD_CLICK = "ad_click_ts";
+    public static final String AGILE_UTM_SOURCE = "utm_source=google-play";
+    public static final String AGILE_AG_EVENT_BLANK = "{\"ag_event\": []}";
     public static final String AGILE_CLICK_ID = "ag_clickid";
     public static final String AGILE_PARTNER_NAME = "ag_partner";
+    public static final String AGILE_GOOgle_ID = "ag_gaid";
+    public static final String AGILE_TIMESTAMP = "ag_timestamp";
+    public static final String AGILE_CLICK_LOOKBACK = "ag_click_lookback";
+    public static final String AGILE_REFERRER_EVENT = "ag_event";
+    public static final String AGILE_NON_ORGANIC = "ag_non_organic_details";
 }
