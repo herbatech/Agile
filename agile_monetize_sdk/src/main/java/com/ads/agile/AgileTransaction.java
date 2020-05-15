@@ -14,6 +14,8 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -568,20 +570,20 @@ public class AgileTransaction {
 
 
     private String checkNetworkStatus(Context context) {
-
-        WifiState ="";
+        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiState = "";
         final ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        final android.net.NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        final android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        if (wifi.isConnectedOrConnecting ()) {
-            WifiState="wifi";
-            //  Toast.makeText(this, "Wifi", Toast.LENGTH_LONG).show();
-        } else if (mobile.isConnectedOrConnecting ()) {
-            WifiState="Data";
-            //  Toast.makeText(this, "Mobile 3G ", Toast.LENGTH_LONG).show();
+        NetworkInfo activeNetwork = connMgr.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        //  final android.net.NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        //  final android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        if (wifiManager.isWifiEnabled()) {
+            WifiState = "wifi";
+        } else if (isConnected) {
+            WifiState = "Data";
         } else {
-            WifiState="false";
-            //   Toast.makeText(this, "No Network ", Toast.LENGTH_LONG).show();
+            WifiState = "false";
+
         }
         return WifiState;
     }
@@ -643,7 +645,7 @@ public class AgileTransaction {
         AndroidPlatform="Android";
         Latittude=_latitude;
         Longitude=_longitude;
-        SDkVersion = "2.1.3";
+        SDkVersion = "2.1.4";
         WifiState=checkNetworkStatus(context);
 
         argumentValidation(eventType);  //validation in trackEvent

@@ -15,6 +15,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
@@ -98,7 +100,6 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     private Date date1;
     long seconds;
     SharedPreferences prefs;
-
 
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor1;
@@ -1067,17 +1068,17 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     }
 
     private String checkNetworkStatus(Context context) {
-
+      WifiManager  wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         WifiState = "";
         final ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        final android.net.NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        final android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        if (wifi.isConnectedOrConnecting()) {
+        NetworkInfo activeNetwork = connMgr.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+      //  final android.net.NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+      //  final android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        if (wifiManager.isWifiEnabled()) {
             WifiState = "wifi";
-
-        } else if (mobile.isConnectedOrConnecting()) {
+        } else if (isConnected) {
             WifiState = "Data";
-
         } else {
             WifiState = "false";
 
@@ -1116,7 +1117,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
             AndroidPlatform = "Android";
             Latittude = _latitude;
             Longitude = _longitude;
-            SDkVersion = "2.1.3";
+            SDkVersion = "2.1.4";
             WifiState = checkNetworkStatus(context);
             argumentValidation(eventType);  //validation in trackEvent
 

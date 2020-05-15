@@ -1,23 +1,23 @@
 -- Merging decision tree log ---
 manifest
-ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
-INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
-INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
-INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
-INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
-INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
-INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
+ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
+INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
+INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
+INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
+INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
+INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
+INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
 	package
 		ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:2:5-42
 		INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
 		INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
 	android:versionName
 		INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
-		ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
+		ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
 		INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
 	android:versionCode
 		INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
-		ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-17:12
+		ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:1-18:12
 		INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:1:11-69
@@ -25,14 +25,18 @@ uses-permission#android.permission.INTERNET
 ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:4:5-66
 	android:name
 		ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:4:22-64
+uses-permission#android.permission.ACCESS_WIFI_STATE
+ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:5:5-75
+	android:name
+		ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:5:22-73
 uses-permission#android.permission.ACCESS_NETWORK_STATE
-ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:5:5-78
+ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:6:5-78
 	android:name
-		ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:5:22-76
+		ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:6:22-76
 uses-permission#android.permission.RECEIVE_BOOT_COMPLETED
-ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:6:5-80
+ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:7:5-80
 	android:name
-		ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:6:22-78
+		ADDED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml:7:22-78
 uses-sdk
 INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from F:\Agile\agile_monetize_sdk\src\main\AndroidManifest.xml
