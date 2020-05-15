@@ -99,6 +99,7 @@ public class AgileLog extends Activity implements AgileStateMonitor.NetworkCallB
     long seconds;
     SharedPreferences prefs;
 
+
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor1;
     public static final String MyPREFERENCES = "myprefs";
